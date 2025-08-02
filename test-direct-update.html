@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直接測試商品更新</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        input, select, textarea { width: 300px; padding: 5px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>直接測試商品更新 API</h1>
+    
+    <div>
+        <h3>商品更新表單</h3>
+        <form id="updateForm">
+            <div>
+                <label>商品名稱:</label><br>
+                <input type="text" id="name" value="測試商品名稱">
+            </div>
+            
+            <div>
+                <label>價格:</label><br>
+                <input type="number" id="price" value="1500">
+            </div>
+            
+            <div>
+                <label>訂金:</label><br>
+                <input type="number" id="deposit" value="300">
+            </div>
+            
+            <div>
+                <label>最大數量:</label><br>
+                <input type="number" id="max_quantity" value="3">
+            </div>
+            
+            <div>
+                <label>狀態:</label><br>
+                <select id="status">
+                    <option value="available">可購買</option>
+                    <option value="sold_out">已售完</option>
+                    <option value="discontinued">已停售</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>描述:</label><br>
+                <textarea id="description">這是測試描述</textarea>
+            </div>
+            
+            <div>
+                <button type="button" onclick="testUpdate()">測試更新商品</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        async function testUpdate() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div>正在測試...</div>';
+
+            try {
+                // 準備 FormData（模擬管理介面）
+                const formData = new FormData();
+                formData.append('name', document.getElementById('name').value);
+                formData.append('price', document.getElementById('price').value);
+                formData.append('deposit', document.getElementById('deposit').value);
+                formData.append('max_quantity', document.getElementById('max_quantity').value);
+                formData.append('status', document.getElementById('status').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('main_colors', JSON.stringify(['black', 'white']));
+                formData.append('sub_colors', JSON.stringify(['red', 'blue', 'green']));
+
+                console.log('發送更新請求...');
+                
+                const response = await fetch('http://localhost:3000/api/products/product-SoftzillaOD', {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                console.log('響應狀態:', response.status);
+                console.log('響應標頭:', [...response.headers.entries()]);
+
+                const responseText = await response.text();
+                console.log('響應內容:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    result = { error: '響應不是有效的JSON', rawResponse: responseText };
+                }
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4>✅ 更新成功</h4>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ 更新失敗 (${response.status})</h4>
+                            <p><strong>錯誤:</strong> ${result.error || '未知錯誤'}</p>
+                            <p><strong>訊息:</strong> ${result.message || '無'}</p>
+                            <h5>完整響應:</h5>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('請求失敗:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ 請求失敗</h4>
+                        <p><strong>錯誤:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 自動測試健康檢查
+        async function testHealth() {
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const result = await response.json();
+                console.log('健康檢查成功:', result);
+            } catch (error) {
+                console.error('健康檢查失敗:', error);
+            }
+        }
+
+        window.addEventListener('load', testHealth);
+    </script>
+</body>
+</html>

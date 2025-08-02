@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試商品更新修復</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        #result { margin-top: 20px; padding: 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>測試商品更新修復</h1>
+    
+    <div class="test-section">
+        <h3>1. 測試 API 健康檢查</h3>
+        <button onclick="testHealth()">測試健康檢查</button>
+        <div id="healthResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. 測試商品列表 API</h3>
+        <button onclick="testProductList()">測試商品列表</button>
+        <div id="productsResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. 測試商品更新 (模擬管理介面)</h3>
+        <button onclick="testProductUpdate()">測試商品更新</button>
+        <div id="updateResult"></div>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        // API 基礎設定
+        const API_BASE_URL = 'http://localhost:3000';
+
+        async function apiRequest(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function testHealth() {
+            const result = await apiRequest('/api/health');
+            const resultDiv = document.getElementById('healthResult');
+            
+            if (result.success) {
+                resultDiv.innerHTML = `<div class="success">✅ 健康檢查成功: ${JSON.stringify(result.data)}</div>`;
+            } else {
+                resultDiv.innerHTML = `<div class="error">❌ 健康檢查失敗: ${result.error}</div>`;
+            }
+        }
+
+        async function testProductList() {
+            const result = await apiRequest('/api/products');
+            const resultDiv = document.getElementById('productsResult');
+            
+            if (result.success) {
+                const products = result.data.products || [];
+                resultDiv.innerHTML = `<div class="success">✅ 商品列表載入成功，共 ${products.length} 個商品</div>`;
+                
+                // 檢查顏色資料格式
+                if (products.length > 0) {
+                    const product = products[0];
+                    const colorsInfo = `
+                        <p>第一個商品顏色資料檢查:</p>
+                        <p>main_colors: ${JSON.stringify(product.main_colors)} (${Array.isArray(product.main_colors) ? '陣列' : '非陣列'})</p>
+                        <p>sub_colors: ${JSON.stringify(product.sub_colors)} (${Array.isArray(product.sub_colors) ? '陣列' : '非陣列'})</p>
+                    `;
+                    resultDiv.innerHTML += colorsInfo;
+                }
+            } else {
+                resultDiv.innerHTML = `<div class="error">❌ 商品列表載入失敗: ${result.error}</div>`;
+            }
+        }
+
+        async function testProductUpdate() {
+            const resultDiv = document.getElementById('updateResult');
+            resultDiv.innerHTML = '正在測試商品更新...';
+
+            // 創建 FormData 模擬管理介面的更新請求
+            const formData = new FormData();
+            formData.append('name', '測試商品');
+            formData.append('price', '1500');
+            formData.append('deposit', '300');
+            formData.append('max_quantity', '3');
+            formData.append('status', 'available');
+            formData.append('description', '這是一個測試描述');
+            formData.append('main_colors', JSON.stringify(['black', 'white']));
+            formData.append('sub_colors', JSON.stringify(['red', 'blue']));
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/products/product-SoftzillaOD`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="success">✅ 商品更新成功: ${JSON.stringify(result)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ 商品更新失敗 (${response.status}): ${JSON.stringify(result)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ 商品更新失敗: ${error.message}</div>`;
+            }
+        }
+
+        // 自動執行基本測試
+        window.addEventListener('load', () => {
+            testHealth();
+            setTimeout(testProductList, 1000);
+        });
+    </script>
+</body>
+</html>

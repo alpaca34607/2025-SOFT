@@ -1,26 +1,37 @@
-const openNoticeBtn = document.getElementById('open-notice');
-const closeNoticeBtn = document.getElementById('close-notice');
-const noticePopup = document.getElementById('notice-popup');
+// 注意事項彈窗相關元素
+if (typeof window.openNoticeBtn === 'undefined') {
+    window.openNoticeBtn = document.getElementById('open-notice');
+    window.closeNoticeBtn = document.getElementById('close-notice');
+    window.noticePopup = document.getElementById('notice-popup');
 
-// 開啟注意事項彈窗
-openNoticeBtn.addEventListener('click', () => {
-    noticePopup.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-});
-
-// 關閉注意事項彈窗
-closeNoticeBtn.addEventListener('click', () => {
-    noticePopup.style.display = 'none';
-    document.body.style.overflow = '';
-});
-
-// 點擊外部關閉注意事項彈窗
-window.addEventListener('click', (event) => {
-    if (event.target === noticePopup) {
-        noticePopup.style.display = 'none';
-        document.body.style.overflow = '';
+    // 開啟注意事項彈窗
+    if (window.openNoticeBtn) {
+        window.openNoticeBtn.addEventListener('click', () => {
+            if (window.noticePopup) {
+                window.noticePopup.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        });
     }
-});
+
+    // 關閉注意事項彈窗
+    if (window.closeNoticeBtn) {
+        window.closeNoticeBtn.addEventListener('click', () => {
+            if (window.noticePopup) {
+                window.noticePopup.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // 點擊外部關閉注意事項彈窗
+    window.addEventListener('click', (event) => {
+        if (event.target === window.noticePopup) {
+            window.noticePopup.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+}
 // 購物車相關功能
 function initializeCart() {
     // 在 body 最後插入購物車 HTML
@@ -252,7 +263,7 @@ function toggleHistoryPopup() {
 
 
 //搜尋購買紀錄
-function searchOrderHistory() {
+async function searchOrderHistory() {
     const phoneNumber = document.getElementById('searchPhoneNumber').value.trim();
     const historyRecords = document.getElementById('historyRecords');
 
@@ -261,6 +272,85 @@ function searchOrderHistory() {
         return;
     }
 
+    // 顯示載入狀態
+    historyRecords.innerHTML = '<p>搜尋中...</p>';
+
+    try {
+        // 檢查 API 是否可用
+        if (typeof API === 'undefined' || typeof API.searchOrdersByPhone !== 'function') {
+            console.log('API 不可用，使用 localStorage 模式');
+            searchOrderHistoryFromLocalStorage(phoneNumber);
+            return;
+        }
+
+        // 從後端 API 查詢訂單
+        const result = await API.searchOrdersByPhone(phoneNumber);
+        
+        if (!result.orders || result.orders.length === 0) {
+            historyRecords.innerHTML = '<p>查無訂單紀錄</p>';
+            return;
+        }
+
+        // 顯示訂單資料
+        historyRecords.innerHTML = result.orders.map(order => {
+            try {
+                // 訂單總覽資訊
+                const orderOverview = `
+                    <div class="order-header">
+                        <p class="order-number">訂單編號: ${order.order_number}</p>
+                        <p class="order-date">訂單時間: ${new Date(order.created_at).toLocaleString()}</p>
+                        <p class="order-total">訂單總額: NT$ ${order.total_amount}</p>
+                        <p class="order-deposit">訂金總額: NT$ ${order.deposit_amount}</p>
+                        <p class="order-status">訂單狀態: ${getStatusText(order.status)}</p>
+                    </div>
+                `;
+
+                // 訂單商品詳情
+                const orderItems = order.items.map(item => `
+                    <div class="history-item">
+                        <h3>${item.product_name}</h3>
+                        <p>主色: ${item.main_color_name}</p>
+                        <p>副色: ${item.sub_color_name}</p>
+                        <p>數量: ${item.quantity}</p>
+                        <p>單價: NT$ ${item.unit_price}</p>
+                        <p>單件訂金: NT$ ${item.unit_deposit}</p>
+                    </div>
+                `).join('');
+
+                // 訂單客戶資訊
+                const customerInfo = `
+                    <div class="customer-info">
+                        <p>訂購人: ${order.customer_name}</p>
+                        <p>取貨方式: ${order.pickup_method}</p>
+                        <p>付款方式: ${getPaymentMethodText(order.payment_method)}</p>
+                        ${order.note ? `<p>備註: ${order.note}</p>` : ''}
+                    </div>
+                `;
+
+                return `
+                    <div class="order-container">
+                        ${orderOverview}
+                        ${orderItems}
+                        ${customerInfo}
+                        <hr>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('訂單資料處理錯誤:', error);
+                return '<div class="error-message">訂單資料顯示錯誤</div>';
+            }
+        }).join('');
+
+    } catch (error) {
+        console.error('API 查詢失敗:', error);
+        // 如果 API 查詢失敗，回退到 localStorage 模式
+        searchOrderHistoryFromLocalStorage(phoneNumber);
+    }
+}
+
+// 從 localStorage 查詢訂單（回退模式）
+function searchOrderHistoryFromLocalStorage(phoneNumber) {
+    const historyRecords = document.getElementById('historyRecords');
     const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || {};
     const orders = purchaseHistory[phoneNumber] || [];
 
@@ -319,6 +409,30 @@ function searchOrderHistory() {
     if (!historyRecords.innerHTML) {
         historyRecords.innerHTML = '<p>無法顯示訂單資料</p>';
     }
+}
+
+// 狀態文字轉換
+function getStatusText(status) {
+    const statusMap = {
+        'pending': '待確認',
+        'confirmed': '已確認',
+        'paid': '已付款',
+        'shipped': '已出貨',
+        'completed': '已完成',
+        'cancelled': '已取消'
+    };
+    return statusMap[status] || status;
+}
+
+// 付款方式文字轉換
+function getPaymentMethodText(paymentMethod) {
+    const paymentMap = {
+        'creditCard': '信用卡',
+        'atm': 'ATM /網銀轉帳',
+        'pxpay': '全支付',
+        'lnepay': 'LinePay'
+    };
+    return paymentMap[paymentMethod] || paymentMethod;
 }
 
 //按下 Enter 鍵也能搜尋的功能

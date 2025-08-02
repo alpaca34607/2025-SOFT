@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 健康檢查測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>API 健康檢查測試</h1>
+    
+    <button onclick="testHealthCheck()">測試健康檢查</button>
+    <button onclick="testAPI()">測試 API 功能</button>
+    
+    <div id="results"></div>
+    
+    <script src="./js/api.js"></script>
+    <script>
+        async function testHealthCheck() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="status loading">正在測試健康檢查...</div>';
+            
+            try {
+                console.log('🔍 開始健康檢查...');
+                
+                // 測試 API 模組是否載入
+                if (typeof API === 'undefined') {
+                    throw new Error('API 模組未載入');
+                }
+                
+                console.log('✅ API 模組已載入');
+                
+                // 測試健康檢查
+                const isHealthy = await API.checkHealth();
+                
+                if (isHealthy) {
+                    resultsDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ API 健康檢查成功
+                        </div>
+                        <h3>詳細資訊：</h3>
+                        <pre id="details">正在獲取詳細資訊...</pre>
+                    `;
+                    
+                    // 獲取詳細資訊
+                    try {
+                        const details = await API.request('/api/health');
+                        document.getElementById('details').textContent = JSON.stringify(details, null, 2);
+                    } catch (error) {
+                        document.getElementById('details').textContent = '無法獲取詳細資訊: ' + error.message;
+                    }
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ API 健康檢查失敗
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('健康檢查失敗:', error);
+                resultsDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ 健康檢查失敗: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="status loading">正在測試 API 功能...</div>';
+            
+            try {
+                // 測試獲取產品列表
+                const products = await API.getProducts();
+                
+                resultsDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ API 功能測試成功
+                    </div>
+                    <h3>產品列表：</h3>
+                    <pre>${JSON.stringify(products, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('API 功能測試失敗:', error);
+                resultsDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ API 功能測試失敗: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 頁面載入時自動測試
+        window.addEventListener('load', () => {
+            console.log('頁面載入完成，API 模組狀態:', {
+                API: typeof API,
+                checkAPIHealth: typeof checkAPIHealth
+            });
+        });
+    </script>
+</body>
+</html> 
