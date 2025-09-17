@@ -18,53 +18,18 @@ const COLOR_NAMES = {
 // 從 localStorage 獲取商品選擇資訊
 const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
 
-// 檢查 API 模組是否已載入
-console.log('checkout.js 載入完成，檢查 API 模組:', {
-    API: typeof API,
-    checkAPIHealth: typeof checkAPIHealth,
-    handleAPIError: typeof handleAPIError
-});
-
 // 付款方式相關欄位控制
 function handlePaymentMethodChange() {
     const paymentMethod = document.getElementById('paymentMethod').value;
     const creditCardFields = document.getElementById('creditCardFields');
     const qrcodeSection = document.getElementById('qrcodeSection');
     
-    // 隱藏所有 QR Code 容器
-    const atmQrcode = document.getElementById('atmQrcode');
-    const pxpayQrcode = document.getElementById('pxpayQrcode');
-    const lnepayQrcode = document.getElementById('lnepayQrcode');
-    
-    // 隱藏信用卡欄位 (暫時停用)
-    if (creditCardFields) {
-        creditCardFields.style.display = 'none';
-    }
-    
-    // 根據付款方式顯示對應的 QR Code
     if (paymentMethod === 'creditCard') {
-        // 信用卡暫時停用
+        creditCardFields.style.display = 'block';
         qrcodeSection.style.display = 'none';
     } else {
+        creditCardFields.style.display = 'none';
         qrcodeSection.style.display = 'block';
-        
-        // 隱藏所有 QR Code
-        atmQrcode.style.display = 'none';
-        pxpayQrcode.style.display = 'none';
-        lnepayQrcode.style.display = 'none';
-        
-        // 顯示對應的 QR Code
-        switch (paymentMethod) {
-            case 'atm':
-                atmQrcode.style.display = 'block';
-                break;
-            case 'pxpay':
-                pxpayQrcode.style.display = 'block';
-                break;
-            case 'lnepay':
-                lnepayQrcode.style.display = 'block';
-                break;
-        }
     }
 }
 
@@ -130,7 +95,7 @@ function updateOrderSummary() {
 }
 
 // 表單驗證提交
-async function validateAndSubmitForm(event) {
+function validateAndSubmitForm(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -142,101 +107,12 @@ async function validateAndSubmitForm(event) {
         return;
     }
 
-    // 檢查 API 連接 - 如果 API 模組未載入，直接使用 localStorage 模式
-    console.log('🔍 檢查 API 模組...');
-    console.log('checkAPIHealth 類型:', typeof checkAPIHealth);
-    console.log('API 類型:', typeof API);
-    
-    if (typeof checkAPIHealth !== 'function') {
-        console.log('❌ API 模組未載入，使用 localStorage 模式');
-        submitToLocalStorage(formData);
-        return;
-    }
-    
-    console.log('✅ API 模組已載入，開始健康檢查...');
-    try {
-        const isAPIHealthy = await checkAPIHealth();
-        console.log('健康檢查結果:', isAPIHealthy);
-        if (!isAPIHealthy) {
-            // 如果 API 無法連接，回退到 localStorage 模式
-            console.warn('❌ API 無法連接，使用 localStorage 模式');
-            submitToLocalStorage(formData);
-            return;
-        }
-        console.log('✅ API 健康檢查通過');
-    } catch (error) {
-        console.warn('❌ API 健康檢查失敗，使用 localStorage 模式:', error);
-        submitToLocalStorage(formData);
-        return;
-    }
-
-    try {
-        // 準備訂單資料
-        const orderData = {
-            customerInfo: {
-                name: formData.get('name'),
-                phone: formData.get('phone'),
-                email: formData.get('email')
-            },
-            items: checkoutItems,
-            pickupMethod: formData.get('pickupMethod'),
-            paymentMethod: formData.get('paymentMethod'),
-            note: formData.get('note')
-        };
-
-        // 顯示載入狀態
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.textContent = '處理中...';
-        submitButton.disabled = true;
-
-        // 送出訂單到後端
-        console.log('🔍 檢查 API 類別...');
-        console.log('API 類型:', typeof API);
-        console.log('API.createOrder 類型:', typeof API?.createOrder);
-        
-        if (typeof API === 'undefined' || typeof API.createOrder !== 'function') {
-            console.log('❌ API 類別未定義，使用 localStorage 模式');
-            submitToLocalStorage(formData);
-            return;
-        }
-        
-        console.log('✅ API 類別正常，開始提交訂單...');
-        console.log('訂單資料:', orderData);
-        
-        try {
-            console.log('🔄 正在提交訂單到後端...');
-            const result = await API.createOrder(orderData);
-            console.log('✅ 訂單提交成功:', result);
-            
-            // 清空購物車
-            localStorage.removeItem('cartItems');
-            localStorage.removeItem('checkoutItems');
-
-            // 顯示成功訊息
-            alert(`訂單建立成功！\n訂單編號: ${result.order.order_number}`);
-            window.location.href = './Get-Soft.html';
-            return;
-        } catch (apiError) {
-            console.warn('❌ API 提交失敗，使用 localStorage 模式:', apiError);
-            console.error('詳細錯誤:', apiError);
-            submitToLocalStorage(formData);
-            return;
-        }
-
-    } catch (error) {
-        console.error('表單提交過程中發生錯誤:', error);
-        submitToLocalStorage(formData);
-    }
-}
-
-// 回退到 localStorage 模式
-function submitToLocalStorage(formData) {
+    // 儲存電話號碼到 localStorage
     const phoneNumber = formData.get('phone');
     let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || {};
     purchaseHistory[phoneNumber] = purchaseHistory[phoneNumber] || [];
     
-    // 建立訂單資訊
+    // 建立訂單資訊 - 現在包含所有商品
     const orderInfo = {
         orderDate: new Date().toISOString(),
         items: checkoutItems,
@@ -260,8 +136,9 @@ function submitToLocalStorage(formData) {
     localStorage.removeItem('cartItems');
     localStorage.removeItem('checkoutItems');
 
-    alert('訂單已送出！(離線模式)');
-    window.location.href = './Get-Soft.html';
+    // 送出訂單到後端
+    alert('訂單已送出！');
+    window.location.href = './Get-Soft.html';;
 }
 
 // 頁面載入時初始化
@@ -281,7 +158,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 設置表單提交監聽
     document.getElementById('checkoutForm').addEventListener('submit', validateAndSubmitForm);
-    
-    // 初始化付款方式顯示 (預設為 ATM)
-    handlePaymentMethodChange();
 });
