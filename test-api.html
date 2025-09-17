@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 測試頁面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>API 連接測試</h1>
+    
+    <div class="test-section">
+        <h2>1. 載入 API 模組</h2>
+        <button onclick="testAPIModule()">測試 API 模組載入</button>
+        <div id="module-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 健康檢查</h2>
+        <button onclick="testHealthCheck()">測試健康檢查</button>
+        <div id="health-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 直接 Fetch 測試</h2>
+        <button onclick="testDirectFetch()">測試直接 Fetch</button>
+        <div id="fetch-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. 訂單 API 測試</h2>
+        <button onclick="testOrdersAPI()">測試訂單 API</button>
+        <div id="orders-result"></div>
+    </div>
+
+    <script src="./js/api.js"></script>
+    <script>
+        function logResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function testAPIModule() {
+            console.log('測試 API 模組載入...');
+            console.log('API:', typeof API);
+            console.log('checkAPIHealth:', typeof checkAPIHealth);
+            
+            if (typeof API === 'function' && typeof checkAPIHealth === 'function') {
+                logResult('module-result', '✅ API 模組載入成功');
+            } else {
+                logResult('module-result', '❌ API 模組載入失敗', false);
+            }
+        }
+
+        async function testHealthCheck() {
+            console.log('測試健康檢查...');
+            try {
+                if (typeof checkAPIHealth !== 'function') {
+                    logResult('health-result', '❌ checkAPIHealth 函數未定義', false);
+                    return;
+                }
+                
+                const result = await checkAPIHealth();
+                if (result) {
+                    logResult('health-result', '✅ 健康檢查通過');
+                } else {
+                    logResult('health-result', '❌ 健康檢查失敗', false);
+                }
+            } catch (error) {
+                logResult('health-result', `❌ 健康檢查錯誤: ${error.message}`, false);
+            }
+        }
+
+        async function testDirectFetch() {
+            console.log('測試直接 Fetch...');
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                logResult('fetch-result', `✅ 直接 Fetch 成功: ${data.message}`);
+            } catch (error) {
+                logResult('fetch-result', `❌ 直接 Fetch 失敗: ${error.message}`, false);
+            }
+        }
+
+        async function testOrdersAPI() {
+            console.log('測試訂單 API...');
+            try {
+                if (typeof API !== 'function') {
+                    logResult('orders-result', '❌ API 類別未定義', false);
+                    return;
+                }
+                
+                const result = await API.getOrders();
+                logResult('orders-result', `✅ 訂單 API 成功: ${JSON.stringify(result)}`);
+            } catch (error) {
+                logResult('orders-result', `❌ 訂單 API 失敗: ${error.message}`, false);
+            }
+        }
+
+        // 頁面載入時自動測試
+        window.addEventListener('load', () => {
+            console.log('頁面載入完成，開始測試...');
+            testAPIModule();
+        });
+    </script>
+</body>
+</html> 

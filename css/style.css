@@ -4133,12 +4133,12 @@ textarea {
   height: max-content;
   padding-top: 7%;
   z-index: 0;
+  border-radius: 5px;
   overflow: hidden;
 }
 #product-page .product-container .ad-area .long-ad-wrap img {
   display: block;
   width: 100%;
-  border-radius: 5px;
 }
 #product-page .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper {
   position: absolute;

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試顏色選擇功能</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .color-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .color-checkbox:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .color-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.1);
+        }
+        
+        .color-checkbox input[type="checkbox"]:checked + .color-label {
+            color: #007bff;
+            font-weight: 600;
+        }
+        
+        .color-label {
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .result h4 {
+            margin-top: 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>測試後台顏色選擇功能</h1>
+    
+    <div class="test-section">
+        <h2>測試1: 新增商品時的預設顏色</h2>
+        <p>這模擬新增商品時的顏色選擇，預設會選中常見的顏色選項。</p>
+        
+        <div class="form-group">
+            <label>主色選項 (預設選中: black, white):</label>
+            <div class="color-options" id="mainColorsNew">
+                <!-- 將由 JavaScript 生成 -->
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>副色選項 (預設選中: red, blue, green, brown):</label>
+            <div class="color-options" id="subColorsNew">
+                <!-- 將由 JavaScript 生成 -->
+            </div>
+        </div>
+        
+        <button onclick="getSelectedColors('new')">獲取選中的顏色</button>
+        <div class="result" id="resultNew"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>測試2: 編輯商品時的預設顏色</h2>
+        <p>這模擬編輯現有商品時的顏色選擇，會預選現有的顏色。</p>
+        
+        <div class="form-group">
+            <label>主色選項 (預設選中: black, white, gray):</label>
+            <div class="color-options" id="mainColorsEdit">
+                <!-- 將由 JavaScript 生成 -->
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>副色選項 (預設選中: red, orange, yellow, blue):</label>
+            <div class="color-options" id="subColorsEdit">
+                <!-- 將由 JavaScript 生成 -->
+            </div>
+        </div>
+        
+        <button onclick="getSelectedColors('edit')">獲取選中的顏色</button>
+        <div class="result" id="resultEdit"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>測試3: 載入現有商品資料</h2>
+        <p>測試從後台載入商品資料並預選顏色。</p>
+        <button onclick="loadProductData()">載入商品資料</button>
+        <div class="result" id="resultLoad"></div>
+    </div>
+
+    <script>
+        // 從前台的 shopping.js 中獲取顏色選項
+        const getFrontendColors = () => {
+            const frontendColors = [
+                'black', 'white', 'gray', 'gold', 'silver', 'bronze', 
+                'red', 'orange', 'yellow', 'blue', 'green', 'brown', 'none'
+            ];
+            
+            const colorNames = {
+                'black': '黑色',
+                'white': '白色',
+                'gray': '灰色',
+                'gold': '金色',
+                'silver': '銀色',
+                'bronze': '銅色',
+                'red': '紅色',
+                'orange': '橙色',
+                'yellow': '黃色',
+                'blue': '藍色',
+                'green': '綠色',
+                'brown': '棕色',
+                'none': '無顏色選項'
+            };
+            
+            return { colors: frontendColors, names: colorNames };
+        };
+        
+        // 生成顏色選項的HTML
+        const generateColorCheckboxes = (prefix, defaultColors = []) => {
+            const { colors: availableColors, names: colorNames } = getFrontendColors();
+            return availableColors.map(color => `
+                <label class="color-checkbox">
+                    <input type="checkbox" name="${prefix}Colors" value="${color}" 
+                           ${defaultColors.includes(color) ? 'checked' : ''}>
+                    <span class="color-label">${colorNames[color]}</span>
+                </label>
+            `).join('');
+        };
+        
+        // 獲取選中的顏色
+        const getSelectedColors = (prefix) => {
+            const checkboxes = document.querySelectorAll(`input[name="${prefix}Colors"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        };
+        
+        // 初始化頁面
+        function initializePage() {
+            // 測試1: 新增商品時的預設顏色
+            document.getElementById('mainColorsNew').innerHTML = generateColorCheckboxes('main', ['black', 'white']);
+            document.getElementById('subColorsNew').innerHTML = generateColorCheckboxes('sub', ['red', 'blue', 'green', 'brown']);
+            
+            // 測試2: 編輯商品時的預設顏色
+            document.getElementById('mainColorsEdit').innerHTML = generateColorCheckboxes('main', ['black', 'white', 'gray']);
+            document.getElementById('subColorsEdit').innerHTML = generateColorCheckboxes('sub', ['red', 'orange', 'yellow', 'blue']);
+        }
+        
+        // 獲取選中顏色的函數
+        function getSelectedColors(prefix) {
+            const mainColors = getSelectedColors('main');
+            const subColors = getSelectedColors('sub');
+            
+            const resultDiv = document.getElementById(`result${prefix.charAt(0).toUpperCase() + prefix.slice(1)}`);
+            resultDiv.innerHTML = `
+                <h4>選中的顏色:</h4>
+                <p><strong>主色:</strong> ${mainColors.join(', ') || '無'}</p>
+                <p><strong>副色:</strong> ${subColors.join(', ') || '無'}</p>
+                <p><strong>JSON 格式:</strong></p>
+                <pre>{
+  "main_colors": ${JSON.stringify(mainColors, null, 2)},
+  "sub_colors": ${JSON.stringify(subColors, null, 2)}
+}</pre>
+            `;
+        }
+        
+        // 載入商品資料
+        async function loadProductData() {
+            const resultDiv = document.getElementById('resultLoad');
+            resultDiv.innerHTML = '<p>正在載入商品資料...</p>';
+            
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                
+                let html = '<h4>載入的商品資料:</h4>';
+                data.products.forEach(product => {
+                    html += `
+                        <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <h5>${product.name} (${product.product_id})</h5>
+                            <p><strong>主色:</strong> ${product.main_colors ? product.main_colors.join(', ') : '無'}</p>
+                            <p><strong>副色:</strong> ${product.sub_colors ? product.sub_colors.join(', ') : '無'}</p>
+                        </div>
+                    `;
+                });
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">載入失敗: ${error.message}</p>`;
+            }
+        }
+        
+        // 頁面載入時初始化
+        window.addEventListener('load', initializePage);
+    </script>
+</body>
+</html> 

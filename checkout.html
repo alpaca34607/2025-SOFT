@@ -205,15 +205,15 @@
                         <h2>付款方式</h2>
                         <div class="form-group">
                             <select id="paymentMethod" name="paymentMethod">
-                                <option value="creditCard">信用卡</option>
+                                <!-- <option value="creditCard">信用卡</option> -->
                                 <option value="atm">ATM /網銀轉帳</option>
                                 <option value="pxpay">全支付</option>
                                 <option value="lnepay">LinePay</option>
                             </select>
                         </div>
 
-                        <!-- 信用卡欄位 -->
-                        <div id="creditCardFields" class="form-group">
+                        <!-- 信用卡欄位 (暫時隱藏) -->
+                        <!-- <div id="creditCardFields" class="form-group">
                             <input type="text" name="cardNumber" placeholder="信用卡卡號" pattern="[0-9]{16}">
                             <div class="card-expiry">
                                 <select name="expiryMonth">
@@ -226,13 +226,22 @@
                                 </select>
                             </div>
                             <input type="text" name="cvv" placeholder="安全碼" pattern="[0-9]{3}">
-                        </div>
+                        </div> -->
 
-                        <!-- QRCode -->
+                        <!-- QRCode 區域 -->
                         <div id="qrcodeSection" style="display: none;">
-                            <p>請於備註附註轉帳帳號</p>
-                            <img src="./images/shop/bank-qrcode.jpg" alt="付款 QR Code">
-
+                            <div id="atmQrcode" class="qrcode-container" style="display: none;">
+                                <p>請使用 ATM 或網銀轉帳</p>
+                                <img src="./images/shop/bank-qrcode.jpg" alt="ATM 轉帳 QR Code">
+                            </div>
+                            <div id="pxpayQrcode" class="qrcode-container" style="display: none;">
+                                <p>請使用全支付掃描</p>
+                                <img src="./images/shop/pxpay-qrcode.jpg" alt="全支付 QR Code">
+                            </div>
+                            <div id="lnepayQrcode" class="qrcode-container" style="display: none;">
+                                <p>請使用 LinePay 掃描</p>
+                                <img src="./images/shop/lnepay-qrcode.jpg" alt="LinePay QR Code">
+                            </div>
                         </div>
                     </div>
 
@@ -276,6 +285,7 @@
             </form>
         </section>
     </main>
+    <script src="./js/api.js"></script>
     <script src="./js/checkout.js"></script>
     <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
     <script src="./js/shop-menu.js"></script>

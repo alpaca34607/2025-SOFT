@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code 佔位符生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .qrcode-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code 佔位符生成器</h1>
+    <p>點擊按鈕生成不同支付方式的 QR Code 佔位符圖片</p>
+    
+    <div class="qrcode-container">
+        <h3>ATM / 網銀轉帳 QR Code</h3>
+        <canvas id="atmCanvas" width="200" height="200"></canvas>
+        <br>
+        <button onclick="generateQRCode('atm', 'ATM/網銀轉帳')">生成 ATM QR Code</button>
+        <button onclick="downloadCanvas('atmCanvas', 'pxpay-qrcode.jpg')">下載 ATM QR Code</button>
+    </div>
+    
+    <div class="qrcode-container">
+        <h3>全支付 QR Code</h3>
+        <canvas id="pxpayCanvas" width="200" height="200"></canvas>
+        <br>
+        <button onclick="generateQRCode('pxpay', '全支付')">生成全支付 QR Code</button>
+        <button onclick="downloadCanvas('pxpayCanvas', 'pxpay-qrcode.jpg')">下載全支付 QR Code</button>
+    </div>
+    
+    <div class="qrcode-container">
+        <h3>LinePay QR Code</h3>
+        <canvas id="lnepayCanvas" width="200" height="200"></canvas>
+        <br>
+        <button onclick="generateQRCode('lnepay', 'LinePay')">生成 LinePay QR Code</button>
+        <button onclick="downloadCanvas('lnepayCanvas', 'lnepay-qrcode.jpg')">下載 LinePay QR Code</button>
+    </div>
+
+    <script>
+        function generateQRCode(type, text) {
+            const canvas = document.getElementById(type + 'Canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 清空畫布
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 200, 200);
+            
+            // 繪製邊框
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, 180, 180);
+            
+            // 繪製 QR Code 樣式圖案
+            ctx.fillStyle = '#333';
+            
+            // 左上角
+            ctx.fillRect(20, 20, 30, 30);
+            ctx.fillRect(25, 25, 20, 20);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(30, 30, 10, 10);
+            
+            // 右上角
+            ctx.fillStyle = '#333';
+            ctx.fillRect(150, 20, 30, 30);
+            ctx.fillRect(155, 25, 20, 20);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(160, 30, 10, 10);
+            
+            // 左下角
+            ctx.fillStyle = '#333';
+            ctx.fillRect(20, 150, 30, 30);
+            ctx.fillRect(25, 155, 20, 20);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(30, 160, 10, 10);
+            
+            // 中間的 QR Code 樣式點
+            ctx.fillStyle = '#333';
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    if (Math.random() > 0.3) {
+                        ctx.fillRect(60 + i * 20, 60 + j * 20, 15, 15);
+                    }
+                }
+            }
+            
+            // 添加文字
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 100, 190);
+        }
+        
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/jpeg', 0.8);
+            link.click();
+        }
+        
+        // 頁面載入時生成預設 QR Code
+        window.addEventListener('load', () => {
+            generateQRCode('atm', 'ATM/網銀轉帳');
+            generateQRCode('pxpay', '全支付');
+            generateQRCode('lnepay', 'LinePay');
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Admin Customers</title>
+  </head>
+  <body>
+    <h1>Test Admin Customers</h1>
+    <div id="customersList">Loading...</div>
+
+    <script src="./js/api.js"></script>
+    <script>
+      async function testLoadCustomers() {
+        try {
+          console.log("Testing loadCustomers...");
+          const data = await API.getCustomers();
+          console.log("API response:", data);
+
+          if (data && data.customers) {
+            console.log("Customers array:", data.customers);
+            console.log("Is array?", Array.isArray(data.customers));
+
+            if (Array.isArray(data.customers)) {
+              const customersHTML = data.customers
+                .map(
+                  (customer) => `
+                            <div>
+                                <strong>${customer.name}</strong> - ${customer.phone}
+                            </div>
+                        `
+                )
+                .join("");
+              document.getElementById("customersList").innerHTML =
+                customersHTML;
+            } else {
+              document.getElementById("customersList").innerHTML =
+                "Error: customers is not an array";
+            }
+          } else {
+            document.getElementById("customersList").innerHTML =
+              "Error: No customers data";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          document.getElementById("customersList").innerHTML =
+            "Error: " + error.message;
+        }
+      }
+
+      testLoadCustomers();
+    </script>
+  </body>
+</html>
