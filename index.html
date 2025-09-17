@@ -1,179 +1,210 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>軟筋生物</title>
+    <link rel="icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="./css/textslider.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/163697/normalize.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>軟筋生物</title>
-  <link rel="icon" href="./favicon.ico">
-  <link rel="stylesheet" href="./css/textslider.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-  <link rel='stylesheet' href='https://s3-us-west-2.amazonaws.com/s.cdpn.io/163697/normalize.css'>
-  <link rel="stylesheet" href="./css/style.css">
-</head>
+  <body>
+    <main id="home">
+      <div class="cursor"></div>
+      <header id="topbar">
+        <!-- logo區 -->
+        <h1 class="logo">
+          <a href="./index.html">
+            <img
+              src="./images/home/Logo.svg"
+              alt="軟筋生物LOGO"
+              title="軟筋生物LOGO"
+            />
+          </a>
+        </h1>
 
-<body>
-
-
-  <main id="home">
-
-
-    <div class="cursor"></div>
-    <header id="topbar">
-      <!-- logo區 -->
-      <h1 class="logo">
-        <a href="./index.html">
-          <img src="./images/home/Logo.svg" alt="軟筋生物LOGO" title="軟筋生物LOGO">
-        </a>
-      </h1>
-
-      <div class="navbar">
-        <a class="shop-icon" href="./Get-Soft.html"><img src="./images/home/shop-icon.svg" alt="shop-icon"></a>
-        <a target=”_blank” class="ig-icon" href="https://www.instagram.com/soft.ig/"><img src="./images/home/ig-icon.svg"
-            alt="ig-icon"></a>
-        <button class="hamburger">
-          <span class="bar bar1"></span>
-          <span class="bar bar2"></span>
-          <span class="bar bar3"></span>
-        </button>
-        <!-- 導覽列 -->
-        <nav class="navigation">
-          <!-- 主選單 -->
-          <ul class="menu">
-            <li><a href="#about-soft-intro">
-                <img src="./images/home/menu1.svg" alt="關於軟筋LOGO">
-                <div class="menu-title">
-                  <p>關於軟筋</p>
-                  <span>About Soft</span>
-                </div>
-              </a></li>
-            <li><a href="./Learning-Soft.html ">
-                <img src="./images/home/menu4.svg" alt="理解軟筋LOGO">
-                <div class="menu-title">
-                  <p>理解軟筋</p>
-                  <span>learning Soft</span>
-                </div>
-              </a></li>
-            <li><a href="./Becoming-Soft.html ">
-                <img src="./images/home/menu2.svg" alt="成為軟筋LOGO">
-                <div class="menu-title">
-                  <p>成為軟筋</p>
-                  <span>Becoming Soft</span>
-                </div>
-              </a></li>
-            <li><a href="./Get-Soft.html">
-                <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO">
-                <div class="menu-title">
-                  <p>擁有軟筋</p>
-                  <span>Get Soft</span>
-                </div>
-              </a></li>
-            <li><button id="open-contact">
-                <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO">
-                <div class="menu-title">
-                  <p>聯絡軟筋</p>
-                  <span>Contact Soft</span>
-                </div>
-              </button></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
-    <!-- 彈窗區 -->
-    <div id="contact-popup" class="popup-container">
-      <div class="popup-content">
-        <button id="close-contact" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-        <h2>聯絡軟筋</h2>
-        <form id="contact-form">
-          <div class="form-group">
-            <label for="name">姓名或暱稱 *</label>
-            <input type="text" id="name" required>
-          </div>
-
-          <div class="form-group">
-            <label for="email">信箱 (選填)</label>
-            <input type="email" id="email">
-          </div>
-
-          <div class="form-group">
-            <label for="subject">聯絡主旨 *</label>
-            <div  class="select-wrapper">
-              <select id="subject" required style="width: 100%;">
-                <option class="op" value="">請選擇主旨</option>
-                <option class="op" value="shopping">購物相關</option>
-                <option class="op" value="cooperation">合作邀請</option>
-                <option class="op" value="ip">角色IP</option>
-                <option class="op" value="other">其他</option>
-              </select>
+        <div class="navbar">
+          <a class="shop-icon" href="./Get-Soft.html"
+            ><img src="./images/home/shop-icon.svg" alt="shop-icon"
+          /></a>
+          <a
+            target="”_blank”"
+            class="ig-icon"
+            href="https://www.instagram.com/soft.ig/"
+            ><img src="./images/home/ig-icon.svg" alt="ig-icon"
+          /></a>
+          <button class="hamburger">
+            <span class="bar bar1"></span>
+            <span class="bar bar2"></span>
+            <span class="bar bar3"></span>
+          </button>
+          <!-- 導覽列 -->
+          <nav class="navigation">
+            <!-- 主選單 -->
+            <ul class="menu">
+              <li>
+                <a href="#about-soft-intro">
+                  <img src="./images/home/menu1.svg" alt="關於軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>關於軟筋</p>
+                    <span>About Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Learning-Soft.html ">
+                  <img src="./images/home/menu4.svg" alt="理解軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>理解軟筋</p>
+                    <span>learning Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Becoming-Soft.html ">
+                  <img src="./images/home/menu2.svg" alt="成為軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>成為軟筋</p>
+                    <span>Becoming Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Get-Soft.html">
+                  <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>擁有軟筋</p>
+                    <span>Get Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <button id="open-contact">
+                  <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>聯絡軟筋</p>
+                    <span>Contact Soft</span>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <!-- 彈窗區 -->
+      <div id="contact-popup" class="popup-container">
+        <div class="popup-content">
+          <button id="close-contact" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h2>聯絡軟筋</h2>
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="name">姓名或暱稱 *</label>
+              <input type="text" id="name" required />
             </div>
-            
-          </div>
 
-          <div class="form-group">
-            <label for="message">內容 *</label>
-            <textarea id="message" maxlength="1000" required></textarea>
-            <div class="char-count"><span id="char-count">0</span>/1000</div>
-          </div>
+            <div class="form-group">
+              <label for="email">信箱 (選填)</label>
+              <input type="email" id="email" />
+            </div>
 
-          <button type="submit" class="submit-btn">送出</button>
-          <p class="note">或是來信 soft-official@gmail.com</p>
-        </form>
-      </div>
-    </div>
-    <section id="home-banner">
-      <div class="whats-new">
-        <div class="slideText-heading">
-          <h1>What's New</h1>
-          <hr />
-        </div>
-        <div class="slideText">
-          <ul>
-            <li>2024.12.20<br />軟軟家族新成員 軟薯人誕生! </li>
-            <li>2024.12.06<br />軟軟家族新成員 軟鵝襪誕生! </li>
-            <li>2024.11.05<br />軟吉拉公仔餘量釋出!趕緊前往預約</li>
-            <li>2024.10.22<br />軟軟家族新成員 多力多軟誕生!</li>
-            <li>2024.10.11<br />軟筋生物參展TTF玩具創作大展</li>
-            <li>2024.10.10<br />搶先看! 戶外風軟吉拉監修中</li>
-            <li>2024.11.01<br />慟!作者扭到腳，軟爛休息中</li>
-          </ul>
-        </div>
-        <a href="./WhatsNew.html" class="news-more-btn"><span>MORE<i class="fa-solid fa-angle-right"></i></span></a>
-      </div>
-      <div class="home-middle">
-        <div class="carousel-wrapper">
-          <div class="carousel">
-            <div class="inner">
-              <div class="slide active">
-              </div>
-              <div class="slide">
-              </div>
-              <div class="slide">
+            <div class="form-group">
+              <label for="subject">聯絡主旨 *</label>
+              <div class="select-wrapper">
+                <select id="subject" required style="width: 100%">
+                  <option class="op" value="">請選擇主旨</option>
+                  <option class="op" value="shopping">購物相關</option>
+                  <option class="op" value="cooperation">合作邀請</option>
+                  <option class="op" value="ip">角色IP</option>
+                  <option class="op" value="other">其他</option>
+                </select>
               </div>
             </div>
-            <div class="arrow arrow-left"></div>
-            <div class="arrow arrow-right"></div>
-          </div>
-          <div class="circle-bg"></div>
-        </div>
-        <img src="./images/home/soft.svg" alt="soft" class="soft-text">
-        <div class="scroll-icon">
-          <div class="scroll-circle">
-            <img src="./images/home/scroll-arrow.svg" alt="scroll-arrow" class="scroll-arrow">
-          </div>
 
-          <img src="./images/home/scroll.svg" alt="scroll-text">
+            <div class="form-group">
+              <label for="message">內容 *</label>
+              <textarea id="message" maxlength="1000" required></textarea>
+              <div class="char-count"><span id="char-count">0</span>/1000</div>
+            </div>
+
+            <button type="submit" class="submit-btn">送出</button>
+            <p class="note">或是來信 soft-official@gmail.com</p>
+          </form>
         </div>
       </div>
-      <div id="box" class="blobs-box">
-        <!-- <div class="blob blob-1"></div>
+      <section id="home-banner">
+        <div class="whats-new">
+          <div class="slideText-heading">
+            <h1>What's New</h1>
+            <hr />
+          </div>
+          <div class="slideText">
+            <ul>
+              <li>2024.12.20<br />軟軟家族新成員 軟薯人誕生!</li>
+              <li>2024.12.06<br />軟軟家族新成員 軟鵝襪誕生!</li>
+              <li>2024.11.05<br />軟吉拉公仔餘量釋出!趕緊前往預約</li>
+              <li>2024.10.22<br />軟軟家族新成員 多力多軟誕生!</li>
+              <li>2024.10.11<br />軟筋生物參展TTF玩具創作大展</li>
+              <li>2024.10.10<br />搶先看! 戶外風軟吉拉監修中</li>
+              <li>2024.11.01<br />慟!作者扭到腳，軟爛休息中</li>
+            </ul>
+          </div>
+          <a href="./WhatsNew.html" class="news-more-btn"
+            ><span>MORE<i class="fa-solid fa-angle-right"></i></span
+          ></a>
+        </div>
+        <div class="home-middle">
+          <div class="carousel-wrapper">
+            <div class="carousel">
+              <div class="inner">
+                <div class="slide active"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+              </div>
+              <div class="arrow arrow-left"></div>
+              <div class="arrow arrow-right"></div>
+            </div>
+            <div class="circle-bg"></div>
+          </div>
+          <img src="./images/home/soft.svg" alt="soft" class="soft-text" />
+          <div class="scroll-icon">
+            <div class="scroll-circle">
+              <img
+                src="./images/home/scroll-arrow.svg"
+                alt="scroll-arrow"
+                class="scroll-arrow"
+              />
+            </div>
+
+            <img src="./images/home/scroll.svg" alt="scroll-text" />
+          </div>
+        </div>
+        <div id="box" class="blobs-box">
+          <!-- <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
         <div class="blob blob-4"></div> -->
-        <div class="blob blob-5"></div>
-        <div class="blob blob-6"></div>
-        <!-- <div class="blob blob-7"></div>
+          <div class="blob blob-5"></div>
+          <div class="blob blob-6"></div>
+          <!-- <div class="blob blob-7"></div>
         <div class="blob blob-8"></div>
         <div class="blob blob-9"></div>
         <div class="blob blob-10"></div>
@@ -181,165 +212,247 @@
         <div class="blob blob-12"></div>
         <div class="blob blob-13"></div>
         <div class="blob blob-14"></div> -->
-      </div>
-
-
-    </section>
-
-    <section id="about-soft-intro">
-
-      <div class="shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-      </div>
-      <div class="keyart-container">
-        <div class="keyart" id="parallax">
-          <div class="keyart_layer parallax" id="keyart-0" data-speed="10"></div>
-          <div class="keyart_layer parallax" id="keyart-1" data-speed="60"></div>
-          <div class="keyart_layer parallax" id="keyart-2" data-speed="20"></div>
-          <div class="keyart_layer parallax" id="keyart-3" data-speed="40"></div>
-          <div class="keyart_layer parallax" id="keyart-4" data-speed="20"></div>
-          <div class="keyart_layer parallax" id="keyart-5" data-speed="30"></div>
-          <div class="keyart_layer parallax" id="keyart-6" data-speed="11"></div>
-          <div class="keyart_layer" id="keyart-scrim"></div>
-          <div class="keyart_layer parallax" id="keyart-7" data-speed="10"></div> <!-- 87.5 -->
-          <!-- <div class="keyart_layer parallax" id="keyart-8" data-speed="69"></div>		 -->
         </div>
-      </div>
-    </section>
-    <section id="learning-soft-intro">
-      <div id="box" class="blobs-box">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-        <div class="blob blob-4"></div>
-        <div class="blob blob-5"></div>
-        <!-- <div class="blob blob-6"></div> -->
-        <div class="blob blob-7"></div>
-        <div class="blob blob-8"></div>
-        <div class="blob blob-9"></div>
-        <div class="blob blob-10"></div>
-        <div class="blob blob-11"></div>
-        <div class="blob blob-12"></div>
-        <div class="blob blob-13"></div>
-        <div class="blob blob-14"></div>
-      </div>
-      <div class="bubble-box-wrapper">
-        <div class="bubbles-box">
-          <div class="bubbles bubble-1"></div>
-          <div class="bubbles bubble-5"></div>
-          <div class="bubbles bubble-2"></div>
-          <div class="bubbles bubble-6"></div>
-          <div class="bubbles bubble-3"></div>
-          <div class="bubbles bubble-7"></div>
-          <div class="bubbles bubble-4"></div>
-          <div class="bubbles bubble-8"></div>
+      </section>
+
+      <section id="about-soft-intro">
+        <div class="shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
         </div>
-      </div>
-      <div><img src="./images/home/learn-about-soft-blobs.png" alt="理解軟筋介紹" class="learn-blobs"></div>
-      <div class="book-wrapper">
-        <img src="./images/home/left-page.png" alt="左頁" class="left-page">
-        <img src="./images/home/left-page2.png" alt="左2頁" class="left-page2">
-        <img src="./images/home/left-page3.png" alt="左3頁" class="left-page3">
-        <img src="./images/home/lying-soft.png" alt="躺在書上的軟筋" class="lying-soft">
-        <div class="right-page">
-          <div class="right-page-content">
-            <a href="./Learning-Soft.html"><img src="./images/home/learn-about-soft-button.svg" alt=""></a>
-            <img src="./images/home/right-page.png" alt="右頁" class="right-page-img">
+        <div class="keyart-container">
+          <div class="keyart" id="parallax">
+            <div
+              class="keyart_layer parallax"
+              id="keyart-0"
+              data-speed="10"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-1"
+              data-speed="60"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-2"
+              data-speed="20"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-3"
+              data-speed="40"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-4"
+              data-speed="20"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-5"
+              data-speed="30"
+            ></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-6"
+              data-speed="11"
+            ></div>
+            <div class="keyart_layer" id="keyart-scrim"></div>
+            <div
+              class="keyart_layer parallax"
+              id="keyart-7"
+              data-speed="10"
+            ></div>
+            <!-- 87.5 -->
+            <!-- <div class="keyart_layer parallax" id="keyart-8" data-speed="69"></div>		 -->
           </div>
         </div>
-        <img src="./images/home/right-page2.png" alt="右2頁" class="right-page2">
-        <img src="./images/home/BOOK.png" alt="BOOK" class="book">
-      </div>
-      <img src="./images/home/lying-softzilla.png" alt="躺著的軟吉拉" class="lying-softzilla">
-    </section>
-    <section id="becoming-Soft-intro">
-      <div class="becoming-left">
-        <img src="images/home/becoming-soft-blob.png" alt="成為軟筋介紹">
-      </div>
-      <svg width="0" height="0">
-        <defs>
-          <mask id="svg-mask" >
-            <path
-              d="M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z"
-              fill="#ffffff">
-              <animate attributeName="d" dur="10s" repeatCount="indefinite"
-                values="M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z;
+      </section>
+      <section id="learning-soft-intro">
+        <div id="box" class="blobs-box">
+          <div class="blob blob-1"></div>
+          <div class="blob blob-2"></div>
+          <div class="blob blob-3"></div>
+          <div class="blob blob-4"></div>
+          <div class="blob blob-5"></div>
+          <!-- <div class="blob blob-6"></div> -->
+          <div class="blob blob-7"></div>
+          <div class="blob blob-8"></div>
+          <div class="blob blob-9"></div>
+          <div class="blob blob-10"></div>
+          <div class="blob blob-11"></div>
+          <div class="blob blob-12"></div>
+          <div class="blob blob-13"></div>
+          <div class="blob blob-14"></div>
+        </div>
+        <div class="bubble-box-wrapper">
+          <div class="bubbles-box">
+            <div class="bubbles bubble-1"></div>
+            <div class="bubbles bubble-5"></div>
+            <div class="bubbles bubble-2"></div>
+            <div class="bubbles bubble-6"></div>
+            <div class="bubbles bubble-3"></div>
+            <div class="bubbles bubble-7"></div>
+            <div class="bubbles bubble-4"></div>
+            <div class="bubbles bubble-8"></div>
+          </div>
+        </div>
+        <div>
+          <img
+            src="./images/home/learn-about-soft-blobs.png"
+            alt="理解軟筋介紹"
+            class="learn-blobs"
+          />
+        </div>
+        <div class="book-wrapper">
+          <img src="./images/home/left-page.png" alt="左頁" class="left-page" />
+          <img
+            src="./images/home/left-page2.png"
+            alt="左2頁"
+            class="left-page2"
+          />
+          <img
+            src="./images/home/left-page3.png"
+            alt="左3頁"
+            class="left-page3"
+          />
+          <img
+            src="./images/home/lying-soft.png"
+            alt="躺在書上的軟筋"
+            class="lying-soft"
+          />
+          <div class="right-page">
+            <div class="right-page-content">
+              <a href="./Learning-Soft.html"
+                ><img src="./images/home/learn-about-soft-button.svg" alt=""
+              /></a>
+              <img
+                src="./images/home/right-page.png"
+                alt="右頁"
+                class="right-page-img"
+              />
+            </div>
+          </div>
+          <img
+            src="./images/home/right-page2.png"
+            alt="右2頁"
+            class="right-page2"
+          />
+          <img src="./images/home/BOOK.png" alt="BOOK" class="book" />
+        </div>
+        <img
+          src="./images/home/lying-softzilla.png"
+          alt="躺著的軟吉拉"
+          class="lying-softzilla"
+        />
+      </section>
+      <section id="becoming-Soft-intro">
+        <div class="becoming-left">
+          <img src="images/home/becoming-soft-blob.png" alt="成為軟筋介紹" />
+        </div>
+        <svg width="0" height="0">
+          <defs>
+            <mask id="svg-mask">
+              <path
+                d="M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z"
+                fill="#ffffff"
+              >
+                <animate
+                  attributeName="d"
+                  dur="10s"
+                  repeatCount="indefinite"
+                  values="M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z;
                 M349.88 50.2955C447.88 58.7955 472.2 145.341 489.315 206.769C507.097 270.595 529.117 414.01 489.315 468.838C445.399 529.332 358.875 578.22 279.704 580.667C197.643 583.203 64.2301 553.825 24.1478 488.074C-12.008 428.765 8.91527 273.274 24.1479 206.769C39.9705 137.689 22.0429 51.6625 87.1108 14.0003C154.539 -25.0277 256.38 32.2957 349.88 50.2955Z;
                 M390.176 31.8443C488.176 40.3443 458.927 168.166 476.041 229.595C493.824 293.42 510.088 397.001 485.862 465.511C443.312 585.84 338.348 561.174 259.176 563.62C177.115 566.156 76.0262 539.305 20.1923 447.715C-15.9634 388.406 4.95955 254.635 20.1921 188.131C36.0148 119.05 81.1097 53.5586 146.178 15.8964C213.605 -23.1316 303.741 24.3474 390.176 31.8443Z;
                 M434.753 21.8023C518.581 51.8234 491.263 140.982 518.581 251.342C564.456 346.838 558.383 448.976 518.581 503.804C474.666 564.298 383.968 607.099 293.697 585.992C148.85 552.125 116.994 585.992 43.8437 465.997C7.68797 406.687 -8.54366 181.633 6.68893 115.128C34.2091 -5.02299 136.155 77.7459 214.873 41.3472C329.532 -11.6703 350.925 -8.21872 434.753 21.8023Z;
                 M409.03 52.8953C492.858 82.9164 459.967 132.451 560.558 251.572C636.765 341.816 569.99 474.153 530.188 528.982C486.272 589.475 416.521 560.659 321.486 609.108C268.363 636.19 155.726 711.704 59.6859 609.108C-15.3201 528.982 -3.10552 302.013 12.1271 235.508C39.6473 115.357 101.569 116.251 150.017 52.8954C226.752 -47.4501 325.201 22.8743 409.03 52.8953Z;
-                M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z;">
-              </animate>
-              <animateTransform attributeName="transform" dur="15s" repeatCount="indefinite">
-              </animateTransform>
-            </path>
-          </mask>
-        </defs>
-      </svg>
-      <div class="test-intro-middle">
-        <div class="masked-content">
-          <div id="test-gallery">
-            <div class="block"><img src="./images/home/soft-rabbit.png" alt=""></div>
-            <div class="block"><img src="./images/home/soft-chips.png" alt=""></div>
-            <div class="block"><img src="./images/home/soft-heart.png" alt=""></div>
-            <div class="block"><img src="./images/home/soft-paca.png" alt=""></div>
-            <div class="block"><img src="./images/home/soft-frog.png" alt=""></div>
+                M349.684 54.6108C483.846 104.283 428.538 146.061 445.652 207.489C463.435 271.315 523.648 444.763 483.846 499.591C439.931 560.085 371.274 575.178 292.102 577.625C166.241 577.625 151.138 688.383 41.4108 577.625C5.25503 518.315 -3.56597 372.357 11.6666 305.852C27.4892 236.772 -23.6573 92.273 41.4107 54.6108C166.241 -49.2669 259.051 21.0543 349.684 54.6108Z;"
+                ></animate>
+                <animateTransform
+                  attributeName="transform"
+                  dur="15s"
+                  repeatCount="indefinite"
+                ></animateTransform>
+              </path>
+            </mask>
+          </defs>
+        </svg>
+        <div class="test-intro-middle">
+          <div class="masked-content">
+            <div id="test-gallery">
+              <div class="block">
+                <img src="./images/home/soft-rabbit.png" alt="" />
+              </div>
+              <div class="block">
+                <img src="./images/home/soft-chips.png" alt="" />
+              </div>
+              <div class="block">
+                <img src="./images/home/soft-heart.png" alt="" />
+              </div>
+              <div class="block">
+                <img src="./images/home/soft-paca.png" alt="" />
+              </div>
+              <div class="block">
+                <img src="./images/home/soft-frog.png" alt="" />
+              </div>
+            </div>
+            <p>
+              每個人心中都有一個軟魂，它可能柔軟、温暖，<br />也可能有點脆弱。<br />
+              參加軟軟測驗，探索那悄悄作祟的軟爛，<br />看看它會是什麼樣子...<br /><br />
+              準備好一起發掘屬於你的軟筋生物了嗎？
+            </p>
           </div>
-          <p>每個人心中都有一個軟魂，它可能柔軟、温暖，<br>也可能有點脆弱。<br>
-            參加軟軟測驗，探索那悄悄作祟的軟爛，<br>看看它會是什麼樣子...<br><br>
-            準備好一起發掘屬於你的軟筋生物了嗎？
-          </p>
-        </div>
-        <div class="test-intro-bottom">
-          <div class="softtest-text"><img src="./images/home/soft-test-intro.svg" alt="軟軟測驗"></div>
-          <div class="button_container">
-            <div class="button_su">
-              <span class="su_button_circle">
-              </span>
-              <a href="./Becoming-Soft.html" class="test-button">
-                <span class="button_text_container">
-                  Start
-                  <i class="fa-solid fa-play"></i>
-                </span>
-              </a>
+          <div class="test-intro-bottom">
+            <div class="softtest-text">
+              <img src="./images/home/soft-test-intro.svg" alt="軟軟測驗" />
+            </div>
+            <div class="button_container">
+              <div class="button_su">
+                <span class="su_button_circle"> </span>
+                <a href="./Becoming-Soft.html" class="test-button">
+                  <span class="button_text_container">
+                    Start
+                    <i class="fa-solid fa-play"></i>
+                  </span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="becoming-right"></div>
+        <div class="becoming-right"></div>
+      </section>
+      <footer>
+        <small>
+          &copy; 2024 Mystic Markers. All Rights Reserved.
+          此網站設計學生練習作品，無蒐集資料與商業營利用途。
+        </small>
+      </footer>
+      <!-- 置頂按鈕 -->
+      <div id="gotop"><img src="./images/home/tired-softs.png" /></div>
+    </main>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="./js/carousel.js"></script>
+    <script src="./js/jquery.textslider.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
+    <script src="./js/spotlight-cursor.js"></script>
+    <script src="./js/castParallex.js"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/contactsoft.js"></script>
+    <script src="./js/script.js"></script>
 
-    </section>
-    <footer> <small>
-      &copy; 2024 Mystic Markers. All Rights Reserved.  此網站設計學生練習作品，無蒐集資料與商業營利用途。
-    </small></footer>
-    <!-- 置頂按鈕 -->
-    <div id="gotop"><img src="./images/home/tired-softs.png" /></div>
-  </main>
-  <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="./js/carousel.js"></script>
-  <script src="./js/jquery.textslider.min.js"></script>
-  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js'></script>
-  <script src="./js/spotlight-cursor.js"></script>
-  <script src="./js/castParallex.js"></script>
-  <script src="./js/contactsoft.js"></script>
-  <script src="./js/env-switcher.js"></script>
-  <script src="./js/script.js"></script>
-
-  <script>
-    $(function () {
-      $('.slideText').textslider({
-        // 捲動方向(向上 =>scrollUp,向下 =>scrollDown)
-        direction: 'scrollUp',
-        // 一次捲動幾列
-        scrollNum: 1, //一次捲動幾個
-        scrollSpeed: 600, //捲動速度
-        pause: 1500, //停頓時間
-      })
-    })
-  </script>
-</body>
-
+    <script>
+      $(function () {
+        $(".slideText").textslider({
+          // 捲動方向(向上 =>scrollUp,向下 =>scrollDown)
+          direction: "scrollUp",
+          // 一次捲動幾列
+          scrollNum: 1, //一次捲動幾個
+          scrollSpeed: 600, //捲動速度
+          pause: 1500, //停頓時間
+        });
+      });
+    </script>
+  </body>
 </html>
