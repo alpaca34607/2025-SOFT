@@ -55,14 +55,14 @@ RUN chmod +x start.sh
 
 # 設定環境變數
 ENV NODE_ENV=staging
-ENV PORT=3000
+# Railway 會自動設定 PORT 環境變數
 
-# 暴露端口
-EXPOSE 3000
+# 暴露端口 (Railway 會動態分配端口)
+EXPOSE $PORT
 
-# 健康檢查
+# 健康檢查 (使用動態端口)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+  CMD node -e "const port = process.env.PORT || 3000; require('http').get('http://localhost:' + port + '/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # 啟動應用程式
 CMD ["./start.sh"]
