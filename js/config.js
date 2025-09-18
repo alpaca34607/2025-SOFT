@@ -20,15 +20,44 @@ window.ENV_CONFIG = {
       console.log("⚠️ 無法從後端獲取環境配置，使用預設值");
     }
 
-    // 預設配置
+    // 預設配置 - 智能判斷環境
     const defaultConfig = {
-      API_BASE_URL: "http://localhost:3000",
-      NODE_ENV: "development",
+      API_BASE_URL: this.getDefaultAPIURL(),
+      NODE_ENV: this.getDefaultEnvironment(),
       PORT: 3000,
     };
 
     Object.assign(this, defaultConfig);
     return defaultConfig;
+  },
+
+  // 智能判斷預設 API URL
+  getDefaultAPIURL() {
+    const hostname = window.location.hostname;
+
+    // 如果是 Vercel 部署
+    if (hostname.includes("vercel.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 如果是 Railway 部署
+    if (hostname.includes("railway.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 本地開發環境
+    return "http://localhost:3000";
+  },
+
+  // 智能判斷環境
+  getDefaultEnvironment() {
+    const hostname = window.location.hostname;
+
+    if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
+      return "staging";
+    }
+
+    return "development";
   },
 
   // 獲取當前配置

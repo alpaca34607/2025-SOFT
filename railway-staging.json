@@ -12,6 +12,9 @@
   },
   "env": {
     "NODE_ENV": "staging",
-    "PORT": "3000"
+    "PORT": "3000",
+    "PUBLIC_API_URL": "https://2025-soft-staging.up.railway.app",
+    "ENABLE_DEBUG": "false",
+    "LOG_LEVEL": "info"
   }
 }

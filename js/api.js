@@ -10,8 +10,27 @@ class API {
       return window.ENV_CONFIG.API_BASE_URL;
     }
 
-    // 預設值
-    console.log(`🔧 使用預設 API URL: http://localhost:3000`);
+    // 智能預設值
+    const defaultURL = this.getSmartDefaultURL();
+    console.log(`🔧 使用智能預設 API URL: ${defaultURL}`);
+    return defaultURL;
+  }
+
+  // 智能判斷預設 URL
+  static getSmartDefaultURL() {
+    const hostname = window.location.hostname;
+
+    // 如果是 Vercel 部署
+    if (hostname.includes("vercel.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 如果是 Railway 部署
+    if (hostname.includes("railway.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 本地開發環境
     return "http://localhost:3000";
   }
 
@@ -27,7 +46,7 @@ class API {
     } catch (error) {
       console.log("⚠️ 無法動態獲取配置，使用預設值");
     }
-    return "http://localhost:3000";
+    return this.getSmartDefaultURL();
   }
 
   // 獲取當前環境資訊
