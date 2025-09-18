@@ -180,8 +180,8 @@ async function ensureDatabaseInitialized(req, res, next) {
 app.use("/api", ensureDatabaseInitialized);
 
 // 根據環境決定啟動方式
-if (process.env.NODE_ENV !== "production" && require.main === module) {
-  // 開發環境：啟動伺服器
+if (require.main === module) {
+  // 所有環境都啟動伺服器
   async function startServer() {
     try {
       await initializeDatabase();

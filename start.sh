@@ -38,17 +38,6 @@ else
   echo "  - images/shop 目錄不存在"
 fi
 
-# 等待資料庫初始化
-echo "⏳ 等待資料庫初始化..."
-sleep 5
-
-# 更新商品資料
-echo "🔄 更新商品資料..."
-node backend/robust-update-products.js
-
-# 檢查更新結果
-echo "✅ 商品資料更新完成"
-
 # 啟動應用程式
 echo "🏃 啟動後端服務..."
 node backend/server.js
