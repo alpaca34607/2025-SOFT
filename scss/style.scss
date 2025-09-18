@@ -2577,14 +2577,16 @@ textarea {
                 }
             }
         }
+
         #becoming-Soft-intro {
             align-items: center;
-            .test-intro-middle .masked-content{
+
+            .test-intro-middle .masked-content {
                 display: none;
             }
 
         }
-        
+
 
         #gotop {
             visibility: hidden;
@@ -4096,7 +4098,7 @@ textarea {
 
                 tbody {
                     display: grid;
-                    grid-template-columns: repeat(4,1fr);
+                    grid-template-columns: repeat(4, 1fr);
                     justify-content: space-evenly;
                     width: 100%;
                     gap: 33px 20px;
@@ -4114,7 +4116,7 @@ textarea {
                         margin-bottom: 40px;
                         filter: drop-shadow(8px 4px 0 #619ABD);
                         transition: all 0.3s ease;
-                    
+
 
                         &:hover {
                             transform: scale(1.1);
@@ -4258,7 +4260,7 @@ textarea {
 
             table tbody {
                 display: grid;
-                grid-template-columns: repeat(3,1fr);
+                grid-template-columns: repeat(3, 1fr);
                 justify-content: flex-end;
                 width: auto;
                 gap: 25px 20px;
@@ -4273,6 +4275,7 @@ textarea {
             letter-spacing: 0rem; // 15%
         }
     }
+
     @media(max-width:1023px) {
         display: flex;
         flex-direction: column;
@@ -4358,7 +4361,7 @@ textarea {
             .product-table table tbody {
 
                 tr {
-                   
+
 
                     .product-cell {
                         padding: 0 10px;
@@ -4387,9 +4390,10 @@ textarea {
         }
 
     }
+
     @media (max-width: 768px) {
         .container .product-table table tbody {
-            grid-template-columns: repeat(3,1fr);
+            grid-template-columns: repeat(3, 1fr);
             justify-content: center;
             align-items: center;
             gap: 16px;
@@ -4404,7 +4408,7 @@ textarea {
                 }
             }
         }
-       
+
 
         .container .product-table table tbody tr .product-cell .product-figure figcaption .product-title {
             font-size: 12px;
@@ -4418,9 +4422,10 @@ textarea {
         }
 
     }
+
     @media (max-width: 480px) {
         .container .product-table table tbody {
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns: repeat(2, 1fr);
             justify-content: center;
             align-items: center;
             gap: 16px;
@@ -4737,22 +4742,21 @@ textarea {
 
         .ad-area {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
 
             .long-ad-wrap {
                 position: relative;
                 border-top: $light 1.5px solid;
                 width: 100%;
-                height: max-content;
+                min-height: 100vh;
                 padding-top: 7%;
                 z-index: 0;
 
-                overflow: hidden;
+                overflow: visible;
 
                 img {
                     display: block;
                     width: 100%;
-                    border-radius: 5px;
                 }
 
                 .sketchfab-embed-wrapper {
@@ -4764,7 +4768,7 @@ textarea {
                     left: 0;
                     width: 100%;
                     z-index: 1;
-                    overflow: hidden;
+                    overflow: visible;
                     aspect-ratio: 17/9;
                     /* 保持固定比例 */
 
@@ -4778,7 +4782,7 @@ textarea {
 
                 .sketchfab-embed-wrapper-softzilla {
                     z-index: 1;
-                    overflow: hidden;
+                    overflow: visible;
                     aspect-ratio: 17/9;
 
                     iframe {
@@ -4876,7 +4880,7 @@ textarea {
             /* 保持固定比例 */
         }
 
-        .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper-softzilla {
+        .product-container .ad-area .sketchfab-embed-wrapper-softzilla {
             top: 0%;
             width: 100%;
             aspect-ratio: 17/9;

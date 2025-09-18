@@ -99,3 +99,22 @@ PORT=3000
 ### 5. 前端 API 配置
 
 前端的 `js/api.js` 文件已經更新為自動讀取環境變數，無需手動修改。
+
+### 6. 測試 API 連接
+
+您可以使用以下方法測試 API 連接：
+
+```javascript
+// 測試健康檢查
+API.checkHealth().then((result) => {
+  console.log("API 健康檢查:", result);
+});
+
+// 測試獲取產品
+API.getProducts().then((products) => {
+  console.log("產品列表:", products);
+});
+
+// 查看當前 API 設定
+console.log(API.getEnvironmentInfo());
+```

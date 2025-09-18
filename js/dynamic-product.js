@@ -6,6 +6,20 @@ class DynamicProductLoader {
     this.loadingElement = null;
   }
 
+  // 構建完整的圖片 URL
+  buildImageUrl(imagePath) {
+    if (!imagePath) return null;
+
+    // 如果已經是完整 URL，直接返回
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+      return imagePath;
+    }
+
+    // 使用當前環境的 API base URL
+    const baseURL = window.ENV_CONFIG?.API_BASE_URL || "http://localhost:3000";
+    return `${baseURL}${imagePath}`;
+  }
+
   // 初始化
   async init() {
     // 顯示載入動畫
@@ -164,14 +178,15 @@ class DynamicProductLoader {
     ) {
       // 使用預設圖片
       const fallbackImage = "/images/shop/yellow-noisy-gradients.jpg";
+      const fullFallbackUrl = this.buildImageUrl(fallbackImage);
       const li = document.createElement("li");
-      li.setAttribute("data-thumb", fallbackImage);
+      li.setAttribute("data-thumb", fullFallbackUrl);
 
       const img = document.createElement("img");
-      img.src = fallbackImage;
+      img.src = fullFallbackUrl;
       img.alt = this.productData.name || "商品圖片";
       img.onerror = () => {
-        console.warn(`圖片載入失敗: ${fallbackImage}`);
+        console.warn(`圖片載入失敗: ${fullFallbackUrl}`);
       };
 
       li.appendChild(img);
@@ -180,16 +195,19 @@ class DynamicProductLoader {
       // 添加新的圖片，包含錯誤處理
       this.productData.lightslider_images.forEach((imagePath) => {
         const li = document.createElement("li");
-        li.setAttribute("data-thumb", imagePath);
+        const fullImageUrl = this.buildImageUrl(imagePath);
+        li.setAttribute("data-thumb", fullImageUrl);
 
         const img = document.createElement("img");
-        img.src = imagePath;
+        img.src = fullImageUrl;
         img.alt = this.productData.name || "商品圖片";
 
         // 圖片載入失敗時使用預設圖片
         img.onerror = () => {
-          console.warn(`圖片載入失敗: ${imagePath}，使用預設圖片`);
-          img.src = "/images/shop/yellow-noisy-gradients.jpg";
+          console.warn(`圖片載入失敗: ${fullImageUrl}，使用預設圖片`);
+          img.src = this.buildImageUrl(
+            "/images/shop/yellow-noisy-gradients.jpg"
+          );
         };
 
         li.appendChild(img);
@@ -244,7 +262,9 @@ class DynamicProductLoader {
     // 更新商品介紹圖片
     const introImage = document.getElementById("product-intro-img");
     if (introImage && this.productData.product_introduction) {
-      introImage.src = this.productData.product_introduction;
+      introImage.src = this.buildImageUrl(
+        this.productData.product_introduction
+      );
       introImage.style.display = "block";
     } else if (introImage) {
       // 如果沒有商品介紹圖片，隱藏該元素
@@ -257,7 +277,7 @@ class DynamicProductLoader {
         '.long-ad-wrap img[alt="預購注意事項"]'
       );
       if (noticeImage) {
-        noticeImage.src = this.productData.preorder_notes;
+        noticeImage.src = this.buildImageUrl(this.productData.preorder_notes);
       }
     }
 
@@ -267,7 +287,9 @@ class DynamicProductLoader {
         '.long-ad-wrap img[alt="sketchfab背景"]'
       );
       if (sketchfabBackgroundImage) {
-        sketchfabBackgroundImage.src = this.productData.sketchfab_background;
+        sketchfabBackgroundImage.src = this.buildImageUrl(
+          this.productData.sketchfab_background
+        );
         sketchfabBackgroundImage.style.display = "block";
       }
     }

@@ -216,33 +216,44 @@ async function loadProductsConfig() {
 
 // 更新顏色選項
 function updateColorOptions(productConfig) {
+  // 檢查商品配置是否存在
+  if (!productConfig) {
+    console.warn("productConfig is undefined in updateColorOptions");
+    return;
+  }
+
   const mainColorSelect = document.getElementById("mainColor");
   if (mainColorSelect) {
     mainColorSelect.innerHTML = '<option value="">選擇主色</option>';
-    productConfig.mainColors.forEach((color) => {
-      const option = document.createElement("option");
-      option.value = color;
-      option.textContent = COLOR_NAMES[color];
-      mainColorSelect.appendChild(option);
-    });
+    if (productConfig.mainColors && Array.isArray(productConfig.mainColors)) {
+      productConfig.mainColors.forEach((color) => {
+        const option = document.createElement("option");
+        option.value = color;
+        option.textContent = COLOR_NAMES[color];
+        mainColorSelect.appendChild(option);
+      });
+    }
   }
 
   const subColorSelect = document.getElementById("subColor");
   if (subColorSelect) {
     subColorSelect.innerHTML = '<option value="">選擇副色</option>';
-    productConfig.subColors.forEach((color) => {
-      const option = document.createElement("option");
-      option.value = color;
-      option.textContent = COLOR_NAMES[color];
-      subColorSelect.appendChild(option);
-    });
+    if (productConfig.subColors && Array.isArray(productConfig.subColors)) {
+      productConfig.subColors.forEach((color) => {
+        const option = document.createElement("option");
+        option.value = color;
+        option.textContent = COLOR_NAMES[color];
+        subColorSelect.appendChild(option);
+      });
+    }
   }
 
   // 數量
   const quantitySelect = document.getElementById("quantity");
   if (quantitySelect) {
     quantitySelect.innerHTML = "";
-    for (let i = 1; i <= productConfig.maxQuantity; i++) {
+    const maxQuantity = productConfig.maxQuantity || 0;
+    for (let i = 1; i <= maxQuantity; i++) {
       const option = document.createElement("option");
       option.value = i;
       option.textContent = i;
@@ -322,6 +333,11 @@ function updateCheckoutButton() {
 
   const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
 
+  // 檢查商品配置是否存在
+  if (!productConfig) {
+    return;
+  }
+
   // 先檢查是否已售完（maxQuantity 為 0）
   if (productConfig.maxQuantity === 0) {
     checkoutButton.disabled = true;
@@ -373,6 +389,12 @@ function updateSelection() {
   }
 
   const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
+
+  // 檢查商品配置是否存在
+  if (!productConfig) {
+    return;
+  }
+
   const mainColor = document.getElementById("mainColor").value;
   const subColor = document.getElementById("subColor").value;
   const quantity = parseInt(document.getElementById("quantity").value) || 0;
@@ -406,11 +428,22 @@ function updateSelection() {
 }
 
 // 前往結帳頁面
-function goToCheckout() {
+async function goToCheckout() {
+  // 確保商品配置已載入
+  if (Object.keys(PRODUCTS_CONFIG).length === 0) {
+    await loadProductsConfig();
+  }
+
   const mainColor = document.getElementById("mainColor").value;
   const subColor = document.getElementById("subColor").value;
   const quantity = parseInt(document.getElementById("quantity").value) || 0;
   const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
+
+  // 檢查商品配置是否存在
+  if (!productConfig) {
+    alert("商品資料載入中，請稍後再試！");
+    return;
+  }
 
   // 驗證是否已選擇所有必要選項
   if (!mainColor || !subColor || !quantity) {
@@ -516,17 +549,28 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeCartEvents();
 });
 
-function addToCart() {
+async function addToCart() {
   // 如果是動態頁面，使用動態載入的商品資料
   if (window.location.pathname.includes("product.html")) {
     addToCartDynamic();
     return;
   }
 
+  // 確保商品配置已載入
+  if (Object.keys(PRODUCTS_CONFIG).length === 0) {
+    await loadProductsConfig();
+  }
+
   const mainColor = document.getElementById("mainColor").value;
   const subColor = document.getElementById("subColor").value;
   const quantity = parseInt(document.getElementById("quantity").value) || 0;
   const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
+
+  // 檢查商品配置是否存在
+  if (!productConfig) {
+    alert("商品資料載入中，請稍後再試！");
+    return;
+  }
 
   // 驗證選擇
   if (!mainColor || !subColor || !quantity) {
@@ -945,10 +989,18 @@ function addToCartDynamic() {
   };
 
   // 獲取現有購物車
-  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+
+  // 檢查總數量是否超過3件
+  const totalQuantity =
+    cartItems.reduce((sum, item) => sum + item.quantity, 0) + quantity;
+  if (totalQuantity > 3) {
+    alert("購物車商品總數不能超過3件");
+    return;
+  }
 
   // 檢查是否已存在相同商品和選項
-  const existingItemIndex = cart.findIndex(
+  const existingItemIndex = cartItems.findIndex(
     (item) =>
       item.productId === cartItem.productId &&
       item.mainColor === cartItem.mainColor &&
@@ -957,18 +1009,20 @@ function addToCartDynamic() {
 
   if (existingItemIndex !== -1) {
     // 更新數量
-    cart[existingItemIndex].quantity += cartItem.quantity;
-    cart[existingItemIndex].totalPrice =
-      cart[existingItemIndex].unitPrice * cart[existingItemIndex].quantity;
-    cart[existingItemIndex].totalDeposit =
-      cart[existingItemIndex].unitDeposit * cart[existingItemIndex].quantity;
+    cartItems[existingItemIndex].quantity += cartItem.quantity;
+    cartItems[existingItemIndex].totalPrice =
+      cartItems[existingItemIndex].unitPrice *
+      cartItems[existingItemIndex].quantity;
+    cartItems[existingItemIndex].totalDeposit =
+      cartItems[existingItemIndex].unitDeposit *
+      cartItems[existingItemIndex].quantity;
   } else {
     // 新增項目
-    cart.push(cartItem);
+    cartItems.push(cartItem);
   }
 
   // 儲存到 localStorage
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
   // 更新購物車計數
   updateCartCount();

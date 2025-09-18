@@ -4134,21 +4134,20 @@ textarea {
 }
 #product-page .product-container .ad-area {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 #product-page .product-container .ad-area .long-ad-wrap {
   position: relative;
   border-top: #FFFFFF 1.5px solid;
   width: 100%;
-  height: max-content;
+  min-height: 100vh;
   padding-top: 7%;
   z-index: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 #product-page .product-container .ad-area .long-ad-wrap img {
   display: block;
   width: 100%;
-  border-radius: 5px;
 }
 #product-page .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper {
   position: absolute;
@@ -4159,7 +4158,7 @@ textarea {
   left: 0;
   width: 100%;
   z-index: 1;
-  overflow: hidden;
+  overflow: visible;
   aspect-ratio: 17/9;
   /* 保持固定比例 */
 }
@@ -4169,7 +4168,7 @@ textarea {
 }
 #product-page .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper-softzilla {
   z-index: 1;
-  overflow: hidden;
+  overflow: visible;
   aspect-ratio: 17/9;
 }
 #product-page .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper-softzilla iframe {
@@ -4242,7 +4241,7 @@ textarea {
     aspect-ratio: 17/9;
     /* 保持固定比例 */
   }
-  #product-page .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper-softzilla {
+  #product-page .product-container .ad-area .sketchfab-embed-wrapper-softzilla {
     top: 0%;
     width: 100%;
     aspect-ratio: 17/9;

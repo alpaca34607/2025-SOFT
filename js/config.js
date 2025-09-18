@@ -31,12 +31,6 @@ window.ENV_CONFIG = {
     return defaultConfig;
   },
 
-  // 手動設置配置
-  setConfig(config) {
-    Object.assign(this, config);
-    console.log("🔧 環境配置已手動設置:", config);
-  },
-
   // 獲取當前配置
   getConfig() {
     return {

@@ -1,9 +1,10 @@
+const path = require("path");
+
 // 載入環境變數
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
 // 使用資料庫適配器
 const { setupDatabase } = require("./database-adapter");
@@ -38,6 +39,11 @@ app.get("/api/health", (req, res) => {
 
 // 環境配置端點
 app.get("/api/config", (req, res) => {
+  console.log("🔍 環境變數檢查:");
+  console.log("  - PUBLIC_API_URL:", process.env.PUBLIC_API_URL);
+  console.log("  - API_BASE_URL:", process.env.API_BASE_URL);
+  console.log("  - NODE_ENV:", process.env.NODE_ENV);
+
   res.json({
     API_BASE_URL:
       process.env.PUBLIC_API_URL ||

@@ -86,13 +86,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const resp = await API.getProducts();
     const fallbackThumb = "./images/shop/product-Softzilla-thumb.jpg";
+
+    // 構建完整的圖片 URL
+    const buildImageUrl = (imagePath) => {
+      if (!imagePath) return fallbackThumb;
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+        return imagePath;
+      }
+      const baseURL =
+        window.ENV_CONFIG?.API_BASE_URL || "http://localhost:3000";
+      return `${baseURL}${imagePath}`;
+    };
+
     productData = (resp.products || []).map((p) => ({
       // 以 created_at 排序（轉為毫秒）
       createdAt: p.created_at ? new Date(p.created_at).getTime() : 0,
       title: p.name,
       link: `./product.html?id=${p.product_id}`,
       price: p.price,
-      imgUrl: p.thumbnail_path || fallbackThumb,
+      imgUrl: buildImageUrl(p.thumbnail_path),
       status: mapStatusClass(p.cell_open_status),
       statusText: mapStatusText(p.cell_open_status),
       marker: mapMarkerText(p.cell_remaining_status),

@@ -1,86 +1,48 @@
 // API 基礎設定
-// 從環境變數或預設值讀取 API URL
-const API_BASE_URL =
-  window.ENV_CONFIG?.API_BASE_URL || "http://localhost:3000/api";
-
-// 環境配置
-const ENV_CONFIG = {
-  // 本地開發環境
-  local: "http://localhost:3000",
-  // Railway 測試環境
-  railway: "https://2025-soft-staging.up.railway.app",
-  // Vercel 正式環境 (請替換為您的實際網址)
-  vercel: "https://your-vercel-domain.vercel.app",
-};
+// 注意：API_BASE_URL 現在通過 baseURL getter 動態獲取
 
 // API 請求工具函數
 class API {
   static get baseURL() {
-    // 優先使用環境配置中的 API_BASE_URL
+    // 使用環境配置中的 API_BASE_URL
     if (window.ENV_CONFIG && window.ENV_CONFIG.API_BASE_URL) {
       console.log(`🔧 使用環境配置 API URL: ${window.ENV_CONFIG.API_BASE_URL}`);
       return window.ENV_CONFIG.API_BASE_URL;
     }
 
-    // 檢查是否有手動設定的環境
-    const manualEnv = localStorage.getItem("API_ENVIRONMENT");
-    if (manualEnv && ENV_CONFIG[manualEnv]) {
-      console.log(
-        `🔧 使用手動設定環境: ${manualEnv} -> ${ENV_CONFIG[manualEnv]}`
-      );
-      return ENV_CONFIG[manualEnv];
-    }
-
-    // 自動檢測 API 基礎 URL
-    if (
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-    ) {
-      return ENV_CONFIG.local;
-    } else if (window.location.hostname.includes("railway.app")) {
-      // Railway 部署環境
-      return window.location.origin;
-    } else if (window.location.hostname.includes("vercel.app")) {
-      // Vercel 部署環境
-      return window.location.origin;
-    } else {
-      // 其他生產環境：使用相對路徑
-      return window.location.origin;
-    }
+    // 預設值
+    console.log(`🔧 使用預設 API URL: http://localhost:3000`);
+    return "http://localhost:3000";
   }
 
-  // 手動設定 API 環境
-  static setEnvironment(env) {
-    if (ENV_CONFIG[env]) {
-      localStorage.setItem("API_ENVIRONMENT", env);
-      console.log(`✅ API 環境已切換至: ${env} (${ENV_CONFIG[env]})`);
-      return true;
-    } else {
-      console.error(`❌ 無效的環境: ${env}`);
-      console.log("可用環境:", Object.keys(ENV_CONFIG));
-      return false;
+  // 動態獲取 API URL（用於確保獲取最新配置）
+  static async getDynamicBaseURL() {
+    try {
+      const response = await fetch("/api/config");
+      if (response.ok) {
+        const config = await response.json();
+        console.log(`🔧 動態獲取 API URL: ${config.API_BASE_URL}`);
+        return config.API_BASE_URL;
+      }
+    } catch (error) {
+      console.log("⚠️ 無法動態獲取配置，使用預設值");
     }
-  }
-
-  // 清除手動環境設定
-  static clearEnvironment() {
-    localStorage.removeItem("API_ENVIRONMENT");
-    console.log("🔄 已清除手動環境設定，恢復自動檢測");
+    return "http://localhost:3000";
   }
 
   // 獲取當前環境資訊
   static getEnvironmentInfo() {
-    const manualEnv = localStorage.getItem("API_ENVIRONMENT");
     const currentURL = this.baseURL;
     return {
-      manual: manualEnv,
       current: currentURL,
-      available: ENV_CONFIG,
+      source: window.ENV_CONFIG?.API_BASE_URL ? "環境變數" : "預設值",
     };
   }
 
   static async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    // 使用動態獲取的 URL 以確保獲取最新配置
+    const baseURL = await this.getDynamicBaseURL();
+    const url = `${baseURL}${endpoint}`;
 
     // 如果 body 是 FormData，不設置 Content-Type（讓瀏覽器自動處理）
     const isFormData = options.body instanceof FormData;

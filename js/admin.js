@@ -1,5 +1,50 @@
 // 管理後台功能
 
+// 全局變量存儲 API base URL
+let globalAPIBaseURL = null;
+
+// 初始化 API base URL
+async function initializeAPIBaseURL() {
+  if (globalAPIBaseURL) return globalAPIBaseURL;
+
+  // 嘗試從 window.ENV_CONFIG 獲取
+  if (window.ENV_CONFIG?.API_BASE_URL) {
+    globalAPIBaseURL = window.ENV_CONFIG.API_BASE_URL;
+    return globalAPIBaseURL;
+  }
+
+  // 如果 ENV_CONFIG 還沒載入，嘗試動態獲取
+  try {
+    const response = await fetch("/api/config");
+    if (response.ok) {
+      const config = await response.json();
+      globalAPIBaseURL = config.API_BASE_URL;
+      console.log(`🔧 動態獲取管理後台 API URL: ${globalAPIBaseURL}`);
+      return globalAPIBaseURL;
+    }
+  } catch (error) {
+    console.log("⚠️ 無法動態獲取環境配置，使用預設 API URL");
+  }
+
+  // 預設值
+  globalAPIBaseURL = "http://localhost:3000";
+  return globalAPIBaseURL;
+}
+
+// 構建完整的圖片 URL（同步版本）
+function buildImageUrl(imagePath) {
+  if (!imagePath) return null;
+
+  // 如果已經是完整 URL，直接返回
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  // 使用全局 API base URL
+  const baseURL = globalAPIBaseURL || "http://localhost:3000";
+  return `${baseURL}${imagePath}`;
+}
+
 // 格式化時間為台北時間
 function formatDateTime(dateString) {
   if (!dateString) return "-";
@@ -15,7 +60,10 @@ function formatDateTime(dateString) {
 }
 
 // 頁面載入時初始化
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // 初始化 API base URL
+  await initializeAPIBaseURL();
+
   initializeNavigation();
   loadDashboard();
 });
@@ -318,7 +366,11 @@ function displayProducts(products) {
                 }
                 ${
                   product.thumbnail_path
-                    ? `<p>縮圖: <img src="${product.thumbnail_path}" alt="${product.name}" style="max-width: 100px; max-height: 100px;"></p>`
+                    ? `<p>縮圖: <img src="${buildImageUrl(
+                        product.thumbnail_path
+                      )}" alt="${
+                        product.name
+                      }" style="max-width: 100px; max-height: 100px;"></p>`
                     : ""
                 }
                 ${
@@ -584,7 +636,8 @@ async function addProduct() {
       cell_remaining_status: document.getElementById(
         "productCellRemainingStatus"
       ).value,
-      sketchfab_embed_link: document.getElementById("productSketchfabEmbedLink").value,
+      sketchfab_embed_link: document.getElementById("productSketchfabEmbedLink")
+        .value,
       main_colors: getSelectedColors("main"),
       sub_colors: getSelectedColors("sub"),
     };
@@ -608,12 +661,14 @@ async function addProduct() {
       formData.sketchfab_background = sketchfabBackgroundFile;
     }
 
-    const introductionImg = document.getElementById("productIntroduction").files?.[0];
+    const introductionImg = document.getElementById("productIntroduction")
+      .files?.[0];
     if (introductionImg) {
       formData.product_introduction = introductionImg;
     }
 
-    const preorderNotesImg = document.getElementById("productPreorderNotes").files?.[0];
+    const preorderNotesImg = document.getElementById("productPreorderNotes")
+      .files?.[0];
     if (preorderNotesImg) {
       formData.preorder_notes = preorderNotesImg;
     }
@@ -829,8 +884,14 @@ async function editProduct(productId) {
                           product.thumbnail_path
                             ? `<div class="current-image">
                                 <p>目前縮圖:</p>
-                                <img src="${product.thumbnail_path}" alt="${product.name}" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;">
-                                <button type="button" onclick="deleteImage('thumbnail', '${product.product_id}')" style="background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;">刪除</button>
+                                <img src="${buildImageUrl(
+                                  product.thumbnail_path
+                                )}" alt="${
+                                product.name
+                              }" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;">
+                                <button type="button" onclick="deleteImage('thumbnail', '${
+                                  product.product_id
+                                }')" style="background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;">刪除</button>
                                </div>`
                             : "<p>目前無縮圖</p>"
                         }
@@ -850,7 +911,9 @@ async function editProduct(productId) {
                                     .map(
                                       (img, index) => `
                                     <div style="position: relative; display: inline-block;">
-                                      <img src="${img}" alt="LightSlider圖片${
+                                      <img src="${buildImageUrl(
+                                        img
+                                      )}" alt="LightSlider圖片${
                                         index + 1
                                       }" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;">
                                       <button type="button" onclick="deleteImage('lightslider', '${
@@ -879,7 +942,11 @@ async function editProduct(productId) {
                         <input type="file" id="editProductSketchfabBackground" accept="image/*">
                         ${
                           product.sketchfab_background
-                            ? `<div class="current-image"><p>目前背景:</p><img src="${product.sketchfab_background}" alt="sketchfab背景" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type="button" onclick="deleteImage('sketchfab_background', '${product.product_id}')" style="background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;">刪除</button></div>`
+                            ? `<div class="current-image"><p>目前背景:</p><img src="${buildImageUrl(
+                                product.sketchfab_background
+                              )}" alt="sketchfab背景" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type="button" onclick="deleteImage('sketchfab_background', '${
+                                product.product_id
+                              }')" style="background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;">刪除</button></div>`
                             : "<p>目前無背景</p>"
                         }
                     </div>
@@ -888,7 +955,11 @@ async function editProduct(productId) {
                         <input type="file" id="editProductIntroduction" accept="image/*">
                         ${
                           product.product_introduction
-                            ? `<div class=\"current-image\"><p>目前介紹圖:</p><img src="${product.product_introduction}" alt="商品介紹" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type=\"button\" onclick=\"deleteImage('product_introduction', '${product.product_id}')\" style=\"background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;\">刪除</button></div>`
+                            ? `<div class=\"current-image\"><p>目前介紹圖:</p><img src="${buildImageUrl(
+                                product.product_introduction
+                              )}" alt="商品介紹" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type=\"button\" onclick=\"deleteImage('product_introduction', '${
+                                product.product_id
+                              }')\" style=\"background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;\">刪除</button></div>`
                             : "<p>目前無介紹圖</p>"
                         }
                     </div>
@@ -897,7 +968,11 @@ async function editProduct(productId) {
                         <input type="file" id="editProductPreorderNotes" accept="image/*">
                         ${
                           product.preorder_notes
-                            ? `<div class=\"current-image\"><p>目前注意事項圖:</p><img src="${product.preorder_notes}" alt="預購注意事項" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type=\"button\" onclick=\"deleteImage('preorder_notes', '${product.product_id}')\" style=\"background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;\">刪除</button></div>`
+                            ? `<div class=\"current-image\"><p>目前注意事項圖:</p><img src="${buildImageUrl(
+                                product.preorder_notes
+                              )}" alt="預購注意事項" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;"><button type=\"button\" onclick=\"deleteImage('preorder_notes', '${
+                                product.product_id
+                              }')\" style=\"background: #ff4444; color: white; border: none; padding: 5px 10px; margin-top: 10px; cursor: pointer;\">刪除</button></div>`
                             : "<p>目前無注意事項圖</p>"
                         }
                     </div>
@@ -951,7 +1026,9 @@ async function updateProduct(productId) {
       cell_remaining_status: document.getElementById(
         "editProductCellRemainingStatus"
       ).value,
-      sketchfab_embed_link: document.getElementById("editProductSketchfabEmbedLink").value,
+      sketchfab_embed_link: document.getElementById(
+        "editProductSketchfabEmbedLink"
+      ).value,
       main_colors: getSelectedColors("main"),
       sub_colors: getSelectedColors("sub"),
     };
@@ -976,12 +1053,14 @@ async function updateProduct(productId) {
       formData.sketchfab_background = sketchfabBackgroundFile;
     }
 
-    const editIntroImg = document.getElementById("editProductIntroduction").files?.[0];
+    const editIntroImg = document.getElementById("editProductIntroduction")
+      .files?.[0];
     if (editIntroImg) {
       formData.product_introduction = editIntroImg;
     }
 
-    const editNotesImg = document.getElementById("editProductPreorderNotes").files?.[0];
+    const editNotesImg = document.getElementById("editProductPreorderNotes")
+      .files?.[0];
     if (editNotesImg) {
       formData.preorder_notes = editNotesImg;
     }
