@@ -25,22 +25,39 @@ if not exist "node_modules" (
     )
 )
 
+REM 檢查端口是否被占用
+echo 檢查端口 3000 是否可用...
+netstat -an | findstr ":3000 " >nul
+if %errorlevel% equ 0 (
+    echo 端口 3000 已被占用，嘗試使用端口 3001...
+    set PORT=3001
+    netstat -an | findstr ":3001 " >nul
+    if %errorlevel% equ 0 (
+        echo 端口 3001 也被占用，嘗試使用端口 3002...
+        set PORT=3002
+    )
+) else (
+    set PORT=3000
+)
+
+echo 使用端口: %PORT%
+
 REM 啟動後端伺服器
 echo 啟動後端 API 伺服器...
-start "Soft Bio API" cmd /k "npm run dev"
+start "Soft Bio API" cmd /k "set PORT=%PORT% && npm run dev"
 
 REM 等待伺服器啟動
 timeout /t 3 /nobreak >nul
 
 REM 開啟前端頁面
 echo 開啟前端頁面...
-start http://localhost:3000
+start http://localhost:%PORT%
 
 echo.
 echo 系統已啟動！
-echo 前端頁面: http://localhost:3000
-echo 管理後台: http://localhost:3000/admin.html
-echo API 文檔: http://localhost:3000/api/health
+echo 前端頁面: http://localhost:%PORT%
+echo 管理後台: http://localhost:%PORT%/admin.html
+echo API 文檔: http://localhost:%PORT%/api/health
 echo.
 echo 按任意鍵關閉此視窗...
 pause >nul 

@@ -189,13 +189,20 @@ if (require.main === module) {
 
       // Railway 要求：必須綁定到 0.0.0.0 和使用 PORT 環境變數
       // 根據 Railway 官方文檔：https://docs.railway.com/reference/errors/application-failed-to-respond
-      app.listen(PORT, "0.0.0.0", () => {
-        console.log(`🚀 伺服器運行在 http://0.0.0.0:${PORT}`);
-        console.log(`📊 API 文檔: http://0.0.0.0:${PORT}/api/health`);
+      // 本地開發：使用 localhost 以便於開發
+      const host =
+        process.env.NODE_ENV === "staging" ||
+        process.env.NODE_ENV === "production"
+          ? "0.0.0.0" // Railway/生產環境
+          : "localhost"; // 本地開發環境
+
+      app.listen(PORT, host, () => {
+        console.log(`🚀 伺服器運行在 http://${host}:${PORT}`);
+        console.log(`📊 API 文檔: http://${host}:${PORT}/api/health`);
         console.log(`🌍 環境: ${process.env.NODE_ENV || "development"}`);
-        console.log(`🏠 網站首頁: http://0.0.0.0:${PORT}/index.html`);
-        console.log(`🛒 商店頁面: http://0.0.0.0:${PORT}/Get-Soft.html`);
-        console.log(`📋 管理後台: http://0.0.0.0:${PORT}/admin.html`);
+        console.log(`🏠 網站首頁: http://${host}:${PORT}/index.html`);
+        console.log(`🛒 商店頁面: http://${host}:${PORT}/Get-Soft.html`);
+        console.log(`📋 管理後台: http://${host}:${PORT}/admin.html`);
       });
     } catch (error) {
       console.error("❌ 伺服器啟動失敗:", error);
