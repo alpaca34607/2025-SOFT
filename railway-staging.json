@@ -10,10 +10,29 @@
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   },
+  "volumes": [
+    {
+      "name": "database-storage",
+      "mountPath": "/data"
+    }
+  ],
   "env": {
     "NODE_ENV": "staging",
     "PUBLIC_API_URL": "https://2025-soft-staging.up.railway.app",
     "ENABLE_DEBUG": "false",
     "LOG_LEVEL": "info"
-  }
+  },
+  "services": [
+    {
+      "name": "app",
+      "env": {
+        "NODE_ENV": "staging",
+        "PUBLIC_API_URL": "https://2025-soft-staging.up.railway.app"
+      }
+    },
+    {
+      "name": "postgres",
+      "type": "postgresql"
+    }
+  ]
 }

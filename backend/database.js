@@ -2,12 +2,16 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
 
-// 資料庫檔案路徑 (Vercel 環境使用 /tmp 目錄，Railway 使用持久化目錄)
+// 資料庫檔案路徑 (Railway 使用持久化卷，其他環境使用本地檔案)
 const dbPath = (() => {
   if (process.env.NODE_ENV === "production") {
     return "/tmp/database.sqlite"; // Vercel
-  } else if (process.env.RAILWAY_ENVIRONMENT) {
-    return path.join(__dirname, "database.sqlite"); // Railway
+  } else if (
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.NODE_ENV === "staging"
+  ) {
+    // Railway 使用持久化卷路徑
+    return "/data/database.sqlite"; // Railway 持久化存儲
   } else {
     return path.join(__dirname, "database.sqlite"); // 本地開發
   }
