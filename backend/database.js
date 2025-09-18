@@ -27,22 +27,40 @@ const db = new sqlite3.Database(dbPath, (err) => {
 // 初始化資料庫表格
 function initDatabase() {
   return new Promise((resolve, reject) => {
-    const schemaPath = path.join(__dirname, "../database_schema.sql");
-    console.log("🔍 尋找資料庫 schema 檔案:", schemaPath);
+    // 嘗試多個可能的 schema 檔案路徑
+    const possiblePaths = [
+      path.join(__dirname, "../database_schema.sql"), // 本地開發
+      path.join(process.cwd(), "database_schema.sql"), // Docker 容器
+      "/app/database_schema.sql", // 絕對路徑
+    ];
 
-    // 檢查檔案是否存在
-    if (!fs.existsSync(schemaPath)) {
-      console.error("❌ 資料庫 schema 檔案不存在:", schemaPath);
+    let schemaPath = null;
+    for (const testPath of possiblePaths) {
+      if (fs.existsSync(testPath)) {
+        schemaPath = testPath;
+        break;
+      }
+    }
+
+    console.log("🔍 尋找資料庫 schema 檔案...");
+    console.log("🔍 嘗試的路徑:", possiblePaths);
+
+    if (!schemaPath) {
+      console.error("❌ 資料庫 schema 檔案不存在於任何預期位置");
+      console.log("📁 當前工作目錄:", process.cwd());
+      console.log("📁 __dirname:", __dirname);
       console.log("📁 當前目錄內容:");
       try {
-        const files = fs.readdirSync(path.join(__dirname, ".."));
+        const files = fs.readdirSync(process.cwd());
         files.forEach((file) => console.log("  -", file));
       } catch (e) {
         console.log("  無法讀取目錄");
       }
-      reject(new Error(`資料庫 schema 檔案不存在: ${schemaPath}`));
+      reject(new Error(`資料庫 schema 檔案不存在於任何預期位置`));
       return;
     }
+
+    console.log("✅ 找到資料庫 schema 檔案:", schemaPath);
 
     const schema = fs.readFileSync(schemaPath, "utf8");
 
