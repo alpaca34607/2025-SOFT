@@ -1,3 +1,22 @@
+// 確保 COLOR_NAMES 可用（如果未在其他文件中定義）
+if (typeof COLOR_NAMES === "undefined") {
+  const COLOR_NAMES = {
+    black: "黑色",
+    white: "白色",
+    gray: "灰色",
+    gold: "金色",
+    silver: "銀色",
+    bronze: "銅色",
+    red: "紅色",
+    orange: "橙色",
+    yellow: "黃色",
+    blue: "藍色",
+    green: "綠色",
+    brown: "棕色",
+    none: "無顏色選項",
+  };
+}
+
 // 動態商品頁面載入器
 class DynamicProductLoader {
   constructor() {
@@ -271,10 +290,10 @@ class DynamicProductLoader {
       introImage.style.display = "none";
     }
 
-    // 更新預購注意事項圖片（只更新long-ad-wrap區域的圖片）
+    // 更新預購注意事項圖片（只更新showcase-wrap區域的圖片）
     if (this.productData.preorder_notes) {
       const noticeImage = document.querySelector(
-        '.long-ad-wrap img[alt="預購注意事項"]'
+        '.showcase-wrap img[alt="預購注意事項"]'
       );
       if (noticeImage) {
         noticeImage.src = this.buildImageUrl(this.productData.preorder_notes);
@@ -284,7 +303,7 @@ class DynamicProductLoader {
     // 更新 Sketchfab 背景圖片
     if (this.productData.sketchfab_background) {
       const sketchfabBackgroundImage = document.querySelector(
-        '.long-ad-wrap img[alt="sketchfab背景"]'
+        '.showcase-wrap img[alt="sketchfab背景"]'
       );
       if (sketchfabBackgroundImage) {
         sketchfabBackgroundImage.src = this.buildImageUrl(
@@ -307,7 +326,7 @@ class DynamicProductLoader {
       this.productData.main_colors.forEach((color) => {
         const option = document.createElement("option");
         option.value = color;
-        option.textContent = color;
+        option.textContent = COLOR_NAMES[color] || color;
         mainColorSelect.appendChild(option);
       });
     }
@@ -318,7 +337,7 @@ class DynamicProductLoader {
       this.productData.sub_colors.forEach((color) => {
         const option = document.createElement("option");
         option.value = color;
-        option.textContent = color;
+        option.textContent = COLOR_NAMES[color] || color;
         subColorSelect.appendChild(option);
       });
     }

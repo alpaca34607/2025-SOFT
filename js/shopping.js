@@ -657,7 +657,11 @@ function updateCartDisplay() {
             <div class="cart-item">
                 <div class="item-info">
                     <h3>${item.productName}</h3>
-                    <p>主色: ${item.mainColorName} / 副色: ${item.subColorName}</p>
+                    <p>主色: ${
+                      item.mainColorName || COLOR_NAMES[item.mainColor]
+                    } / 副色: ${
+        item.subColorName || COLOR_NAMES[item.subColor]
+      }</p>
                     <p>數量: ${item.quantity}</p>
                     <p>小計: NT$ ${item.totalPrice}</p>
                     <p>訂金: NT$ ${item.totalDeposit}</p>
@@ -979,7 +983,9 @@ function addToCartDynamic() {
     productId: CURRENT_PRODUCT_ID,
     productName: productName,
     mainColor,
+    mainColorName: COLOR_NAMES[mainColor],
     subColor,
+    subColorName: COLOR_NAMES[subColor],
     quantity,
     unitPrice,
     unitDeposit,

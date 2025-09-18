@@ -3987,7 +3987,7 @@ textarea {
         }
     }
 
-    .ad-side {
+    .product-side {
         width: 100%;
         margin-top: 20px;
     }
@@ -4290,7 +4290,7 @@ textarea {
             left: 0;
             margin-top: 20%;
 
-            .ad-side {
+            .product-side {
                 display: none;
             }
 
@@ -4462,7 +4462,7 @@ textarea {
         left: 10%;
         height: fit-content;
 
-        .ad-side {
+        .product-side {
             display: none;
         }
 
@@ -4740,11 +4740,11 @@ textarea {
 
         }
 
-        .ad-area {
+        .product-showcase {
             display: flex;
             align-items: flex-start;
 
-            .long-ad-wrap {
+            .showcase-wrap {
                 position: relative;
                 border-top: $light 1.5px solid;
                 width: 100%;
@@ -4828,21 +4828,21 @@ textarea {
             }
         }
 
-        .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper {
+        .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
             top: 0%;
             width: 100%;
             aspect-ratio: 17/9;
             /* 保持固定比例 */
         }
 
-        .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper-softzilla {
+        .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper-softzilla {
             top: 0%;
             width: 100%;
             aspect-ratio: 17/9;
             /* 保持固定比例 */
         }
 
-        .product-container .ad-area .long-ad-wrap iframe {
+        .product-container .product-showcase .showcase-wrap iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -4873,21 +4873,21 @@ textarea {
             }
         }
 
-        .product-container .ad-area .long-ad-wrap .sketchfab-embed-wrapper {
+        .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
             top: 0;
             width: 100%;
             aspect-ratio: 17/9;
             /* 保持固定比例 */
         }
 
-        .product-container .ad-area .sketchfab-embed-wrapper-softzilla {
+        .product-container .product-showcase .sketchfab-embed-wrapper-softzilla {
             top: 0%;
             width: 100%;
             aspect-ratio: 17/9;
             /* 保持固定比例 */
         }
 
-        .product-container .ad-area .long-ad-wrap iframe {
+        .product-container .product-showcase .showcase-wrap iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -5336,7 +5336,7 @@ textarea {
             left: 0;
             margin-top: 20%;
 
-            .ad-side {
+            .product-side {
                 display: none;
             }
 

@@ -1,41 +1,58 @@
+// 顏色名稱對照表
+const COLOR_NAMES = {
+  black: "黑色",
+  white: "白色",
+  gray: "灰色",
+  gold: "金色",
+  silver: "銀色",
+  bronze: "銅色",
+  red: "紅色",
+  orange: "橙色",
+  yellow: "黃色",
+  blue: "藍色",
+  green: "綠色",
+  brown: "棕色",
+  none: "無顏色選項",
+};
+
 // 注意事項彈窗相關元素
-if (typeof window.openNoticeBtn === 'undefined') {
-    window.openNoticeBtn = document.getElementById('open-notice');
-    window.closeNoticeBtn = document.getElementById('close-notice');
-    window.noticePopup = document.getElementById('notice-popup');
+if (typeof window.openNoticeBtn === "undefined") {
+  window.openNoticeBtn = document.getElementById("open-notice");
+  window.closeNoticeBtn = document.getElementById("close-notice");
+  window.noticePopup = document.getElementById("notice-popup");
 
-    // 開啟注意事項彈窗
-    if (window.openNoticeBtn) {
-        window.openNoticeBtn.addEventListener('click', () => {
-            if (window.noticePopup) {
-                window.noticePopup.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-        });
-    }
-
-    // 關閉注意事項彈窗
-    if (window.closeNoticeBtn) {
-        window.closeNoticeBtn.addEventListener('click', () => {
-            if (window.noticePopup) {
-                window.noticePopup.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        });
-    }
-
-    // 點擊外部關閉注意事項彈窗
-    window.addEventListener('click', (event) => {
-        if (event.target === window.noticePopup) {
-            window.noticePopup.style.display = 'none';
-            document.body.style.overflow = '';
-        }
+  // 開啟注意事項彈窗
+  if (window.openNoticeBtn) {
+    window.openNoticeBtn.addEventListener("click", () => {
+      if (window.noticePopup) {
+        window.noticePopup.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
     });
+  }
+
+  // 關閉注意事項彈窗
+  if (window.closeNoticeBtn) {
+    window.closeNoticeBtn.addEventListener("click", () => {
+      if (window.noticePopup) {
+        window.noticePopup.style.display = "none";
+        document.body.style.overflow = "";
+      }
+    });
+  }
+
+  // 點擊外部關閉注意事項彈窗
+  window.addEventListener("click", (event) => {
+    if (event.target === window.noticePopup) {
+      window.noticePopup.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  });
 }
 // 購物車相關功能
 function initializeCart() {
-    // 在 body 最後插入購物車 HTML
-    const cartHTML = `
+  // 在 body 最後插入購物車 HTML
+  const cartHTML = `
         <div id="cartPopup" class="cart-popup" style="display: none;">
             <div class="cart-content">
                 <div class="cart-header">
@@ -55,141 +72,142 @@ function initializeCart() {
             </div>
         </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', cartHTML);
+  document.body.insertAdjacentHTML("beforeend", cartHTML);
 
-
-
-    // 更新購物車數量
-    updateCartCount();
+  // 更新購物車數量
+  updateCartCount();
 }
 
 function toggleCart() {
-    const cartPopup = document.getElementById('cartPopup');
-    if (!cartPopup.classList.contains('show')) {
-        updateCartDisplay();
-        cartPopup.style.display = 'block';
-        // 使用 setTimeout確保display:block生效後再show
-        setTimeout(() => {
-            cartPopup.classList.add('show');
-        }, 10);
-    } else {
-        cartPopup.classList.remove('show');
-        // 等待過渡動畫完成後再隐藏元素
-        setTimeout(() => {
-            cartPopup.style.display = 'none';
-        }, 300);
-    }
+  const cartPopup = document.getElementById("cartPopup");
+  if (!cartPopup.classList.contains("show")) {
+    updateCartDisplay();
+    cartPopup.style.display = "block";
+    // 使用 setTimeout確保display:block生效後再show
+    setTimeout(() => {
+      cartPopup.classList.add("show");
+    }, 10);
+  } else {
+    cartPopup.classList.remove("show");
+    // 等待過渡動畫完成後再隐藏元素
+    setTimeout(() => {
+      cartPopup.style.display = "none";
+    }, 300);
+  }
 }
 
 //點擊外部關閉購物車
 function initializeCartEvents() {
-    const cartPopup = document.getElementById('cartPopup');
-    cartPopup.addEventListener('click', (e) => {
-        if (e.target === cartPopup) {
-            toggleCart();
-        }
-    });
+  const cartPopup = document.getElementById("cartPopup");
+  cartPopup.addEventListener("click", (e) => {
+    if (e.target === cartPopup) {
+      toggleCart();
+    }
+  });
 }
 
 // 頁面加載完後進入事件
-document.addEventListener('DOMContentLoaded', () => {
-    initializeCart();
-    initializeCartEvents();
+document.addEventListener("DOMContentLoaded", () => {
+  initializeCart();
+  initializeCartEvents();
 });
 
-
-
-
 function addToCart() {
-    const mainColor = document.getElementById('mainColor').value;
-    const subColor = document.getElementById('subColor').value;
-    const quantity = parseInt(document.getElementById('quantity').value) || 0;
-    const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
+  const mainColor = document.getElementById("mainColor").value;
+  const subColor = document.getElementById("subColor").value;
+  const quantity = parseInt(document.getElementById("quantity").value) || 0;
+  const productConfig = PRODUCTS_CONFIG[CURRENT_PRODUCT_ID];
 
-    // 驗證選擇
-    if (!mainColor || !subColor || !quantity) {
-        alert('請完成所有選擇！');
-        return;
-    }
+  // 驗證選擇
+  if (!mainColor || !subColor || !quantity) {
+    alert("請完成所有選擇！");
+    return;
+  }
 
-    // 檢查商品是否可購買
-    if (productConfig.maxQuantity === 0) {
-        alert('很抱歉，此商品已售完！');
-        return;
-    }
+  // 檢查商品是否可購買
+  if (productConfig.maxQuantity === 0) {
+    alert("很抱歉，此商品已售完！");
+    return;
+  }
 
-    // 建立購物車項目
-    const cartItem = {
-        productId: CURRENT_PRODUCT_ID,
-        productName: productConfig.name,
-        mainColor,
-        mainColorName: COLOR_NAMES[mainColor],
-        subColor,
-        subColorName: COLOR_NAMES[subColor],
-        quantity,
-        unitPrice: productConfig.price,
-        unitDeposit: productConfig.deposit,
-        totalPrice: productConfig.price * quantity,
-        totalDeposit: productConfig.deposit * quantity
-    };
+  // 建立購物車項目
+  const cartItem = {
+    productId: CURRENT_PRODUCT_ID,
+    productName: productConfig.name,
+    mainColor,
+    mainColorName: COLOR_NAMES[mainColor],
+    subColor,
+    subColorName: COLOR_NAMES[subColor],
+    quantity,
+    unitPrice: productConfig.price,
+    unitDeposit: productConfig.deposit,
+    totalPrice: productConfig.price * quantity,
+    totalDeposit: productConfig.deposit * quantity,
+  };
 
-    // 取得現有購物車項目
-    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    
-    // 檢查總數量是否超過3件
-    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0) + quantity;
-    if (totalQuantity > 3) {
-        alert('購物車商品總數不能超過3件');
-        return;
-    }
+  // 取得現有購物車項目
+  let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
 
-    // 加入購物車
-    cartItems.push(cartItem);
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    
-    alert('已加入購物車！');
-    updateCartCount();
-    updateCartDisplay();
+  // 檢查總數量是否超過3件
+  const totalQuantity =
+    cartItems.reduce((sum, item) => sum + item.quantity, 0) + quantity;
+  if (totalQuantity > 3) {
+    alert("購物車商品總數不能超過3件");
+    return;
+  }
+
+  // 加入購物車
+  cartItems.push(cartItem);
+  localStorage.setItem("cartItems", JSON.stringify(cartItems));
+
+  alert("已加入購物車！");
+  updateCartCount();
+  updateCartDisplay();
 }
 
 function removeFromCart(index) {
-    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    cartItems.splice(index, 1);
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    updateCartCount();
-    updateCartDisplay();
+  let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+  cartItems.splice(index, 1);
+  localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  updateCartCount();
+  updateCartDisplay();
 }
 
 function updateCartCount() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cartCount').textContent = totalQuantity;
+  const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById("cartCount").textContent = totalQuantity;
 }
 
 function updateCartDisplay() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const cartItemsContainer = document.getElementById('cartItems');
-    const cartTotalPrice = document.getElementById('cartTotalPrice');
-    const cartTotalDeposit = document.getElementById('cartTotalDeposit');
+  const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+  const cartItemsContainer = document.getElementById("cartItems");
+  const cartTotalPrice = document.getElementById("cartTotalPrice");
+  const cartTotalDeposit = document.getElementById("cartTotalDeposit");
 
-    if (cartItems.length === 0) {
-        cartItemsContainer.innerHTML = '<p class="empty-cart">購物車是空的</p>';
-        cartTotalPrice.textContent = '0';
-        cartTotalDeposit.textContent = '0';
-        return;
-    }
+  if (cartItems.length === 0) {
+    cartItemsContainer.innerHTML = '<p class="empty-cart">購物車是空的</p>';
+    cartTotalPrice.textContent = "0";
+    cartTotalDeposit.textContent = "0";
+    return;
+  }
 
-    let totalPrice = 0;
-    let totalDeposit = 0;
+  let totalPrice = 0;
+  let totalDeposit = 0;
 
-    cartItemsContainer.innerHTML = cartItems.map((item, index) => {
-        totalPrice += item.totalPrice;
-        totalDeposit += item.totalDeposit;
-        return `
+  cartItemsContainer.innerHTML = cartItems
+    .map((item, index) => {
+      totalPrice += item.totalPrice;
+      totalDeposit += item.totalDeposit;
+      return `
             <div class="cart-item">
                 <div class="item-info">
                     <h3>${item.productName}</h3>
-                    <p>主色: ${item.mainColorName} / 副色: ${item.subColorName}</p>
+                    <p>主色: ${
+                      item.mainColorName || COLOR_NAMES[item.mainColor]
+                    } / 副色: ${
+        item.subColorName || COLOR_NAMES[item.subColor]
+      }</p>
                     <p>數量: ${item.quantity}</p>
                     <p>小計: NT$ ${item.totalPrice}</p>
                     <p>訂金: NT$ ${item.totalDeposit}</p>
@@ -197,116 +215,130 @@ function updateCartDisplay() {
                 <button onclick="removeFromCart(${index})" class="remove-btn">&times;</button>
             </div>
         `;
-    }).join('');
+    })
+    .join("");
 
-    cartTotalPrice.textContent = totalPrice;
-    cartTotalDeposit.textContent = totalDeposit;
+  cartTotalPrice.textContent = totalPrice;
+  cartTotalDeposit.textContent = totalDeposit;
 }
 
 function cartCheckout() {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    if (cartItems.length === 0) {
-        alert('購物車是空的！');
-        return;
-    }
-    
-    if (cartItems.length > 3) {
-        alert('購物車商品不能超過3件');
-        return;
-    }
+  const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+  if (cartItems.length === 0) {
+    alert("購物車是空的！");
+    return;
+  }
 
-    localStorage.setItem('checkoutItems', JSON.stringify(cartItems));
-    window.location.href = 'checkout.html';
+  if (cartItems.length > 3) {
+    alert("購物車商品不能超過3件");
+    return;
+  }
+
+  localStorage.setItem("checkoutItems", JSON.stringify(cartItems));
+  window.location.href = "checkout.html";
 }
-
-
 
 // 購物紀錄
 
 // 點擊外部關閉歷史清單
 function initializeHistoryEvents() {
-    const historyPopup = document.getElementById('historyPopup');
-    if (!historyPopup) {
-        console.warn('找不到歷史紀錄彈窗元素');
-        return;
-    }
+  const historyPopup = document.getElementById("historyPopup");
+  if (!historyPopup) {
+    console.warn("找不到歷史紀錄彈窗元素");
+    return;
+  }
 
-    // 點擊外部關閉功能
-    historyPopup.addEventListener('click', (e) => {
-        if (e.target === historyPopup) {
-            toggleHistoryPopup();
-        }
-    });
+  // 點擊外部關閉功能
+  historyPopup.addEventListener("click", (e) => {
+    if (e.target === historyPopup) {
+      toggleHistoryPopup();
+    }
+  });
 }
 
 function toggleHistoryPopup() {
-    const historyPopup = document.getElementById('historyPopup');
-    if (!historyPopup) return;
-    
-    if (!historyPopup.classList.contains('show')) {
-        // 先設置 display: block
-        historyPopup.style.display = 'block';
-        // 使用 requestAnimationFrame 確保 DOM 更新完成
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                historyPopup.classList.add('show');
-            });
-        });
-    } else {
-        historyPopup.classList.remove('show');
-        // 等待過渡動畫完成後再隱藏元素
-        setTimeout(() => {
-            historyPopup.style.display = 'none';
-        }, 300); // 與 CSS transition 時間一致
-    }
-}
+  const historyPopup = document.getElementById("historyPopup");
+  if (!historyPopup) return;
 
+  if (!historyPopup.classList.contains("show")) {
+    // 先設置 display: block
+    historyPopup.style.display = "block";
+    // 使用 requestAnimationFrame 確保 DOM 更新完成
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        historyPopup.classList.add("show");
+      });
+    });
+  } else {
+    historyPopup.classList.remove("show");
+    // 等待過渡動畫完成後再隱藏元素
+    setTimeout(() => {
+      historyPopup.style.display = "none";
+    }, 300); // 與 CSS transition 時間一致
+  }
+}
 
 //搜尋購買紀錄
 async function searchOrderHistory() {
-    const phoneNumber = document.getElementById('searchPhoneNumber').value.trim();
-    const historyRecords = document.getElementById('historyRecords');
+  const phoneNumber = document.getElementById("searchPhoneNumber").value.trim();
+  const historyRecords = document.getElementById("historyRecords");
 
-    if (!phoneNumber) {
-        alert('請輸入手機號碼');
-        return;
+  if (!phoneNumber) {
+    alert("請輸入手機號碼");
+    return;
+  }
+
+  // 顯示載入狀態
+  historyRecords.innerHTML = "<p>搜尋中...</p>";
+
+  try {
+    // 檢查 API 是否可用
+    if (
+      typeof API === "undefined" ||
+      typeof API.searchOrdersByPhone !== "function"
+    ) {
+      console.log("API 不可用，使用 localStorage 模式");
+      searchOrderHistoryFromLocalStorage(phoneNumber);
+      return;
     }
 
-    // 顯示載入狀態
-    historyRecords.innerHTML = '<p>搜尋中...</p>';
+    // 從後端 API 查詢訂單
+    const result = await API.searchOrdersByPhone(phoneNumber);
 
-    try {
-        // 檢查 API 是否可用
-        if (typeof API === 'undefined' || typeof API.searchOrdersByPhone !== 'function') {
-            console.log('API 不可用，使用 localStorage 模式');
-            searchOrderHistoryFromLocalStorage(phoneNumber);
-            return;
-        }
+    if (!result.orders || result.orders.length === 0) {
+      historyRecords.innerHTML = "<p>查無訂單紀錄</p>";
+      return;
+    }
 
-        // 從後端 API 查詢訂單
-        const result = await API.searchOrdersByPhone(phoneNumber);
-        
-        if (!result.orders || result.orders.length === 0) {
-            historyRecords.innerHTML = '<p>查無訂單紀錄</p>';
-            return;
-        }
-
-        // 顯示訂單資料
-        historyRecords.innerHTML = result.orders.map(order => {
-            try {
-                // 訂單總覽資訊
-                const orderOverview = `
+    // 顯示訂單資料
+    historyRecords.innerHTML = result.orders
+      .map((order) => {
+        try {
+          // 訂單總覽資訊
+          const orderOverview = `
                     <div class="order-header">
-                        <p class="order-number">訂單編號: ${order.order_number}</p>
-                        <p class="order-date">訂單時間: ${new Date(order.created_at).toLocaleString()}</p>
-                        <p class="order-total">訂單總額: NT$ ${order.total_amount}</p>
-                        <p class="order-deposit">訂金總額: NT$ ${order.deposit_amount}</p>
-                        <p class="order-status">訂單狀態: ${getStatusText(order.status)}</p>
+                        <p class="order-number">訂單編號: ${
+                          order.order_number
+                        }</p>
+                        <p class="order-date">訂單時間: ${new Date(
+                          order.created_at
+                        ).toLocaleString()}</p>
+                        <p class="order-total">訂單總額: NT$ ${
+                          order.total_amount
+                        }</p>
+                        <p class="order-deposit">訂金總額: NT$ ${
+                          order.deposit_amount
+                        }</p>
+                        <p class="order-status">訂單狀態: ${getStatusText(
+                          order.status
+                        )}</p>
                     </div>
                 `;
 
-                // 訂單商品詳情
-                const orderItems = order.items.map(item => `
+          // 訂單商品詳情
+          const orderItems = order.items
+            .map(
+              (item) => `
                     <div class="history-item">
                         <h3>${item.product_name}</h3>
                         <p>主色: ${item.main_color_name}</p>
@@ -315,19 +347,23 @@ async function searchOrderHistory() {
                         <p>單價: NT$ ${item.unit_price}</p>
                         <p>單件訂金: NT$ ${item.unit_deposit}</p>
                     </div>
-                `).join('');
+                `
+            )
+            .join("");
 
-                // 訂單客戶資訊
-                const customerInfo = `
+          // 訂單客戶資訊
+          const customerInfo = `
                     <div class="customer-info">
                         <p>訂購人: ${order.customer_name}</p>
                         <p>取貨方式: ${order.pickup_method}</p>
-                        <p>付款方式: ${getPaymentMethodText(order.payment_method)}</p>
-                        ${order.note ? `<p>備註: ${order.note}</p>` : ''}
+                        <p>付款方式: ${getPaymentMethodText(
+                          order.payment_method
+                        )}</p>
+                        ${order.note ? `<p>備註: ${order.note}</p>` : ""}
                     </div>
                 `;
 
-                return `
+          return `
                     <div class="order-container">
                         ${orderOverview}
                         ${orderItems}
@@ -335,55 +371,71 @@ async function searchOrderHistory() {
                         <hr>
                     </div>
                 `;
-            } catch (error) {
-                console.error('訂單資料處理錯誤:', error);
-                return '<div class="error-message">訂單資料顯示錯誤</div>';
-            }
-        }).join('');
-
-    } catch (error) {
-        console.error('API 查詢失敗:', error);
-        // 如果 API 查詢失敗，回退到 localStorage 模式
-        searchOrderHistoryFromLocalStorage(phoneNumber);
-    }
+        } catch (error) {
+          console.error("訂單資料處理錯誤:", error);
+          return '<div class="error-message">訂單資料顯示錯誤</div>';
+        }
+      })
+      .join("");
+  } catch (error) {
+    console.error("API 查詢失敗:", error);
+    // 如果 API 查詢失敗，回退到 localStorage 模式
+    searchOrderHistoryFromLocalStorage(phoneNumber);
+  }
 }
 
 // 從 localStorage 查詢訂單（回退模式）
 function searchOrderHistoryFromLocalStorage(phoneNumber) {
-    const historyRecords = document.getElementById('historyRecords');
-    const purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || {};
-    const orders = purchaseHistory[phoneNumber] || [];
+  const historyRecords = document.getElementById("historyRecords");
+  const purchaseHistory =
+    JSON.parse(localStorage.getItem("purchaseHistory")) || {};
+  const orders = purchaseHistory[phoneNumber] || [];
 
-    if (orders.length === 0) {
-        historyRecords.innerHTML = '<p>查無訂單紀錄</p>';
-        return;
-    }
+  if (orders.length === 0) {
+    historyRecords.innerHTML = "<p>查無訂單紀錄</p>";
+    return;
+  }
 
-    historyRecords.innerHTML = orders.map(order => {
-        try {
-            // 訂單總覽資訊
-            const orderOverview = `
+  historyRecords.innerHTML = orders
+    .map((order) => {
+      try {
+        // 訂單總覽資訊
+        const orderOverview = `
                 <div class="order-header">
-                    <p class="order-date">訂單時間: ${new Date(order.orderDate).toLocaleString()}</p>
-                    <p class="order-total">訂單總額: NT$ ${order.totalAmount}</p>
-                    <p class="order-deposit">訂金總額: NT$ ${order.depositAmount}</p>
+                    <p class="order-date">訂單時間: ${new Date(
+                      order.orderDate
+                    ).toLocaleString()}</p>
+                    <p class="order-total">訂單總額: NT$ ${
+                      order.totalAmount
+                    }</p>
+                    <p class="order-deposit">訂金總額: NT$ ${
+                      order.depositAmount
+                    }</p>
                 </div>
             `;
 
-            // 訂單商品詳情
-            const orderItems = order.items.map(item => `
+        // 訂單商品詳情
+        const orderItems = order.items
+          .map(
+            (item) => `
                 <div class="history-item">
                     <h3>${item.productName}</h3>
-                    <p>主色: ${item.mainColorName || COLOR_NAMES[item.mainColor]}</p>
-                    <p>副色: ${item.subColorName || COLOR_NAMES[item.subColor]}</p>
+                    <p>主色: ${
+                      item.mainColorName || COLOR_NAMES[item.mainColor]
+                    }</p>
+                    <p>副色: ${
+                      item.subColorName || COLOR_NAMES[item.subColor]
+                    }</p>
                     <p>數量: ${item.quantity}</p>
                     <p>單價: NT$ ${item.unitPrice}</p>
                     <p>單件訂金: NT$ ${item.unitDeposit}</p>
                 </div>
-            `).join('');
+            `
+          )
+          .join("");
 
-            // 訂單客戶資訊
-            const customerInfo = `
+        // 訂單客戶資訊
+        const customerInfo = `
                 <div class="customer-info">
                     <p>訂購人: ${order.customerInfo.name}</p>
                     <p>取貨方式: ${order.customerInfo.pickupMethod}</p>
@@ -391,7 +443,7 @@ function searchOrderHistoryFromLocalStorage(phoneNumber) {
                 </div>
             `;
 
-            return `
+        return `
                 <div class="order-container">
                     ${orderOverview}
                     ${orderItems}
@@ -399,46 +451,49 @@ function searchOrderHistoryFromLocalStorage(phoneNumber) {
                     <hr>
                 </div>
             `;
-        } catch (error) {
-            console.error('訂單資料處理錯誤:', error);
-            return '<div class="error-message">訂單資料顯示錯誤</div>';
-        }
-    }).join('');
+      } catch (error) {
+        console.error("訂單資料處理錯誤:", error);
+        return '<div class="error-message">訂單資料顯示錯誤</div>';
+      }
+    })
+    .join("");
 
-    // 如果沒有成功顯示任何訂單，顯示錯誤訊息
-    if (!historyRecords.innerHTML) {
-        historyRecords.innerHTML = '<p>無法顯示訂單資料</p>';
-    }
+  // 如果沒有成功顯示任何訂單，顯示錯誤訊息
+  if (!historyRecords.innerHTML) {
+    historyRecords.innerHTML = "<p>無法顯示訂單資料</p>";
+  }
 }
 
 // 狀態文字轉換
 function getStatusText(status) {
-    const statusMap = {
-        'pending': '待確認',
-        'confirmed': '已確認',
-        'paid': '已付款',
-        'shipped': '已出貨',
-        'completed': '已完成',
-        'cancelled': '已取消'
-    };
-    return statusMap[status] || status;
+  const statusMap = {
+    pending: "待確認",
+    confirmed: "已確認",
+    paid: "已付款",
+    shipped: "已出貨",
+    completed: "已完成",
+    cancelled: "已取消",
+  };
+  return statusMap[status] || status;
 }
 
 // 付款方式文字轉換
 function getPaymentMethodText(paymentMethod) {
-    const paymentMap = {
-        'creditCard': '信用卡',
-        'atm': 'ATM /網銀轉帳',
-        'pxpay': '全支付',
-        'lnepay': 'LinePay'
-    };
-    return paymentMap[paymentMethod] || paymentMethod;
+  const paymentMap = {
+    creditCard: "信用卡",
+    atm: "ATM /網銀轉帳",
+    pxpay: "全支付",
+    lnepay: "LinePay",
+  };
+  return paymentMap[paymentMethod] || paymentMethod;
 }
 
 //按下 Enter 鍵也能搜尋的功能
-document.getElementById('searchPhoneNumber')?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        searchOrderHistory();
+document
+  .getElementById("searchPhoneNumber")
+  ?.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      searchOrderHistory();
     }
-});
-document.addEventListener('DOMContentLoaded', initializeHistoryEvents);
+  });
+document.addEventListener("DOMContentLoaded", initializeHistoryEvents);
