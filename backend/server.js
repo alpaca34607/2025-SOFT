@@ -187,13 +187,20 @@ if (process.env.NODE_ENV !== "production" && require.main === module) {
       await initializeDatabase();
       databaseInitialized = true;
 
-      app.listen(PORT, () => {
-        console.log(`🚀 伺服器運行在 http://localhost:${PORT}`);
-        console.log(`📊 API 文檔: http://localhost:${PORT}/api/health`);
+      // 在 Railway 等雲端平台需要綁定到 0.0.0.0
+      const host =
+        process.env.NODE_ENV === "staging" ||
+        process.env.NODE_ENV === "production"
+          ? "0.0.0.0"
+          : "localhost";
+
+      app.listen(PORT, host, () => {
+        console.log(`🚀 伺服器運行在 http://${host}:${PORT}`);
+        console.log(`📊 API 文檔: http://${host}:${PORT}/api/health`);
         console.log(`🌍 環境: ${process.env.NODE_ENV || "development"}`);
-        console.log(`🏠 網站首頁: http://localhost:${PORT}/index.html`);
-        console.log(`🛒 商店頁面: http://localhost:${PORT}/Get-Soft.html`);
-        console.log(`📋 管理後台: http://localhost:${PORT}/admin.html`);
+        console.log(`🏠 網站首頁: http://${host}:${PORT}/index.html`);
+        console.log(`🛒 商店頁面: http://${host}:${PORT}/Get-Soft.html`);
+        console.log(`📋 管理後台: http://${host}:${PORT}/admin.html`);
       });
     } catch (error) {
       console.error("❌ 伺服器啟動失敗:", error);
