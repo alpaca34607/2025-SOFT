@@ -69,30 +69,7 @@ router.get("/", async (req, res) => {
     );
     const products = productResult.rows || [];
 
-    // 解析 JSON 欄位
-    products.forEach((product) => {
-      if (product.main_colors) {
-        try {
-          product.main_colors = JSON.parse(product.main_colors);
-        } catch (e) {
-          product.main_colors = [];
-        }
-      }
-      if (product.sub_colors) {
-        try {
-          product.sub_colors = JSON.parse(product.sub_colors);
-        } catch (e) {
-          product.sub_colors = [];
-        }
-      }
-      if (product.lightslider_images) {
-        try {
-          product.lightslider_images = JSON.parse(product.lightslider_images);
-        } catch (e) {
-          product.lightslider_images = [];
-        }
-      }
-    });
+    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
 
     res.json({ products });
   } catch (error) {
@@ -113,28 +90,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "商品不存在" });
     }
 
-    // 解析 JSON 欄位
-    if (product.main_colors) {
-      try {
-        product.main_colors = JSON.parse(product.main_colors);
-      } catch (e) {
-        product.main_colors = [];
-      }
-    }
-    if (product.sub_colors) {
-      try {
-        product.sub_colors = JSON.parse(product.sub_colors);
-      } catch (e) {
-        product.sub_colors = [];
-      }
-    }
-    if (product.lightslider_images) {
-      try {
-        product.lightslider_images = JSON.parse(product.lightslider_images);
-      } catch (e) {
-        product.lightslider_images = [];
-      }
-    }
+    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
 
     res.json({ product });
   } catch (error) {
@@ -210,15 +166,27 @@ router.post(
         );
       }
 
-      if (req.files && req.files.sketchfab_background && req.files.sketchfab_background[0]) {
+      if (
+        req.files &&
+        req.files.sketchfab_background &&
+        req.files.sketchfab_background[0]
+      ) {
         sketchfabBackgroundPath = `/images/products/${req.files.sketchfab_background[0].filename}`;
       }
 
-      if (req.files && req.files.product_introduction && req.files.product_introduction[0]) {
+      if (
+        req.files &&
+        req.files.product_introduction &&
+        req.files.product_introduction[0]
+      ) {
         productIntroductionPath = `/images/products/${req.files.product_introduction[0].filename}`;
       }
 
-      if (req.files && req.files.preorder_notes && req.files.preorder_notes[0]) {
+      if (
+        req.files &&
+        req.files.preorder_notes &&
+        req.files.preorder_notes[0]
+      ) {
         preorderNotesPath = `/images/products/${req.files.preorder_notes[0].filename}`;
       }
 
@@ -314,11 +282,11 @@ router.put(
 
       // 處理圖片路徑
       let thumbnailPath = existingProduct.thumbnail_path;
-      let lightsliderImages = existingProduct.lightslider_images
-        ? JSON.parse(existingProduct.lightslider_images)
-        : [];
-      let sketchfabBackgroundPath = existingProduct.sketchfab_background || null;
-      let productIntroductionPath = existingProduct.product_introduction || null;
+      let lightsliderImages = existingProduct.lightslider_images || [];
+      let sketchfabBackgroundPath =
+        existingProduct.sketchfab_background || null;
+      let productIntroductionPath =
+        existingProduct.product_introduction || null;
       let preorderNotesPath = existingProduct.preorder_notes || null;
 
       if (req.files && req.files.thumbnail && req.files.thumbnail[0]) {
@@ -338,9 +306,11 @@ router.put(
 
       if (req.files && req.files.lightslider_images) {
         // 刪除舊的 LightSlider 圖片
-        if (existingProduct.lightslider_images) {
-          const oldImages = JSON.parse(existingProduct.lightslider_images);
-          oldImages.forEach((imagePath) => {
+        if (
+          existingProduct.lightslider_images &&
+          Array.isArray(existingProduct.lightslider_images)
+        ) {
+          existingProduct.lightslider_images.forEach((imagePath) => {
             const fullPath = path.join(__dirname, "../..", imagePath);
             if (fs.existsSync(fullPath)) {
               fs.unlinkSync(fullPath);
@@ -353,9 +323,17 @@ router.put(
       }
 
       // 替換 sketchfab 背景
-      if (req.files && req.files.sketchfab_background && req.files.sketchfab_background[0]) {
+      if (
+        req.files &&
+        req.files.sketchfab_background &&
+        req.files.sketchfab_background[0]
+      ) {
         if (existingProduct.sketchfab_background) {
-          const oldBgPath = path.join(__dirname, "../..", existingProduct.sketchfab_background);
+          const oldBgPath = path.join(
+            __dirname,
+            "../..",
+            existingProduct.sketchfab_background
+          );
           if (fs.existsSync(oldBgPath)) {
             fs.unlinkSync(oldBgPath);
           }
@@ -364,9 +342,17 @@ router.put(
       }
 
       // 替換 商品介紹 圖片
-      if (req.files && req.files.product_introduction && req.files.product_introduction[0]) {
+      if (
+        req.files &&
+        req.files.product_introduction &&
+        req.files.product_introduction[0]
+      ) {
         if (existingProduct.product_introduction) {
-          const oldIntroPath = path.join(__dirname, "../..", existingProduct.product_introduction);
+          const oldIntroPath = path.join(
+            __dirname,
+            "../..",
+            existingProduct.product_introduction
+          );
           if (fs.existsSync(oldIntroPath)) {
             fs.unlinkSync(oldIntroPath);
           }
@@ -375,9 +361,17 @@ router.put(
       }
 
       // 替換 預購注意事項 圖片
-      if (req.files && req.files.preorder_notes && req.files.preorder_notes[0]) {
+      if (
+        req.files &&
+        req.files.preorder_notes &&
+        req.files.preorder_notes[0]
+      ) {
         if (existingProduct.preorder_notes) {
-          const oldNotesPath = path.join(__dirname, "../..", existingProduct.preorder_notes);
+          const oldNotesPath = path.join(
+            __dirname,
+            "../..",
+            existingProduct.preorder_notes
+          );
           if (fs.existsSync(oldNotesPath)) {
             fs.unlinkSync(oldNotesPath);
           }
@@ -392,16 +386,27 @@ router.put(
 
       // 準備更新資料（缺少的欄位沿用原值）
       const updatedName = name ?? existingProduct.name;
-      const updatedPrice = price !== undefined && price !== '' ? price : existingProduct.price;
-      const updatedDeposit = deposit !== undefined && deposit !== '' ? deposit : existingProduct.deposit;
-      const updatedMaxQty = max_quantity !== undefined && max_quantity !== '' ? max_quantity : existingProduct.max_quantity;
+      const updatedPrice =
+        price !== undefined && price !== "" ? price : existingProduct.price;
+      const updatedDeposit =
+        deposit !== undefined && deposit !== ""
+          ? deposit
+          : existingProduct.deposit;
+      const updatedMaxQty =
+        max_quantity !== undefined && max_quantity !== ""
+          ? max_quantity
+          : existingProduct.max_quantity;
       const updatedStatus = status ?? existingProduct.status;
-      const updatedPreorderBtn = preorder_button_status ?? existingProduct.preorder_button_status;
-      const updatedCellOpen = cell_open_status ?? existingProduct.cell_open_status;
-      const updatedCellRemain = cell_remaining_status ?? existingProduct.cell_remaining_status;
+      const updatedPreorderBtn =
+        preorder_button_status ?? existingProduct.preorder_button_status;
+      const updatedCellOpen =
+        cell_open_status ?? existingProduct.cell_open_status;
+      const updatedCellRemain =
+        cell_remaining_status ?? existingProduct.cell_remaining_status;
       const updatedSpecs = specifications ?? existingProduct.specifications;
       const updatedPickup = pickup_info ?? existingProduct.pickup_info;
-      const updatedSketchfab = sketchfab_embed_link ?? existingProduct.sketchfab_embed_link;
+      const updatedSketchfab =
+        sketchfab_embed_link ?? existingProduct.sketchfab_embed_link;
 
       const result = await run(
         `UPDATE products SET 
@@ -500,18 +505,16 @@ router.delete("/:id", async (req, res) => {
     }
 
     // 刪除 LightSlider 圖片檔案
-    if (product.lightslider_images) {
-      try {
-        const lightsliderImages = JSON.parse(product.lightslider_images);
-        lightsliderImages.forEach((imagePath) => {
-          const fullPath = path.join(__dirname, "../..", imagePath);
-          if (fs.existsSync(fullPath)) {
-            fs.unlinkSync(fullPath);
-          }
-        });
-      } catch (e) {
-        console.error("解析 LightSlider 圖片路徑失敗:", e);
-      }
+    if (
+      product.lightslider_images &&
+      Array.isArray(product.lightslider_images)
+    ) {
+      product.lightslider_images.forEach((imagePath) => {
+        const fullPath = path.join(__dirname, "../..", imagePath);
+        if (fs.existsSync(fullPath)) {
+          fs.unlinkSync(fullPath);
+        }
+      });
     }
 
     const result = await run("DELETE FROM products WHERE product_id = ?", [id]);
@@ -561,53 +564,55 @@ router.delete("/:id/images", express.json(), async (req, res) => {
       }
     } else if (imageType === "lightslider") {
       // 刪除 LightSlider 圖片
-      if (product.lightslider_images) {
-        try {
-          const lightsliderImages = JSON.parse(product.lightslider_images);
-
-          if (deleteAll) {
-            // 刪除所有 LightSlider 圖片
-            lightsliderImages.forEach((imagePath) => {
-              const fullPath = path.join(__dirname, "../..", imagePath);
-              if (fs.existsSync(fullPath)) {
-                fs.unlinkSync(fullPath);
-              }
-            });
-            // 清空資料庫中的 LightSlider 圖片路徑
-            await run(
-              "UPDATE products SET lightslider_images = NULL WHERE product_id = ?",
-              [id]
-            );
-          } else if (imageIndex !== null && imageIndex !== undefined) {
-            // 刪除指定索引的圖片
-            if (imageIndex >= 0 && imageIndex < lightsliderImages.length) {
-              const imagePath = lightsliderImages[imageIndex];
-              const fullPath = path.join(__dirname, "../..", imagePath);
-              if (fs.existsSync(fullPath)) {
-                fs.unlinkSync(fullPath);
-              }
-
-              // 從陣列中移除該圖片
-              lightsliderImages.splice(imageIndex, 1);
-
-              // 更新資料庫
-              const updatedImagesJson = JSON.stringify(lightsliderImages);
-              await run(
-                "UPDATE products SET lightslider_images = ? WHERE product_id = ?",
-                [updatedImagesJson, id]
-              );
-            } else {
-              return res.status(400).json({ error: "圖片索引無效" });
+      if (
+        product.lightslider_images &&
+        Array.isArray(product.lightslider_images)
+      ) {
+        if (deleteAll) {
+          // 刪除所有 LightSlider 圖片
+          product.lightslider_images.forEach((imagePath) => {
+            const fullPath = path.join(__dirname, "../..", imagePath);
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath);
             }
+          });
+          // 清空資料庫中的 LightSlider 圖片路徑
+          await run(
+            "UPDATE products SET lightslider_images = NULL WHERE product_id = ?",
+            [id]
+          );
+        } else if (imageIndex !== null && imageIndex !== undefined) {
+          // 刪除指定索引的圖片
+          if (
+            imageIndex >= 0 &&
+            imageIndex < product.lightslider_images.length
+          ) {
+            const imagePath = product.lightslider_images[imageIndex];
+            const fullPath = path.join(__dirname, "../..", imagePath);
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath);
+            }
+
+            // 從陣列中移除該圖片
+            product.lightslider_images.splice(imageIndex, 1);
+
+            // 更新資料庫
+            await run(
+              "UPDATE products SET lightslider_images = ? WHERE product_id = ?",
+              [product.lightslider_images, id]
+            );
+          } else {
+            return res.status(400).json({ error: "圖片索引無效" });
           }
-        } catch (e) {
-          console.error("解析 LightSlider 圖片路徑失敗:", e);
-          return res.status(500).json({ error: "處理圖片路徑失敗" });
         }
       }
     } else if (imageType === "sketchfab_background") {
       if (product.sketchfab_background) {
-        const bgPath = path.join(__dirname, "../..", product.sketchfab_background);
+        const bgPath = path.join(
+          __dirname,
+          "../..",
+          product.sketchfab_background
+        );
         if (fs.existsSync(bgPath)) {
           fs.unlinkSync(bgPath);
         }
@@ -618,7 +623,11 @@ router.delete("/:id/images", express.json(), async (req, res) => {
       }
     } else if (imageType === "product_introduction") {
       if (product.product_introduction) {
-        const introPath = path.join(__dirname, "../..", product.product_introduction);
+        const introPath = path.join(
+          __dirname,
+          "../..",
+          product.product_introduction
+        );
         if (fs.existsSync(introPath)) {
           fs.unlinkSync(introPath);
         }
