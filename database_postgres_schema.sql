@@ -65,4 +65,14 @@ CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON orders(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
 
+-- 插入範例商品資料
+INSERT INTO products (product_id, name, price, deposit, max_quantity, status, description, main_colors, sub_colors, image_path) 
+VALUES 
+('product-Soft', 'Soft 軟筋娃娃', 1200, 300, 3, 'available', '經典軟筋娃娃，柔軟可愛', '["white", "pink", "blue"]', '["red", "green", "yellow"]', '/images/gallery/soft-card.png'),
+('product-Softtwice', 'Soft Twice 限定版', 1500, 400, 2, 'available', '限定版軟筋娃娃', '["black", "white"]', '["gold", "silver"]', '/images/gallery/sofman-card.png'),
+('product-Softzilla', '軟吉拉', 2200, 500, 2, 'available', '大型軟筋怪獸', '["green", "blue", "black"]', '["yellow", "orange", "red"]', '/images/gallery/softzilla-card.png'),
+('product-SoftzillaOD', '監修中 | 戶外風軟吉拉', 2500, 300, 3, 'available', '戶外風格軟吉拉', '["brown", "green"]', '["orange", "blue", "black"]', '/images/gallery/softzilla-camp.png'),
+('product-Remain', '剩餘商品特價', 800, 200, 5, 'available', '剩餘庫存特價商品', '["mixed"]', '["various"]', '/images/gallery/bigcard.svg')
+ON CONFLICT (product_id) DO NOTHING;
+
 -- 注意：觸發器函數已移除，updated_at 欄位將在應用程式層面更新
