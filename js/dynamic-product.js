@@ -382,6 +382,9 @@ class DynamicProductLoader {
       document.getElementById("totalPrice").textContent = "0";
       document.getElementById("totalDeposit").textContent = "0";
     }
+
+    // 更新按鈕狀態
+    this.updateButtonStatus();
   }
 
   // 更新按鈕狀態
@@ -389,7 +392,11 @@ class DynamicProductLoader {
     const addToCartBtn = document.querySelector(".add-to-cart-btn");
     const checkoutBtn = document.querySelector(".checkout button");
 
-    if (this.productData.preorder_button_status === "sold_out") {
+    // 檢查是否已售完
+    if (
+      this.productData.preorder_button_status === "sold_out" ||
+      this.productData.max_quantity === 0
+    ) {
       if (addToCartBtn) {
         addToCartBtn.textContent = "已售完";
         addToCartBtn.disabled = true;
@@ -400,6 +407,28 @@ class DynamicProductLoader {
         checkoutBtn.textContent = "已售完";
         checkoutBtn.disabled = true;
         checkoutBtn.style.opacity = "0.5";
+      }
+      return;
+    }
+
+    // 檢查顏色選擇
+    const mainColor = document.getElementById("mainColor").value;
+    const subColor = document.getElementById("subColor").value;
+    const quantity = parseInt(document.getElementById("quantity").value) || 0;
+
+    if (!mainColor || !subColor || !quantity) {
+      if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.textContent = "請選擇款式";
+        checkoutBtn.classList.add("disabled");
+        checkoutBtn.style.opacity = "0.5";
+      }
+    } else {
+      if (checkoutBtn) {
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = "前往預購";
+        checkoutBtn.classList.remove("disabled");
+        checkoutBtn.style.opacity = "1";
       }
     }
   }
@@ -493,10 +522,53 @@ class DynamicProductLoader {
 
     document.body.appendChild(errorElement);
   }
+
+  // 動態產品頁面的前往預購功能
+  goToCheckout() {
+    const mainColor = document.getElementById("mainColor").value;
+    const subColor = document.getElementById("subColor").value;
+    const quantity = parseInt(document.getElementById("quantity").value) || 0;
+
+    // 驗證是否已選擇所有必要選項
+    if (!mainColor || !subColor || !quantity) {
+      alert("請完成所有選擇！");
+      return;
+    }
+
+    // 確保商品還有庫存
+    if (
+      this.productData.preorder_button_status === "sold_out" ||
+      this.productData.max_quantity === 0
+    ) {
+      alert("很抱歉，此商品已售完！");
+      return;
+    }
+
+    // 儲存完整的商品資訊到 localStorage
+    const selection = {
+      productId: this.productData.product_id,
+      productName: this.productData.name,
+      mainColor,
+      mainColorName: COLOR_NAMES[mainColor] || mainColor,
+      subColor,
+      subColorName: COLOR_NAMES[subColor] || subColor,
+      quantity,
+      unitPrice: this.productData.price,
+      unitDeposit: this.productData.deposit,
+      totalPrice: this.productData.price * quantity,
+      totalDeposit: this.productData.deposit * quantity,
+      timestamp: new Date().toISOString(),
+    };
+
+    localStorage.setItem("checkoutItems", JSON.stringify([selection]));
+
+    // 導向到結帳頁面
+    window.location.href = "checkout.html";
+  }
 }
 
 // 當 DOM 載入完成後初始化
 document.addEventListener("DOMContentLoaded", () => {
-  const productLoader = new DynamicProductLoader();
-  productLoader.init();
+  window.dynamicProductLoader = new DynamicProductLoader();
+  window.dynamicProductLoader.init();
 });

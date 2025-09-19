@@ -429,6 +429,21 @@ function updateSelection() {
 
 // 前往結帳頁面
 async function goToCheckout() {
+  // 如果是動態頁面，使用動態載入器的 goToCheckout 方法
+  if (window.location.pathname.includes("product.html")) {
+    // 檢查是否有動態載入器實例
+    if (
+      window.dynamicProductLoader &&
+      typeof window.dynamicProductLoader.goToCheckout === "function"
+    ) {
+      window.dynamicProductLoader.goToCheckout();
+      return;
+    } else {
+      alert("商品資料載入中，請稍後再試！");
+      return;
+    }
+  }
+
   // 確保商品配置已載入
   if (Object.keys(PRODUCTS_CONFIG).length === 0) {
     await loadProductsConfig();

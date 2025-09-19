@@ -59,7 +59,7 @@ router.post(
 
       const orderResult = await run(
         `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount, 
-             status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+             status, notes, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           customerInfo.name,
           customerInfo.phone,
@@ -69,6 +69,7 @@ router.post(
           depositAmount,
           "pending",
           note,
+          orderNumber,
         ]
       );
 
@@ -86,13 +87,15 @@ router.post(
         [orderResult.lastID]
       );
 
-      // PostgreSQL 使用 JSONB 欄位，訂單明細已包含在 order.order_items 中
+      // 解析訂單明細
+      const orderItems = JSON.parse(order.order_items || "[]");
 
       res.status(201).json({
         success: true,
         message: "訂單建立成功",
         order: {
           ...order,
+          order_number: orderNumber,
           items: orderItems,
         },
       });
@@ -280,11 +283,8 @@ router.delete("/batch/all", express.json(), async (req, res) => {
 
     console.log("⚠️ 執行批量刪除所有訂單...");
 
-    // 先刪除所有訂單明細
-    // PostgreSQL 使用 JSONB 欄位，不需要刪除 order_items 表格
-    console.log(`🗑️ 刪除了 ${deleteItemsResult.changes} 筆訂單明細`);
-
-    // 再刪除所有訂單
+    // PostgreSQL 使用 JSONB 欄位，訂單明細已包含在 orders 表中
+    // 直接刪除所有訂單即可
     const deleteOrdersResult = await run("DELETE FROM orders");
     console.log(`🗑️ 刪除了 ${deleteOrdersResult.changes} 筆訂單`);
 
@@ -292,7 +292,7 @@ router.delete("/batch/all", express.json(), async (req, res) => {
       success: true,
       message: "所有訂單及相關明細已清空",
       deletedOrders: deleteOrdersResult.changes,
-      deletedItems: deleteItemsResult.changes,
+      deletedItems: 0, // PostgreSQL 使用 JSONB，沒有獨立的 order_items 表
     });
   } catch (error) {
     console.error("批量刪除訂單失敗:", error);
@@ -399,11 +399,8 @@ router.delete("/:id", async (req, res) => {
 
     console.log(`📋 找到訂單: ${order.order_number}`);
 
-    // 先刪除訂單明細
-    // PostgreSQL 使用 JSONB 欄位，不需要刪除 order_items 表格
-    console.log(`🗑️ 刪除了 ${deleteItemsResult.changes} 筆訂單明細`);
-
-    // 再刪除訂單主表
+    // PostgreSQL 使用 JSONB 欄位，訂單明細已包含在 orders 表中
+    // 直接刪除訂單即可
     const deleteOrderResult = await run("DELETE FROM orders WHERE id = ?", [
       id,
     ]);
@@ -417,7 +414,7 @@ router.delete("/:id", async (req, res) => {
       success: true,
       message: `訂單 ${order.order_number} 及相關明細已成功刪除`,
       deletedOrder: order.order_number,
-      deletedItems: deleteItemsResult.changes,
+      deletedItems: 0, // PostgreSQL 使用 JSONB，沒有獨立的 order_items 表
     });
   } catch (error) {
     console.error("刪除訂單失敗:", error);

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sortBtn = document.getElementById("sortBtn");
   const sortIcon = sortBtn.querySelector(".sort-icon");
   const searchInput = document.getElementById("search");
-  let isAscending = true;
+  let isAscending = false;
   let productData = [];
 
   function mapStatusClass(cellOpenStatus) {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function updateSortButton() {
-    sortIcon.classList.toggle("descending", !isAscending);
+    sortIcon.classList.toggle("descending", isAscending);
     sortBtn.classList.toggle("active");
   }
 
@@ -75,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 排序（依建立時間）
     filtered.sort((a, b) => {
       return isAscending
-        ? a.createdAt - b.createdAt
-        : b.createdAt - a.createdAt;
+        ? a.createdAt - b.createdAt // 升序：舊商品在前
+        : b.createdAt - a.createdAt; // 降序：新商品在前
     });
 
     renderProducts(filtered);

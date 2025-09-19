@@ -79,6 +79,49 @@ async function run(text, params = []) {
 // 初始化資料庫表格
 async function initDatabase() {
   try {
+    console.log("🔄 檢查資料庫是否需要初始化...");
+
+    // 檢查資料庫是否已經初始化
+    try {
+      const result = await query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'products'
+        ) as products_exists,
+        EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'orders'
+        ) as orders_exists
+      `);
+
+      const { products_exists, orders_exists } = result.rows[0];
+
+      if (products_exists && orders_exists) {
+        console.log("✅ 資料庫表格已存在，跳過初始化");
+
+        // 只運行遷移腳本
+        try {
+          console.log("🔄 檢查並運行資料庫遷移...");
+          const {
+            addOrderNumberColumn,
+          } = require("./migrate-add-order-number");
+          await addOrderNumberColumn();
+          console.log("✅ 資料庫遷移完成");
+        } catch (migrationError) {
+          console.warn(
+            "⚠️ 資料庫遷移失敗，但繼續運行:",
+            migrationError.message
+          );
+        }
+
+        return true;
+      }
+    } catch (error) {
+      console.log("📋 資料庫檢查失敗，繼續初始化:", error.message);
+    }
+
     console.log("🔄 開始初始化 PostgreSQL 資料庫表格...");
 
     // 讀取並執行 SQL schema
@@ -112,6 +155,17 @@ async function initDatabase() {
     }
 
     console.log("✅ PostgreSQL 資料庫表格初始化完成");
+
+    // 自動運行遷移腳本
+    try {
+      console.log("🔄 檢查並運行資料庫遷移...");
+      const { addOrderNumberColumn } = require("./migrate-add-order-number");
+      await addOrderNumberColumn();
+      console.log("✅ 資料庫遷移完成");
+    } catch (migrationError) {
+      console.warn("⚠️ 資料庫遷移失敗，但繼續運行:", migrationError.message);
+    }
+
     return true;
   } catch (error) {
     console.error("❌ PostgreSQL 資料庫初始化失敗:", error.message);

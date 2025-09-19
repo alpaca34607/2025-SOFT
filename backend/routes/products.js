@@ -538,7 +538,7 @@ router.delete("/:id/images", express.json(), async (req, res) => {
 
     // 檢查商品是否存在
     const product = await get(
-      "SELECT thumbnail_path, lightslider_images FROM products WHERE product_id = ?",
+      "SELECT thumbnail_path, lightslider_images, sketchfab_background, product_introduction, preorder_notes FROM products WHERE product_id = ?",
       [id]
     );
     if (!product) {
@@ -599,7 +599,7 @@ router.delete("/:id/images", express.json(), async (req, res) => {
             // 更新資料庫
             await run(
               "UPDATE products SET lightslider_images = ? WHERE product_id = ?",
-              [product.lightslider_images, id]
+              [JSON.stringify(product.lightslider_images), id]
             );
           } else {
             return res.status(400).json({ error: "圖片索引無效" });

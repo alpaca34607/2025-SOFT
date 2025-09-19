@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "init-db": "node -e \"require('./database-adapter').setupDatabase().then(()=>console.log('DB ready')).catch(console.error)\"",
     "migrate-add-columns": "node migrate-add-product-columns.js",
+    "migrate-add-order-number": "node migrate-add-order-number.js",
     "migrate-schema": "node -e \"const fs=require('fs');const path=require('path');const {db}=require('./database');const schema=fs.readFileSync(path.join(__dirname,'../database_schema.sql'),'utf8');db.exec(schema,(e)=>{if(e){console.error(e);process.exit(1)}else{console.log('schema applied');process.exit(0)}})\"",
     "migrate-images": "node migrate-existing-images.js",
     "build": "npm install",

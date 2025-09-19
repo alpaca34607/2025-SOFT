@@ -1,239 +1,252 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>軟軟時報</title>
-    <link rel="icon" href="./favicon.ico">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css">
-</head>
+    <link rel="icon" href="./favicon.ico" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
 
-<body>
+  <body>
     <main id="whats-new">
-        <header id="topbar">
-            <!-- logo區 -->
-            <h1 class="logo">
-                <a href="./index.html">
-                    <img src="./images/home/Logo.svg" alt="軟筋生物LOGO" title="軟筋生物LOGO">
+      <header id="topbar">
+        <!-- logo區 -->
+        <h1 class="logo">
+          <a href="./index.html">
+            <img
+              src="./images/home/Logo.svg"
+              alt="軟筋生物LOGO"
+              title="軟筋生物LOGO"
+            />
+          </a>
+        </h1>
+
+        <div class="navbar">
+          <a class="shop-icon" href="./Get-Soft.html"
+            ><img src="./images/home/shop-icon.svg" alt="shop-icon"
+          /></a>
+          <a
+            target="”_blank”"
+            class="ig-icon"
+            href="https://www.instagram.com/soft.ig/"
+            ><img src="./images/home/ig-icon.svg" alt="ig-icon"
+          /></a>
+          <button class="hamburger">
+            <span class="bar bar1"></span>
+            <span class="bar bar2"></span>
+            <span class="bar bar3"></span>
+          </button>
+          <!-- 導覽列 -->
+          <nav class="navigation">
+            <!-- 主選單 -->
+            <ul class="menu">
+              <li>
+                <a href="./index.html#about-soft-intro">
+                  <img src="./images/home/menu1.svg" alt="關於軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>關於軟筋</p>
+                    <span>About Soft</span>
+                  </div>
                 </a>
-            </h1>
-
-            <div class="navbar">
-                <a class="shop-icon" href="./Get-Soft.html"><img src="./images/home/shop-icon.svg" alt="shop-icon"></a>
-                <a target=”_blank” class="ig-icon" href="https://www.instagram.com/soft.ig/"><img
-                        src="./images/home/ig-icon.svg" alt="ig-icon"></a>
-                <button class="hamburger">
-                    <span class="bar bar1"></span>
-                    <span class="bar bar2"></span>
-                    <span class="bar bar3"></span>
+              </li>
+              <li>
+                <a href="./Learning-Soft.html ">
+                  <img src="./images/home/menu4.svg" alt="理解軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>理解軟筋</p>
+                    <span>learning Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Becoming-Soft.html ">
+                  <img src="./images/home/menu2.svg" alt="成為軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>成為軟筋</p>
+                    <span>Becoming Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Get-Soft.html">
+                  <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>擁有軟筋</p>
+                    <span>Get Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <button id="open-contact">
+                  <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>聯絡軟筋</p>
+                    <span>Contact Soft</span>
+                  </div>
                 </button>
-                <!-- 導覽列 -->
-                <nav class="navigation">
-                    <!-- 主選單 -->
-                    <ul class="menu">
-                        <li><a href="./index.html#about-soft-intro">
-                                <img src="./images/home/menu1.svg" alt="關於軟筋LOGO">
-                                <div class="menu-title">
-                                    <p>關於軟筋</p>
-                                    <span>About Soft</span>
-                                </div>
-                            </a></li>
-                        <li><a href="./Learning-Soft.html ">
-                                <img src="./images/home/menu4.svg" alt="理解軟筋LOGO">
-                                <div class="menu-title">
-                                    <p>理解軟筋</p>
-                                    <span>learning Soft</span>
-                                </div>
-                            </a></li>
-                        <li><a href="./Becoming-Soft.html ">
-                                <img src="./images/home/menu2.svg" alt="成為軟筋LOGO">
-                                <div class="menu-title">
-                                    <p>成為軟筋</p>
-                                    <span>Becoming Soft</span>
-                                </div>
-                            </a></li>
-                        <li><a href="./Get-Soft.html">
-                                <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO">
-                                <div class="menu-title">
-                                    <p>擁有軟筋</p>
-                                    <span>Get Soft</span>
-                                </div>
-                            </a></li>
-                        <li><button id="open-contact">
-                                <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO">
-                                <div class="menu-title">
-                                    <p>聯絡軟筋</p>
-                                    <span>Contact Soft</span>
-                                </div>
-                            </button></li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
-        <!-- 彈窗區 -->
-        <div id="contact-popup" class="popup-container">
-            <div class="popup-content">
-                <button id="close-contact" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-                <h2>聯絡軟筋</h2>
-                <form id="contact-form">
-                    <div class="form-group">
-                        <label for="name">姓名或暱稱 *</label>
-                        <input type="text" id="name" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">信箱 (選填)</label>
-                        <input type="email" id="email">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="subject">聯絡主旨 *</label>
-                        <div class="select-wrapper">
-                            <select id="subject" required style="width: 100%;">
-                                <option class="op" value="">請選擇主旨</option>
-                                <option class="op" value="shopping">購物相關</option>
-                                <option class="op" value="cooperation">合作邀請</option>
-                                <option class="op" value="ip">角色IP</option>
-                                <option class="op" value="other">其他</option>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message">內容 *</label>
-                        <textarea id="message" maxlength="1000" required></textarea>
-                        <div class="char-count"><span id="char-count">0</span>/1000</div>
-                    </div>
-
-                    <button type="submit" class="submit-btn">送出</button>
-                    <p class="note">或是來信 soft-official@gmail.com</p>
-                </form>
-            </div>
+              </li>
+            </ul>
+          </nav>
         </div>
-        <div class="wrapper">
-            <div class="news-area">
-                <div class="news-heading"> <img src="./images/whatsnew/newspage-heading.png" alt="軟軟時報"></div>
-                <div class="news-wrapper">
-                    <div class="news-item">
-                        <button class="news-button">
-                           <h3>2024</h3> 
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="news-content">
-                            <div class="news-content-inner">
-                                <ul>
-                                    <li>2024.12.20 軟軟家族新成員 軟薯人誕生! </li>
-                                    <li>2024.12.06 軟軟家族新成員 軟鵝襪誕生! </li>
-                                    <li>2024.11.05 軟吉拉公仔餘量釋出!趕緊前往預約</li>
-                                    <li>2024.10.22 軟軟家族新成員 多力多軟誕生!</li>
-                                    <li>2024.10.11 軟筋生物參展TTF玩具創作大展</li>
-                                    <li>2024.10.10 搶先看! 戶外風軟吉拉監修中</li>
-                                    <li>2024.11.01 慟!作者扭到腳，軟爛休息中</li>
-                                </ul>
+      </header>
+      <!-- 彈窗區 -->
+      <div id="contact-popup" class="popup-container">
+        <div class="popup-content">
+          <button id="close-contact" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h2>聯絡軟筋</h2>
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="name">姓名或暱稱 *</label>
+              <input type="text" id="name" required />
+            </div>
 
-                                <div class="news-carousel-wrapper">
-                                    <div class="carousel">
-                                        <div class="inner">
-                                            <div class="slide slide-2024 active">
-                                            </div>
-                                            <div class="slide slide-2024 ">
-                                            </div>
-                                            <div class="slide slide-2024 ">
-                                            </div>
-                                        </div>
-                                        <div class="arrow arrow-left"></div>
-                                        <div class="arrow arrow-right"></div>
-                                    </div>
-                                </div>
+            <div class="form-group">
+              <label for="email">信箱 (選填)</label>
+              <input type="email" id="email" />
+            </div>
 
-                            </div>
-                        </div>
+            <div class="form-group">
+              <label for="subject">聯絡主旨 *</label>
+              <div class="select-wrapper">
+                <select id="subject" required style="width: 100%">
+                  <option class="op" value="">請選擇主旨</option>
+                  <option class="op" value="shopping">購物相關</option>
+                  <option class="op" value="cooperation">合作邀請</option>
+                  <option class="op" value="ip">角色IP</option>
+                  <option class="op" value="other">其他</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">內容 *</label>
+              <textarea id="message" maxlength="1000" required></textarea>
+              <div class="char-count"><span id="char-count">0</span>/1000</div>
+            </div>
+
+            <button type="submit" class="submit-btn">送出</button>
+            <p class="note">或是來信 soft-official@gmail.com</p>
+          </form>
+        </div>
+      </div>
+      <div class="wrapper">
+        <div class="news-area">
+          <div class="news-heading">
+            <img src="./images/whatsnew/newspage-heading.png" alt="軟軟時報" />
+          </div>
+          <div class="news-wrapper">
+            <div class="news-item">
+              <button class="news-button">
+                <h3>2024</h3>
+                <span class="icon">+</span>
+              </button>
+              <div class="news-content">
+                <div class="news-content-inner">
+                  <ul>
+                    <li>2024.12.20 軟軟家族新成員 軟薯人誕生!</li>
+                    <li>2024.12.06 軟軟家族新成員 軟鵝襪誕生!</li>
+                    <li>2024.11.05 軟吉拉公仔餘量釋出!趕緊前往預約</li>
+                    <li>2024.10.22 軟軟家族新成員 多力多軟誕生!</li>
+                    <li>2024.10.11 軟筋生物參展TTF玩具創作大展</li>
+                    <li>2024.10.10 搶先看! 戶外風軟吉拉監修中</li>
+                    <li>2024.11.01 慟!作者扭到腳，軟爛休息中</li>
+                  </ul>
+
+                  <div class="news-carousel-wrapper">
+                    <div class="carousel">
+                      <div class="inner">
+                        <div class="slide slide-2024 active"></div>
+                        <div class="slide slide-2024"></div>
+                        <div class="slide slide-2024"></div>
+                      </div>
+                      <div class="arrow arrow-left"></div>
+                      <div class="arrow arrow-right"></div>
                     </div>
-                    <div class="news-item">
-                        <button class="news-button">
-                            <h3>2023</h3>
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="news-content">
-                            <div class="news-content-inner">
-                                <ul>
-                                    <li>2023.10.28 萬聖節軟吉拉來討糖囉~ 到IG看看吧! </li>
-                                    <li>2023.10.23 吸血鬼軟古拉伯爵出沒~ 到IG看看吧! </li>
-                                    <li>2023.10.15 天氣轉涼~軟筋提醒大家睡覺蓋好被被 </li>
-                                    <li>2023.10.10 軟吉拉公仔再版! TTF限時販售 </li>
-                                    <li>2023.7.06 軟軟家族新成員 軟泥馬誕生! </li>
-                                    <li>2023.2.14 情人節快樂! 沒有伴就讓軟筋牽你 </li>
-                                    <li>2023.5.25 軟吉拉公仔確定加印 趕緊前往預約!</li>
-                                    <li>2023.1.21 都已經除夕了 軟兔表示不想值班</li>
-                                </ul>
-
-                                <div class="news-carousel-wrapper">
-                                    <div class="carousel">
-                                        <div class="inner">
-                                          
-                                            <div class="slide slide-2023 active">
-                                            </div>
-                                            <div class="slide slide-2023 ">
-                                            </div>
-                                            <div class="slide slide-2023 ">
-                                            </div>
-                                            <div class="slide slide-2023 ">
-                                            </div>
-                                            <div class="slide slide-2023 ">
-                                            </div>
-                                        </div>
-                                        <div class="arrow arrow-left"></div>
-                                        <div class="arrow arrow-right"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="news-item">
-                        <button class="news-button">
-                            <h3>2022</h3> 
-                            <span class="icon">+</span>
-                        </button>
-                        <div class="news-content">
-                            <div class="news-content-inner">
-                                <ul>
-                                    <li>2022.12.25 最近一直被靜電電到手 聖誕快樂 </li>
-                                    <li>2022.12.21 預祝大家在溫馨氛圍中渡過愉快聖誕 </li>
-                                </ul>
-
-                                <div class="news-carousel-wrapper">
-                                    <div class="carousel">
-                                        <div class="inner">
-                                            <div class="slide slide-2022 active">
-                                            </div>
-                                            <div class="slide slide-2022 ">
-                                            </div>
-                                        </div>
-                                        <div class="arrow arrow-left"></div>
-                                        <div class="arrow arrow-right"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                 <div class="bottom"></div>
+                  </div>
                 </div>
+              </div>
             </div>
+            <div class="news-item">
+              <button class="news-button">
+                <h3>2023</h3>
+                <span class="icon">+</span>
+              </button>
+              <div class="news-content">
+                <div class="news-content-inner">
+                  <ul>
+                    <li>2023.10.28 萬聖節軟吉拉來討糖囉~ 到IG看看吧!</li>
+                    <li>2023.10.23 吸血鬼軟古拉伯爵出沒~ 到IG看看吧!</li>
+                    <li>2023.10.15 天氣轉涼~軟筋提醒大家睡覺蓋好被被</li>
+                    <li>2023.10.10 軟吉拉公仔再版! TTF限時販售</li>
+                    <li>2023.7.06 軟軟家族新成員 軟泥馬誕生!</li>
+                    <li>2023.2.14 情人節快樂! 沒有伴就讓軟筋牽你</li>
+                    <li>2023.5.25 軟吉拉公仔確定加印 趕緊前往預約!</li>
+                    <li>2023.1.21 都已經除夕了 軟兔表示不想值班</li>
+                  </ul>
+
+                  <div class="news-carousel-wrapper">
+                    <div class="carousel">
+                      <div class="inner">
+                        <div class="slide slide-2023 active"></div>
+                        <div class="slide slide-2023"></div>
+                        <div class="slide slide-2023"></div>
+                        <div class="slide slide-2023"></div>
+                        <div class="slide slide-2023"></div>
+                      </div>
+                      <div class="arrow arrow-left"></div>
+                      <div class="arrow arrow-right"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="news-item">
+              <button class="news-button">
+                <h3>2022</h3>
+                <span class="icon">+</span>
+              </button>
+              <div class="news-content">
+                <div class="news-content-inner">
+                  <ul>
+                    <li>2022.12.25 最近一直被靜電電到手 聖誕快樂</li>
+                    <li>2022.12.21 預祝大家在溫馨氛圍中渡過愉快聖誕</li>
+                  </ul>
+
+                  <div class="news-carousel-wrapper">
+                    <div class="carousel">
+                      <div class="inner">
+                        <div class="slide slide-2022 active"></div>
+                        <div class="slide slide-2022"></div>
+                      </div>
+                      <div class="arrow arrow-left"></div>
+                      <div class="arrow arrow-right"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottom"></div>
+          </div>
         </div>
+      </div>
     </main>
-    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="./js/carousel.js"></script>
-  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js'></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="./js/carousel.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
     <script src="./js/whatsnew.js"></script>
     <script src="./js/contactsoft.js"></script>
     <script src="./js/script.js"></script>
-</body>
-
+  </body>
 </html>
