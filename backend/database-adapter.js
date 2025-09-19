@@ -16,9 +16,23 @@ console.log("  - NODE_ENV:", process.env.NODE_ENV);
 console.log("  - 使用 PostgreSQL:", usePostgres);
 
 let dbModule;
+let usePostgresFinal = usePostgres;
+
 if (usePostgres) {
   console.log("📦 載入 PostgreSQL 模組...");
-  dbModule = require("./database-postgres");
+  try {
+    dbModule = require("./database-postgres");
+    // 測試 PostgreSQL 連接是否可用
+    if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
+      console.log("⚠️  PostgreSQL 環境變數未設置，回退到 SQLite");
+      dbModule = require("./database");
+      usePostgresFinal = false;
+    }
+  } catch (error) {
+    console.log("⚠️  PostgreSQL 模組載入失敗，回退到 SQLite:", error.message);
+    dbModule = require("./database");
+    usePostgresFinal = false;
+  }
 } else {
   console.log("📦 載入 SQLite 模組...");
   dbModule = require("./database");
@@ -31,7 +45,7 @@ async function query(sql, params = []) {
     throw new Error("資料庫連接未初始化");
   }
 
-  if (usePostgres) {
+  if (usePostgresFinal) {
     // PostgreSQL 使用 $1, $2, $3... 格式
     const pgSql = convertSQLiteToPostgreSQL(sql);
     const result = await dbModule.query(pgSql, params);
@@ -121,7 +135,7 @@ async function setupDatabase() {
 
 // 獲取原始資料庫實例（用於特殊操作）
 function getDatabase() {
-  if (usePostgres) {
+  if (usePostgresFinal) {
     return dbModule.pool();
   } else {
     return dbModule.getDatabase ? dbModule.getDatabase() : null;
@@ -134,5 +148,5 @@ module.exports = {
   run,
   setupDatabase,
   getDatabase,
-  usePostgres,
+  usePostgres: usePostgresFinal,
 };
