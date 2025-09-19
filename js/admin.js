@@ -135,11 +135,11 @@ function updateDashboardStats(orders, customers) {
     (order) => order.status === "pending"
   ).length;
   const totalRevenue = orders.reduce(
-    (sum, order) => sum + order.total_amount,
+    (sum, order) => sum + parseFloat(order.total_amount || 0),
     0
   );
   const totalDepositRevenue = orders.reduce(
-    (sum, order) => sum + order.deposit_amount,
+    (sum, order) => sum + parseFloat(order.deposit_amount || 0),
     0
   );
   const totalCustomers = customers.length;

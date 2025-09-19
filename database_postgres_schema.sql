@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS orders (
     deposit_amount DECIMAL(10,2) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     notes TEXT,
+    payment_method VARCHAR(50),
+    pickup_method VARCHAR(100),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

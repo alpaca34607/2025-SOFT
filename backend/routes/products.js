@@ -6,6 +6,62 @@ const { query, get, run } = require("../database-adapter");
 
 const router = express.Router();
 
+// 獲取基礎URL的函數
+function getBaseUrl() {
+  return (
+    process.env.PUBLIC_API_URL ||
+    process.env.API_BASE_URL ||
+    `http://localhost:${process.env.PORT || 3000}`
+  );
+}
+
+// 將相對路徑轉換為完整URL的函數
+function convertToFullUrl(path) {
+  if (!path) return null;
+  if (path.startsWith("http")) return path; // 已經是完整URL
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${path}`;
+}
+
+// 處理產品圖片路徑的函數
+function processProductImages(product) {
+  if (!product) return product;
+
+  // 處理各種圖片路徑
+  if (product.thumbnail_path) {
+    product.thumbnail_path = convertToFullUrl(product.thumbnail_path);
+  }
+
+  if (product.sketchfab_background) {
+    product.sketchfab_background = convertToFullUrl(
+      product.sketchfab_background
+    );
+  }
+
+  if (product.product_introduction) {
+    product.product_introduction = convertToFullUrl(
+      product.product_introduction
+    );
+  }
+
+  if (product.preorder_notes) {
+    product.preorder_notes = convertToFullUrl(product.preorder_notes);
+  }
+
+  if (product.image_path) {
+    product.image_path = convertToFullUrl(product.image_path);
+  }
+
+  // 處理 lightsider_images 數組
+  if (product.lightslider_images && Array.isArray(product.lightslider_images)) {
+    product.lightslider_images = product.lightslider_images.map((img) =>
+      convertToFullUrl(img)
+    );
+  }
+
+  return product;
+}
+
 // 設定圖片上傳
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -70,8 +126,12 @@ router.get("/", async (req, res) => {
     const products = productResult.rows || [];
 
     // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // 處理圖片路徑，轉換為完整URL
+    const processedProducts = products.map((product) =>
+      processProductImages(product)
+    );
 
-    res.json({ products });
+    res.json({ products: processedProducts });
   } catch (error) {
     console.error("取得商品失敗:", error);
     res.status(500).json({ error: "取得商品失敗", message: error.message });
@@ -91,8 +151,10 @@ router.get("/:id", async (req, res) => {
     }
 
     // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // 處理圖片路徑，轉換為完整URL
+    const processedProduct = processProductImages(product);
 
-    res.json({ product });
+    res.json({ product: processedProduct });
   } catch (error) {
     console.error("取得商品失敗:", error);
     res.status(500).json({ error: "取得商品失敗", message: error.message });
@@ -448,7 +510,10 @@ router.put(
         [id]
       );
 
-      res.json({ success: true, product: updatedProduct });
+      // 處理圖片路徑，轉換為完整URL
+      const processedProduct = processProductImages(updatedProduct);
+
+      res.json({ success: true, product: processedProduct });
     } catch (error) {
       console.error("更新商品失敗:", error);
       res.status(500).json({ error: "更新商品失敗", message: error.message });

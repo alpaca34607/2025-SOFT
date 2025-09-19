@@ -108,6 +108,12 @@ async function initDatabase() {
             addOrderNumberColumn,
           } = require("./migrate-add-order-number");
           await addOrderNumberColumn();
+
+          const {
+            addPaymentPickupColumns,
+          } = require("./migrate-add-payment-pickup");
+          await addPaymentPickupColumns();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(
@@ -161,6 +167,12 @@ async function initDatabase() {
       console.log("🔄 檢查並運行資料庫遷移...");
       const { addOrderNumberColumn } = require("./migrate-add-order-number");
       await addOrderNumberColumn();
+
+      const {
+        addPaymentPickupColumns,
+      } = require("./migrate-add-payment-pickup");
+      await addPaymentPickupColumns();
+
       console.log("✅ 資料庫遷移完成");
     } catch (migrationError) {
       console.warn("⚠️ 資料庫遷移失敗，但繼續運行:", migrationError.message);

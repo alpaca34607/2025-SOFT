@@ -55,6 +55,11 @@ router.post("/debug/migrate", async (req, res) => {
     const { addOrderNumberColumn } = require("../migrate-add-order-number");
     await addOrderNumberColumn();
 
+    const {
+      addPaymentPickupColumns,
+    } = require("../migrate-add-payment-pickup");
+    await addPaymentPickupColumns();
+
     res.json({
       success: true,
       message: "資料庫遷移完成",
@@ -117,7 +122,7 @@ router.post(
 
       const orderResult = await run(
         `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount, 
-             status, notes, order_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           customerInfo.name,
           customerInfo.phone,
@@ -128,6 +133,8 @@ router.post(
           "pending",
           note,
           orderNumber,
+          paymentMethod,
+          pickupMethod,
         ]
       );
 
