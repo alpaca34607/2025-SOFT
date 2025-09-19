@@ -12,6 +12,64 @@ router.use((req, res, next) => {
   next();
 });
 
+// 檢查資料庫schema的端點（用於調試）
+router.get("/debug/schema", async (req, res) => {
+  try {
+    const { query } = require("../database-adapter");
+
+    // 檢查 orders 表的結構
+    const tableInfo = await query(`
+      SELECT column_name, data_type, is_nullable, column_default
+      FROM information_schema.columns 
+      WHERE table_name = 'orders' 
+      ORDER BY ordinal_position
+    `);
+
+    // 檢查是否有 order_number 欄位
+    const orderNumberExists = await query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.columns 
+        WHERE table_name = 'orders' AND column_name = 'order_number'
+      ) as exists
+    `);
+
+    res.json({
+      success: true,
+      table_structure: tableInfo.rows,
+      order_number_exists: orderNumberExists.rows[0].exists,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("檢查schema失敗:", error);
+    res.status(500).json({
+      error: "檢查schema失敗",
+      message: error.message,
+    });
+  }
+});
+
+// 手動運行遷移的端點（用於調試）
+router.post("/debug/migrate", async (req, res) => {
+  try {
+    console.log("🔄 手動運行資料庫遷移...");
+    const { addOrderNumberColumn } = require("../migrate-add-order-number");
+    await addOrderNumberColumn();
+
+    res.json({
+      success: true,
+      message: "資料庫遷移完成",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("手動遷移失敗:", error);
+    res.status(500).json({
+      error: "手動遷移失敗",
+      message: error.message,
+      stack: error.stack,
+    });
+  }
+});
+
 // 建立新訂單
 router.post(
   "/",
@@ -101,7 +159,20 @@ router.post(
       });
     } catch (error) {
       console.error("建立訂單失敗:", error);
-      res.status(500).json({ error: "建立訂單失敗", message: error.message });
+      console.error("錯誤堆疊:", error.stack);
+      console.error("請求資料:", {
+        customerInfo,
+        items: items?.length,
+        pickupMethod,
+        paymentMethod,
+        note,
+      });
+      res.status(500).json({
+        error: "建立訂單失敗",
+        message: error.message,
+        details:
+          process.env.NODE_ENV === "development" ? error.stack : undefined,
+      });
     }
   }
 );
