@@ -93,8 +93,8 @@ async function initDatabase() {
       schema = await createPostgreSQLSchema();
     }
 
-    // 分割 SQL 語句並執行（處理美元引號）
-    const statements = splitSQLStatements(schema);
+    // 分割 SQL 語句並執行
+    const statements = schema.split(";").filter((stmt) => stmt.trim());
 
     for (const statement of statements) {
       if (statement.trim()) {
@@ -117,81 +117,6 @@ async function initDatabase() {
     console.error("❌ PostgreSQL 資料庫初始化失敗:", error.message);
     throw error;
   }
-}
-
-// 分割 SQL 語句（處理美元引號）
-function splitSQLStatements(sql) {
-  const statements = [];
-  let currentStatement = "";
-  let inDollarQuote = false;
-  let dollarTag = "";
-  let i = 0;
-
-  while (i < sql.length) {
-    const char = sql[i];
-
-    if (!inDollarQuote) {
-      if (char === "$") {
-        // 檢查是否開始美元引號
-        let tag = "$";
-        let j = i + 1;
-        while (j < sql.length && sql[j] !== "$") {
-          tag += sql[j];
-          j++;
-        }
-        if (j < sql.length) {
-          tag += "$";
-          dollarTag = tag;
-          inDollarQuote = true;
-          currentStatement += tag;
-          i = j;
-        } else {
-          currentStatement += char;
-        }
-      } else if (char === ";") {
-        // 語句結束
-        if (currentStatement.trim()) {
-          statements.push(currentStatement.trim());
-        }
-        currentStatement = "";
-      } else {
-        currentStatement += char;
-      }
-    } else {
-      // 在美元引號內
-      currentStatement += char;
-      if (char === "$") {
-        // 檢查是否結束美元引號
-        let tag = "$";
-        let j = i + 1;
-        while (j < sql.length && sql[j] !== "$") {
-          tag += sql[j];
-          j++;
-        }
-        if (j < sql.length) {
-          tag += "$";
-          if (tag === dollarTag) {
-            inDollarQuote = false;
-            dollarTag = "";
-            currentStatement += tag;
-            i = j;
-          } else {
-            currentStatement += char;
-          }
-        } else {
-          currentStatement += char;
-        }
-      }
-    }
-    i++;
-  }
-
-  // 添加最後一個語句
-  if (currentStatement.trim()) {
-    statements.push(currentStatement.trim());
-  }
-
-  return statements;
 }
 
 // 創建 PostgreSQL schema (備用方案)
@@ -261,23 +186,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON orders(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
 
--- 建立觸發器自動更新 updated_at
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $func$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$func$ language plpgsql;
-
-CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_customers_updated_at BEFORE UPDATE ON customers
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- 注意：觸發器函數已移除，updated_at 欄位將在應用程式層面更新
 `;
 }
 
