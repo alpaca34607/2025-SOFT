@@ -156,75 +156,149 @@ class API {
     return this.request(`/api/products/${productId}`);
   }
 
-  static async createProduct(productData) {
-    const formData = new FormData();
-
-    // 添加基本資料
-    Object.keys(productData).forEach((key) => {
-      // 多圖上傳處理
-      if (key === "lightslider_images" && Array.isArray(productData[key])) {
-        productData[key].forEach((file) => {
-          if (file instanceof File) {
-            formData.append("lightslider_images", file);
-          }
-        });
-        return;
-      }
-      if (
-        (key === "thumbnail" ||
-          key === "lightslider_images" ||
-          key === "sketchfab_background" ||
-          key === "product_introduction" ||
-          key === "preorder_notes") &&
-        productData[key] instanceof File
-      ) {
-        formData.append(key, productData[key]);
-      } else if (key === "main_colors" || key === "sub_colors") {
-        formData.append(key, JSON.stringify(productData[key]));
-      } else {
-        formData.append(key, productData[key]);
-      }
+  // 將文件轉換為Base64
+  static async fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
+  }
+
+  // 上傳圖片並獲取Base64 URL
+  static async uploadImageToBase64(file) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${this.baseUrl}/api/products/upload-base64`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`圖片上傳失敗: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.imageUrl;
+  }
+
+  static async createProduct(productData) {
+    const processedData = { ...productData };
+
+    // 處理圖片文件，轉換為Base64
+    const imageFields = [
+      "thumbnail",
+      "sketchfab_background",
+      "product_introduction",
+      "preorder_notes",
+    ];
+
+    for (const field of imageFields) {
+      if (productData[field] instanceof File) {
+        try {
+          processedData[field] = await this.uploadImageToBase64(
+            productData[field]
+          );
+        } catch (error) {
+          console.error(`上傳${field}圖片失敗:`, error);
+          throw new Error(`上傳${field}圖片失敗: ${error.message}`);
+        }
+      }
+    }
+
+    // 處理多圖上傳 (lightslider_images)
+    if (
+      productData.lightslider_images &&
+      Array.isArray(productData.lightslider_images)
+    ) {
+      processedData.lightslider_images = [];
+      for (const file of productData.lightslider_images) {
+        if (file instanceof File) {
+          try {
+            const base64Url = await this.uploadImageToBase64(file);
+            processedData.lightslider_images.push(base64Url);
+          } catch (error) {
+            console.error("上傳LightSlider圖片失敗:", error);
+            throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
+          }
+        }
+      }
+    }
+
+    // 轉換為JSON格式發送
+    const jsonData = {
+      ...processedData,
+      main_colors: processedData.main_colors,
+      sub_colors: processedData.sub_colors,
+    };
 
     return this.request("/api/products", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
     });
   }
 
   static async updateProduct(productId, productData) {
-    const formData = new FormData();
+    const processedData = { ...productData };
 
-    // 添加基本資料
-    Object.keys(productData).forEach((key) => {
-      // 多圖上傳處理
-      if (key === "lightslider_images" && Array.isArray(productData[key])) {
-        productData[key].forEach((file) => {
-          if (file instanceof File) {
-            formData.append("lightslider_images", file);
+    // 處理圖片文件，轉換為Base64
+    const imageFields = [
+      "thumbnail",
+      "sketchfab_background",
+      "product_introduction",
+      "preorder_notes",
+    ];
+
+    for (const field of imageFields) {
+      if (productData[field] instanceof File) {
+        try {
+          processedData[field] = await this.uploadImageToBase64(
+            productData[field]
+          );
+        } catch (error) {
+          console.error(`上傳${field}圖片失敗:`, error);
+          throw new Error(`上傳${field}圖片失敗: ${error.message}`);
+        }
+      }
+    }
+
+    // 處理多圖上傳 (lightslider_images)
+    if (
+      productData.lightslider_images &&
+      Array.isArray(productData.lightslider_images)
+    ) {
+      processedData.lightslider_images = [];
+      for (const file of productData.lightslider_images) {
+        if (file instanceof File) {
+          try {
+            const base64Url = await this.uploadImageToBase64(file);
+            processedData.lightslider_images.push(base64Url);
+          } catch (error) {
+            console.error("上傳LightSlider圖片失敗:", error);
+            throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
           }
-        });
-        return;
+        }
       }
-      if (
-        (key === "thumbnail" ||
-          key === "lightslider_images" ||
-          key === "sketchfab_background" ||
-          key === "product_introduction" ||
-          key === "preorder_notes") &&
-        productData[key] instanceof File
-      ) {
-        formData.append(key, productData[key]);
-      } else if (key === "main_colors" || key === "sub_colors") {
-        formData.append(key, JSON.stringify(productData[key]));
-      } else {
-        formData.append(key, productData[key]);
-      }
-    });
+    }
+
+    // 轉換為JSON格式發送
+    const jsonData = {
+      ...processedData,
+      main_colors: processedData.main_colors,
+      sub_colors: processedData.sub_colors,
+    };
 
     return this.request(`/api/products/${productId}`, {
       method: "PUT",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
     });
   }
 

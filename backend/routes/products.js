@@ -19,8 +19,22 @@ function getBaseUrl() {
 function convertToFullUrl(path) {
   if (!path) return null;
   if (path.startsWith("http")) return path; // 已經是完整URL
+
+  // 檢查是否為base64數據URL
+  if (path.startsWith("data:image/")) return path;
+
   const baseUrl = getBaseUrl();
   return `${baseUrl}${path}`;
+}
+
+// 檢查圖片文件是否存在
+function checkImageExists(imagePath) {
+  if (!imagePath) return false;
+  if (imagePath.startsWith("data:image/")) return true; // base64圖片總是存在
+  if (imagePath.startsWith("http")) return true; // 外部URL假設存在
+
+  const fullPath = path.join(__dirname, "../..", imagePath);
+  return fs.existsSync(fullPath);
 }
 
 // 處理產品圖片路徑的函數
@@ -65,7 +79,9 @@ function processProductImages(product) {
 // 設定圖片上傳
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../../images/products");
+    // 在部署環境中使用環境變數指定的路徑，否則使用默認路徑
+    const uploadDir =
+      process.env.UPLOAD_DIR || path.join(__dirname, "../../images/products");
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -82,6 +98,26 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 限制
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("只允許上傳圖片檔案"));
+    }
+  },
+});
+
+// 內存存儲（用於base64轉換）
+const memoryStorage = multer.memoryStorage();
+const uploadMemory = multer({
+  storage: memoryStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 限制
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -115,6 +151,89 @@ const uploadMultiple = multer({
       cb(new Error("只允許上傳圖片檔案"));
     }
   },
+});
+
+// 上傳圖片並轉換為base64存儲
+router.post(
+  "/upload-base64",
+  uploadMemory.single("image"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "沒有上傳圖片" });
+      }
+
+      // 轉換為base64
+      const base64String = req.file.buffer.toString("base64");
+      const mimeType = req.file.mimetype;
+      const dataUrl = `data:${mimeType};base64,${base64String}`;
+
+      res.json({
+        success: true,
+        message: "圖片上傳成功",
+        imageUrl: dataUrl,
+        originalName: req.file.originalname,
+        size: req.file.size,
+      });
+    } catch (error) {
+      console.error("圖片上傳失敗:", error);
+      res.status(500).json({ error: "圖片上傳失敗", message: error.message });
+    }
+  }
+);
+
+// 檢查圖片文件是否存在（調試用）
+router.get("/debug/check-images/:productId", async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await get("SELECT * FROM products WHERE product_id = ?", [
+      productId,
+    ]);
+
+    if (!product) {
+      return res.status(404).json({ error: "商品不存在" });
+    }
+
+    const imageStatus = {
+      thumbnail_path: {
+        path: product.thumbnail_path,
+        exists: checkImageExists(product.thumbnail_path),
+        fullUrl: convertToFullUrl(product.thumbnail_path),
+      },
+      sketchfab_background: {
+        path: product.sketchfab_background,
+        exists: checkImageExists(product.sketchfab_background),
+        fullUrl: convertToFullUrl(product.sketchfab_background),
+      },
+      product_introduction: {
+        path: product.product_introduction,
+        exists: checkImageExists(product.product_introduction),
+        fullUrl: convertToFullUrl(product.product_introduction),
+      },
+      preorder_notes: {
+        path: product.preorder_notes,
+        exists: checkImageExists(product.preorder_notes),
+        fullUrl: convertToFullUrl(product.preorder_notes),
+      },
+      lightslider_images: product.lightslider_images
+        ? product.lightslider_images.map((img) => ({
+            path: img,
+            exists: checkImageExists(img),
+            fullUrl: convertToFullUrl(img),
+          }))
+        : [],
+    };
+
+    res.json({
+      success: true,
+      productId,
+      imageStatus,
+      baseUrl: getBaseUrl(),
+    });
+  } catch (error) {
+    console.error("檢查圖片失敗:", error);
+    res.status(500).json({ error: "檢查圖片失敗", message: error.message });
+  }
 });
 
 // 取得所有商品
@@ -164,13 +283,7 @@ router.get("/:id", async (req, res) => {
 // 新增商品
 router.post(
   "/",
-  upload.fields([
-    { name: "thumbnail", maxCount: 1 },
-    { name: "lightslider_images", maxCount: 10 },
-    { name: "sketchfab_background", maxCount: 1 },
-    { name: "product_introduction", maxCount: 3 },
-    { name: "preorder_notes", maxCount: 1 },
-  ]),
+  express.json(), // 支持JSON格式
   async (req, res) => {
     try {
       const {
@@ -211,46 +324,12 @@ router.post(
         return res.status(400).json({ error: "商品 ID 已存在" });
       }
 
-      // 處理圖片路徑
-      let thumbnailPath = null;
-      let lightsliderImages = [];
-      let sketchfabBackgroundPath = null;
-      let productIntroductionPath = null;
-      let preorderNotesPath = null;
-
-      if (req.files && req.files.thumbnail && req.files.thumbnail[0]) {
-        thumbnailPath = `/images/products/${req.files.thumbnail[0].filename}`;
-      }
-
-      if (req.files && req.files.lightslider_images) {
-        lightsliderImages = req.files.lightslider_images.map(
-          (file) => `/images/products/${file.filename}`
-        );
-      }
-
-      if (
-        req.files &&
-        req.files.sketchfab_background &&
-        req.files.sketchfab_background[0]
-      ) {
-        sketchfabBackgroundPath = `/images/products/${req.files.sketchfab_background[0].filename}`;
-      }
-
-      if (
-        req.files &&
-        req.files.product_introduction &&
-        req.files.product_introduction[0]
-      ) {
-        productIntroductionPath = `/images/products/${req.files.product_introduction[0].filename}`;
-      }
-
-      if (
-        req.files &&
-        req.files.preorder_notes &&
-        req.files.preorder_notes[0]
-      ) {
-        preorderNotesPath = `/images/products/${req.files.preorder_notes[0].filename}`;
-      }
+      // 處理圖片路徑 (支持Base64和文件路徑)
+      let thumbnailPath = thumbnail || null;
+      let lightsliderImages = lightslider_images || [];
+      let sketchfabBackgroundPath = sketchfab_background || null;
+      let productIntroductionPath = product_introduction || null;
+      let preorderNotesPath = preorder_notes || null;
 
       // 處理顏色配置
       const mainColorsJson = main_colors || "[]";
@@ -304,13 +383,7 @@ router.post(
 // 更新商品
 router.put(
   "/:id",
-  upload.fields([
-    { name: "thumbnail", maxCount: 1 },
-    { name: "lightslider_images", maxCount: 10 },
-    { name: "sketchfab_background", maxCount: 1 },
-    { name: "product_introduction", maxCount: 1 },
-    { name: "preorder_notes", maxCount: 1 },
-  ]),
+  express.json(), // 支持JSON格式
   async (req, res) => {
     try {
       const { id } = req.params;
@@ -342,104 +415,27 @@ router.put(
         return res.status(404).json({ error: "商品不存在" });
       }
 
-      // 處理圖片路徑
-      let thumbnailPath = existingProduct.thumbnail_path;
-      let lightsliderImages = existingProduct.lightslider_images || [];
+      // 處理圖片路徑 (支持Base64和文件路徑)
+      let thumbnailPath =
+        thumbnail !== undefined ? thumbnail : existingProduct.thumbnail_path;
+      let lightsliderImages =
+        lightslider_images !== undefined
+          ? lightslider_images
+          : existingProduct.lightslider_images || [];
       let sketchfabBackgroundPath =
-        existingProduct.sketchfab_background || null;
+        sketchfab_background !== undefined
+          ? sketchfab_background
+          : existingProduct.sketchfab_background || null;
       let productIntroductionPath =
-        existingProduct.product_introduction || null;
-      let preorderNotesPath = existingProduct.preorder_notes || null;
+        product_introduction !== undefined
+          ? product_introduction
+          : existingProduct.product_introduction || null;
+      let preorderNotesPath =
+        preorder_notes !== undefined
+          ? preorder_notes
+          : existingProduct.preorder_notes || null;
 
-      if (req.files && req.files.thumbnail && req.files.thumbnail[0]) {
-        // 刪除舊縮圖
-        if (existingProduct.thumbnail_path) {
-          const oldThumbnailPath = path.join(
-            __dirname,
-            "../..",
-            existingProduct.thumbnail_path
-          );
-          if (fs.existsSync(oldThumbnailPath)) {
-            fs.unlinkSync(oldThumbnailPath);
-          }
-        }
-        thumbnailPath = `/images/products/${req.files.thumbnail[0].filename}`;
-      }
-
-      if (req.files && req.files.lightslider_images) {
-        // 刪除舊的 LightSlider 圖片
-        if (
-          existingProduct.lightslider_images &&
-          Array.isArray(existingProduct.lightslider_images)
-        ) {
-          existingProduct.lightslider_images.forEach((imagePath) => {
-            const fullPath = path.join(__dirname, "../..", imagePath);
-            if (fs.existsSync(fullPath)) {
-              fs.unlinkSync(fullPath);
-            }
-          });
-        }
-        lightsliderImages = req.files.lightslider_images.map(
-          (file) => `/images/products/${file.filename}`
-        );
-      }
-
-      // 替換 sketchfab 背景
-      if (
-        req.files &&
-        req.files.sketchfab_background &&
-        req.files.sketchfab_background[0]
-      ) {
-        if (existingProduct.sketchfab_background) {
-          const oldBgPath = path.join(
-            __dirname,
-            "../..",
-            existingProduct.sketchfab_background
-          );
-          if (fs.existsSync(oldBgPath)) {
-            fs.unlinkSync(oldBgPath);
-          }
-        }
-        sketchfabBackgroundPath = `/images/products/${req.files.sketchfab_background[0].filename}`;
-      }
-
-      // 替換 商品介紹 圖片
-      if (
-        req.files &&
-        req.files.product_introduction &&
-        req.files.product_introduction[0]
-      ) {
-        if (existingProduct.product_introduction) {
-          const oldIntroPath = path.join(
-            __dirname,
-            "../..",
-            existingProduct.product_introduction
-          );
-          if (fs.existsSync(oldIntroPath)) {
-            fs.unlinkSync(oldIntroPath);
-          }
-        }
-        productIntroductionPath = `/images/products/${req.files.product_introduction[0].filename}`;
-      }
-
-      // 替換 預購注意事項 圖片
-      if (
-        req.files &&
-        req.files.preorder_notes &&
-        req.files.preorder_notes[0]
-      ) {
-        if (existingProduct.preorder_notes) {
-          const oldNotesPath = path.join(
-            __dirname,
-            "../..",
-            existingProduct.preorder_notes
-          );
-          if (fs.existsSync(oldNotesPath)) {
-            fs.unlinkSync(oldNotesPath);
-          }
-        }
-        preorderNotesPath = `/images/products/${req.files.preorder_notes[0].filename}`;
-      }
+      // 注意：Base64圖片不需要文件系統操作，直接使用傳入的值
 
       // 處理顏色配置
       const mainColorsJson = main_colors || existingProduct.main_colors;
