@@ -171,7 +171,7 @@ class API {
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch(`${this.baseUrl}/api/products/upload-base64`, {
+    const response = await fetch(`${this.baseURL}/api/products/upload-base64`, {
       method: "POST",
       body: formData,
     });
