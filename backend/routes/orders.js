@@ -58,15 +58,16 @@ router.post(
         .toUpperCase()}`;
 
       const orderResult = await run(
-        `INSERT INTO orders (order_number, customer_id, total_amount, deposit_amount, 
-             pickup_method, payment_method, note) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount, 
+             status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          orderNumber,
-          customer.id,
+          customerInfo.name,
+          customerInfo.phone,
+          customerInfo.email,
+          JSON.stringify(items),
           totalAmount,
           depositAmount,
-          pickupMethod,
-          paymentMethod,
+          "pending",
           note,
         ]
       );
@@ -152,10 +153,9 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     const order = await get(
-      `SELECT o.*, c.name as customer_name, c.phone, c.email 
-             FROM orders o 
-             JOIN customers c ON o.customer_id = c.id 
-             WHERE o.id = ?`,
+      `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
+              FROM orders o 
+              WHERE o.id = ?`,
       [id]
     );
 
@@ -223,10 +223,9 @@ router.patch("/:id/status", express.json(), async (req, res) => {
 
     // 取得更新後的訂單資訊
     const updatedOrder = await get(
-      `SELECT o.*, c.name as customer_name, c.phone, c.email 
-             FROM orders o 
-             JOIN customers c ON o.customer_id = c.id 
-             WHERE o.id = ?`,
+      `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
+              FROM orders o 
+              WHERE o.id = ?`,
       [id]
     );
 
@@ -247,11 +246,10 @@ router.get("/search/phone/:phone", async (req, res) => {
     const { phone } = req.params;
 
     const orderResult = await query(
-      `SELECT o.*, c.name as customer_name, c.phone, c.email 
-             FROM orders o 
-             JOIN customers c ON o.customer_id = c.id 
-             WHERE c.phone = ?
-             ORDER BY o.created_at DESC`,
+      `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
+              FROM orders o 
+              WHERE o.customer_phone = ?
+              ORDER BY o.created_at DESC`,
       [phone]
     );
 
@@ -308,10 +306,9 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     const order = await get(
-      `SELECT o.*, c.name as customer_name, c.phone, c.email 
-             FROM orders o 
-             JOIN customers c ON o.customer_id = c.id 
-             WHERE o.id = ?`,
+      `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
+              FROM orders o 
+              WHERE o.id = ?`,
       [id]
     );
 
