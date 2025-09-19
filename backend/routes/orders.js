@@ -145,8 +145,13 @@ router.post(
         [orderResult.lastID]
       );
 
-      // 解析訂單明細
-      const orderItems = JSON.parse(order.order_items || "[]");
+      // 解析訂單明細 (PostgreSQL JSONB 可能已經是對象)
+      let orderItems;
+      if (typeof order.order_items === "string") {
+        orderItems = JSON.parse(order.order_items || "[]");
+      } else {
+        orderItems = order.order_items || [];
+      }
 
       res.status(201).json({
         success: true,
@@ -161,11 +166,11 @@ router.post(
       console.error("建立訂單失敗:", error);
       console.error("錯誤堆疊:", error.stack);
       console.error("請求資料:", {
-        customerInfo,
-        items: items?.length,
-        pickupMethod,
-        paymentMethod,
-        note,
+        customerInfo: req.body?.customerInfo,
+        items: req.body?.items?.length,
+        pickupMethod: req.body?.pickupMethod,
+        paymentMethod: req.body?.paymentMethod,
+        note: req.body?.note,
       });
       res.status(500).json({
         error: "建立訂單失敗",

@@ -1,17 +1,17 @@
-const { run } = require("./database-adapter");
+const { run, query } = require("./database-adapter");
 
 async function addOrderNumberColumn() {
   try {
     console.log("🔄 開始添加 order_number 欄位...");
 
     // 檢查欄位是否已存在
-    const checkColumn = await run(`
+    const checkColumn = await query(`
       SELECT column_name 
       FROM information_schema.columns 
       WHERE table_name = 'orders' AND column_name = 'order_number'
     `);
 
-    if (checkColumn && checkColumn.length > 0) {
+    if (checkColumn && checkColumn.rows && checkColumn.rows.length > 0) {
       console.log("✅ order_number 欄位已存在");
       return;
     }
