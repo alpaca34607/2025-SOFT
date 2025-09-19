@@ -93,12 +93,21 @@ async function initDatabase() {
       schema = await createPostgreSQLSchema();
     }
 
-    // 分割 SQL 語句並執行
-    const statements = schema.split(";").filter((stmt) => stmt.trim());
+    // 分割 SQL 語句並執行（處理美元引號）
+    const statements = splitSQLStatements(schema);
 
     for (const statement of statements) {
       if (statement.trim()) {
-        await query(statement.trim());
+        try {
+          await query(statement.trim());
+        } catch (error) {
+          console.error(
+            "❌ SQL 語句執行失敗:",
+            statement.substring(0, 100) + "..."
+          );
+          console.error("錯誤詳情:", error.message);
+          throw error;
+        }
       }
     }
 
@@ -108,6 +117,81 @@ async function initDatabase() {
     console.error("❌ PostgreSQL 資料庫初始化失敗:", error.message);
     throw error;
   }
+}
+
+// 分割 SQL 語句（處理美元引號）
+function splitSQLStatements(sql) {
+  const statements = [];
+  let currentStatement = "";
+  let inDollarQuote = false;
+  let dollarTag = "";
+  let i = 0;
+
+  while (i < sql.length) {
+    const char = sql[i];
+
+    if (!inDollarQuote) {
+      if (char === "$") {
+        // 檢查是否開始美元引號
+        let tag = "$";
+        let j = i + 1;
+        while (j < sql.length && sql[j] !== "$") {
+          tag += sql[j];
+          j++;
+        }
+        if (j < sql.length) {
+          tag += "$";
+          dollarTag = tag;
+          inDollarQuote = true;
+          currentStatement += tag;
+          i = j;
+        } else {
+          currentStatement += char;
+        }
+      } else if (char === ";") {
+        // 語句結束
+        if (currentStatement.trim()) {
+          statements.push(currentStatement.trim());
+        }
+        currentStatement = "";
+      } else {
+        currentStatement += char;
+      }
+    } else {
+      // 在美元引號內
+      currentStatement += char;
+      if (char === "$") {
+        // 檢查是否結束美元引號
+        let tag = "$";
+        let j = i + 1;
+        while (j < sql.length && sql[j] !== "$") {
+          tag += sql[j];
+          j++;
+        }
+        if (j < sql.length) {
+          tag += "$";
+          if (tag === dollarTag) {
+            inDollarQuote = false;
+            dollarTag = "";
+            currentStatement += tag;
+            i = j;
+          } else {
+            currentStatement += char;
+          }
+        } else {
+          currentStatement += char;
+        }
+      }
+    }
+    i++;
+  }
+
+  // 添加最後一個語句
+  if (currentStatement.trim()) {
+    statements.push(currentStatement.trim());
+  }
+
+  return statements;
 }
 
 // 創建 PostgreSQL schema (備用方案)
