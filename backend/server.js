@@ -146,7 +146,7 @@ app.use((req, res) => {
 async function initializeDatabase() {
   try {
     await setupDatabase();
-    console.log("✅ 成功連接到 SQLite 資料庫");
+    console.log("✅ 成功連接到資料庫");
     console.log("🔄 初始化資料庫...");
     console.log("✅ 資料庫表格初始化完成");
   } catch (error) {
