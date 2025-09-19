@@ -3,6 +3,8 @@
 const usePostgres =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
+  process.env.PGDATABASE ||
+  process.env.RAILWAY_DATABASE_URL ||
   process.env.NODE_ENV === "production" ||
   process.env.NODE_ENV === "staging" ||
   process.env.RAILWAY_ENVIRONMENT;
@@ -12,7 +14,20 @@ console.log(
   "  - DATABASE_URL:",
   process.env.DATABASE_URL ? "已設置" : "未設置"
 );
+console.log(
+  "  - POSTGRES_URL:",
+  process.env.POSTGRES_URL ? "已設置" : "未設置"
+);
+console.log("  - PGDATABASE:", process.env.PGDATABASE ? "已設置" : "未設置");
+console.log(
+  "  - RAILWAY_DATABASE_URL:",
+  process.env.RAILWAY_DATABASE_URL ? "已設置" : "未設置"
+);
 console.log("  - NODE_ENV:", process.env.NODE_ENV);
+console.log(
+  "  - RAILWAY_ENVIRONMENT:",
+  process.env.RAILWAY_ENVIRONMENT || "未設置"
+);
 console.log("  - 使用 PostgreSQL:", usePostgres);
 
 let dbModule;
@@ -23,7 +38,12 @@ if (usePostgres) {
   try {
     dbModule = require("./database-postgres");
     // 測試 PostgreSQL 連接是否可用
-    if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) {
+    if (
+      !process.env.DATABASE_URL &&
+      !process.env.POSTGRES_URL &&
+      !process.env.PGDATABASE &&
+      !process.env.RAILWAY_DATABASE_URL
+    ) {
       console.log("⚠️  PostgreSQL 環境變數未設置，回退到 SQLite");
       dbModule = require("./database");
       usePostgresFinal = false;
