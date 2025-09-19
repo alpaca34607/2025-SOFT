@@ -179,8 +179,12 @@ function updateRecentOrders(orders) {
                 }">${getStatusText(order.status)}</span>
             </div>
             <div class="order-details">
-                <p><strong>總金額: NT$ ${order.total_amount.toLocaleString()}</strong></p>
-                <p>訂金: NT$ ${order.deposit_amount.toLocaleString()}</p>
+                <p><strong>總金額: NT$ ${parseFloat(
+                  order.total_amount || 0
+                ).toLocaleString()}</strong></p>
+                <p>訂金: NT$ ${parseFloat(
+                  order.deposit_amount || 0
+                ).toLocaleString()}</p>
                 <p>取貨方式: ${getPickupMethodText(order.pickup_method)}</p>
                 <p>付款方式: ${getPaymentMethodText(order.payment_method)}</p>
             </div>
@@ -261,8 +265,12 @@ function displayOrders(orders) {
                 </div>
             </div>
             <div class="order-details">
-                <p><strong>總金額: NT$ ${order.total_amount.toLocaleString()}</strong></p>
-                <p>訂金: NT$ ${order.deposit_amount.toLocaleString()}</p>
+                <p><strong>總金額: NT$ ${parseFloat(
+                  order.total_amount || 0
+                ).toLocaleString()}</strong></p>
+                <p>訂金: NT$ ${parseFloat(
+                  order.deposit_amount || 0
+                ).toLocaleString()}</p>
                 <p>取貨方式: ${getPickupMethodText(order.pickup_method)}</p>
                 <p>付款方式: ${getPaymentMethodText(order.payment_method)}</p>
                 ${order.note ? `<p>備註: ${order.note}</p>` : ""}

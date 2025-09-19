@@ -373,8 +373,8 @@ class DynamicProductLoader {
     const quantity = parseInt(document.getElementById("quantity").value) || 0;
 
     if (mainColor && subColor && quantity) {
-      const totalPrice = this.productData.price * quantity;
-      const totalDeposit = this.productData.deposit * quantity;
+      const totalPrice = parseFloat(this.productData.price || 0) * quantity;
+      const totalDeposit = parseFloat(this.productData.deposit || 0) * quantity;
 
       document.getElementById("totalPrice").textContent = totalPrice;
       document.getElementById("totalDeposit").textContent = totalDeposit;
@@ -555,8 +555,8 @@ class DynamicProductLoader {
       quantity,
       unitPrice: this.productData.price,
       unitDeposit: this.productData.deposit,
-      totalPrice: this.productData.price * quantity,
-      totalDeposit: this.productData.deposit * quantity,
+      totalPrice: parseFloat(this.productData.price || 0) * quantity,
+      totalDeposit: parseFloat(this.productData.deposit || 0) * quantity,
       timestamp: new Date().toISOString(),
     };
 

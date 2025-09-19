@@ -400,8 +400,8 @@ function updateSelection() {
   const quantity = parseInt(document.getElementById("quantity").value) || 0;
 
   // 計算金額
-  const totalPrice = productConfig.price * quantity;
-  const totalDeposit = productConfig.deposit * quantity;
+  const totalPrice = parseFloat(productConfig.price || 0) * quantity;
+  const totalDeposit = parseFloat(productConfig.deposit || 0) * quantity;
 
   // 更新顯示
   document.getElementById("unitPrice").textContent = productConfig.price;
@@ -483,8 +483,8 @@ async function goToCheckout() {
     quantity,
     unitPrice: productConfig.price,
     unitDeposit: productConfig.deposit,
-    totalPrice: productConfig.price * quantity,
-    totalDeposit: productConfig.deposit * quantity,
+    totalPrice: parseFloat(productConfig.price || 0) * quantity,
+    totalDeposit: parseFloat(productConfig.deposit || 0) * quantity,
     timestamp: new Date().toISOString(),
   };
 
@@ -610,8 +610,8 @@ async function addToCart() {
     quantity,
     unitPrice: productConfig.price,
     unitDeposit: productConfig.deposit,
-    totalPrice: productConfig.price * quantity,
-    totalDeposit: productConfig.deposit * quantity,
+    totalPrice: parseFloat(productConfig.price || 0) * quantity,
+    totalDeposit: parseFloat(productConfig.deposit || 0) * quantity,
   };
 
   // 取得現有購物車項目

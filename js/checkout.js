@@ -59,11 +59,11 @@ function updateOrderSummary() {
 
   // 計算總金額和總訂金
   const totalAmount = checkoutItems.reduce(
-    (sum, item) => sum + item.totalPrice,
+    (sum, item) => sum + parseFloat(item.totalPrice || 0),
     0
   );
   const totalDeposit = checkoutItems.reduce(
-    (sum, item) => sum + item.totalDeposit,
+    (sum, item) => sum + parseFloat(item.totalDeposit || 0),
     0
   );
 
@@ -233,9 +233,12 @@ function submitToLocalStorage(formData) {
       paymentMethod: formData.get("paymentMethod"),
       note: formData.get("note"),
     },
-    totalAmount: checkoutItems.reduce((sum, item) => sum + item.totalPrice, 0),
+    totalAmount: checkoutItems.reduce(
+      (sum, item) => sum + parseFloat(item.totalPrice || 0),
+      0
+    ),
     depositAmount: checkoutItems.reduce(
-      (sum, item) => sum + item.totalDeposit,
+      (sum, item) => sum + parseFloat(item.totalDeposit || 0),
       0
     ),
   };

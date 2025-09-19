@@ -197,8 +197,8 @@ function updateCartDisplay() {
 
   cartItemsContainer.innerHTML = cartItems
     .map((item, index) => {
-      totalPrice += item.totalPrice;
-      totalDeposit += item.totalDeposit;
+      totalPrice += parseFloat(item.totalPrice || 0);
+      totalDeposit += parseFloat(item.totalDeposit || 0);
       return `
             <div class="cart-item">
                 <div class="item-info">
