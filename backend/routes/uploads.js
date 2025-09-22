@@ -1,5 +1,6 @@
 const express = require("express");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const crypto = require("crypto");
 
@@ -65,3 +66,33 @@ router.post("/presign", express.json(), async (req, res) => {
 });
 
 module.exports = router;
+
+// 刪除 S3 物件
+router.post("/delete", express.json(), async (req, res) => {
+  try {
+    const { key, url } = req.body || {};
+    let objectKey = key;
+    if (!objectKey && url) {
+      // 將 S3 URL 轉為 key
+      try {
+        const u = new URL(url);
+        objectKey = decodeURIComponent(u.pathname.replace(/^\//, ""));
+      } catch (e) {}
+    }
+    if (!objectKey) {
+      return res.status(400).json({ error: "缺少 key 或 url" });
+    }
+
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.S3_BUCKET,
+        Key: objectKey,
+      })
+    );
+
+    res.json({ success: true, key: objectKey });
+  } catch (error) {
+    console.error("刪除 S3 物件失敗:", error);
+    res.status(500).json({ error: "刪除 S3 物件失敗", message: error.message });
+  }
+});

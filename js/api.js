@@ -108,6 +108,44 @@ class API {
     }
   }
 
+  // 取得預簽名 URL（後端會回 uploadUrl/publicUrl）
+  static async getPresignedUrl(file, folder = "images/products") {
+    const payload = {
+      fileName: file.name,
+      contentType: file.type || "application/octet-stream",
+      folder,
+    };
+    return this.request("/api/uploads/presign", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // 直傳到 S3（PUT 預簽名 URL）
+  static async uploadToS3(uploadUrl, file) {
+    const resp = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(`S3 上傳失敗: ${resp.status} ${resp.statusText} ${text}`);
+    }
+    return true;
+  }
+
+  // 刪除 S3 物件：接受 key 或 URL
+  static async deleteS3Object(keyOrUrl) {
+    const payload = {};
+    if (keyOrUrl.startsWith("http")) payload.url = keyOrUrl;
+    else payload.key = keyOrUrl;
+    return this.request("/api/uploads/delete", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
   // 健康檢查
   static async checkHealth() {
     try {
@@ -187,7 +225,7 @@ class API {
   static async createProduct(productData) {
     const processedData = { ...productData };
 
-    // 處理圖片文件，轉換為Base64
+    // 改為：S3 預簽名直傳，回貼 publicUrl
     const imageFields = [
       "thumbnail_path",
       "sketchfab_background",
@@ -197,32 +235,42 @@ class API {
 
     for (const field of imageFields) {
       if (productData[field] instanceof File) {
+        const file = productData[field];
         try {
-          processedData[field] = await this.uploadImageToBase64(
-            productData[field]
+          const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+            file,
+            "images/products"
           );
+          await this.uploadToS3(uploadUrl, file);
+          processedData[field] = publicUrl;
         } catch (error) {
-          console.error(`上傳${field}圖片失敗:`, error);
+          console.error(`S3 上傳 ${field} 失敗:`, error);
           throw new Error(`上傳${field}圖片失敗: ${error.message}`);
         }
       }
     }
 
-    // 處理多圖上傳 (lightslider_images)
+    // 多圖
     if (
       productData.lightslider_images &&
       Array.isArray(productData.lightslider_images)
     ) {
       processedData.lightslider_images = [];
-      for (const file of productData.lightslider_images) {
-        if (file instanceof File) {
+      for (const item of productData.lightslider_images) {
+        if (item instanceof File) {
           try {
-            const base64Url = await this.uploadImageToBase64(file);
-            processedData.lightslider_images.push(base64Url);
+            const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+              item,
+              "images/products"
+            );
+            await this.uploadToS3(uploadUrl, item);
+            processedData.lightslider_images.push(publicUrl);
           } catch (error) {
-            console.error("上傳LightSlider圖片失敗:", error);
+            console.error("S3 上傳 LightSlider 圖片失敗:", error);
             throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
           }
+        } else {
+          processedData.lightslider_images.push(item);
         }
       }
     }
@@ -246,7 +294,6 @@ class API {
   static async updateProduct(productId, productData) {
     const processedData = { ...productData };
 
-    // 處理圖片文件，轉換為Base64
     const imageFields = [
       "thumbnail_path",
       "sketchfab_background",
@@ -256,32 +303,41 @@ class API {
 
     for (const field of imageFields) {
       if (productData[field] instanceof File) {
+        const file = productData[field];
         try {
-          processedData[field] = await this.uploadImageToBase64(
-            productData[field]
+          const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+            file,
+            "images/products"
           );
+          await this.uploadToS3(uploadUrl, file);
+          processedData[field] = publicUrl;
         } catch (error) {
-          console.error(`上傳${field}圖片失敗:`, error);
+          console.error(`S3 上傳 ${field} 失敗:`, error);
           throw new Error(`上傳${field}圖片失敗: ${error.message}`);
         }
       }
     }
 
-    // 處理多圖上傳 (lightslider_images)
     if (
       productData.lightslider_images &&
       Array.isArray(productData.lightslider_images)
     ) {
       processedData.lightslider_images = [];
-      for (const file of productData.lightslider_images) {
-        if (file instanceof File) {
+      for (const item of productData.lightslider_images) {
+        if (item instanceof File) {
           try {
-            const base64Url = await this.uploadImageToBase64(file);
-            processedData.lightslider_images.push(base64Url);
+            const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+              item,
+              "images/products"
+            );
+            await this.uploadToS3(uploadUrl, item);
+            processedData.lightslider_images.push(publicUrl);
           } catch (error) {
-            console.error("上傳LightSlider圖片失敗:", error);
+            console.error("S3 上傳 LightSlider 圖片失敗:", error);
             throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
           }
+        } else {
+          processedData.lightslider_images.push(item);
         }
       }
     }
