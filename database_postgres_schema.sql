@@ -22,11 +22,10 @@ CREATE TABLE IF NOT EXISTS products (
     lightslider_images JSONB,
     sketchfab_embed_link VARCHAR(1000),
     sketchfab_background VARCHAR(500),
-    product_introduction TEXT,
+    product_introduction VARCHAR(500),
     preorder_notes VARCHAR(500),
     main_colors JSONB,
     sub_colors JSONB,
-    image_path VARCHAR(500),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -70,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
 
 -- 插入範例商品資料
-INSERT INTO products (product_id, name, price, deposit, max_quantity, status, product_introduction, main_colors, sub_colors, image_path) 
+INSERT INTO products (product_id, name, price, deposit, max_quantity, status, product_introduction, main_colors, sub_colors, thumbnail_path) 
 VALUES 
 ('product-Soft', 'Soft 軟筋娃娃', 1200, 300, 3, 'available', '經典軟筋娃娃，柔軟可愛', '["white", "pink", "blue"]', '["red", "green", "yellow"]', '/images/gallery/soft-card.png'),
 ('product-Softtwice', 'Soft Twice 限定版', 1500, 400, 2, 'available', '限定版軟筋娃娃', '["black", "white"]', '["gold", "silver"]', '/images/gallery/sofman-card.png'),

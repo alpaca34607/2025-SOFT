@@ -114,6 +114,9 @@ async function initDatabase() {
           } = require("./migrate-add-payment-pickup");
           await addPaymentPickupColumns();
 
+          const { fixImageFields } = require("./migrate-fix-image-fields");
+          await fixImageFields();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(
@@ -172,6 +175,9 @@ async function initDatabase() {
         addPaymentPickupColumns,
       } = require("./migrate-add-payment-pickup");
       await addPaymentPickupColumns();
+
+      const { fixImageFields } = require("./migrate-fix-image-fields");
+      await fixImageFields();
 
       console.log("✅ 資料庫遷移完成");
     } catch (migrationError) {
