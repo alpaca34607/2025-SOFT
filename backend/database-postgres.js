@@ -125,6 +125,11 @@ async function initDatabase() {
           } = require("./migrate-database-health-check");
           await databaseHealthCheck();
 
+          const {
+            fixOrderNumberNullable,
+          } = require("./migrate-fix-order-number-nullable");
+          await fixOrderNumberNullable();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(
@@ -194,6 +199,11 @@ async function initDatabase() {
         databaseHealthCheck,
       } = require("./migrate-database-health-check");
       await databaseHealthCheck();
+
+      const {
+        fixOrderNumberNullable,
+      } = require("./migrate-fix-order-number-nullable");
+      await fixOrderNumberNullable();
 
       console.log("✅ 資料庫遷移完成");
     } catch (migrationError) {

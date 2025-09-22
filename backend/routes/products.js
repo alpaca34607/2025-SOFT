@@ -383,8 +383,8 @@ router.post(
       let preorderNotesPath = preorder_notes || null;
 
       // 處理顏色配置
-      const mainColorsJson = main_colors || "[]";
-      const subColorsJson = sub_colors || "[]";
+      const mainColorsJson = main_colors ? JSON.stringify(main_colors) : "[]";
+      const subColorsJson = sub_colors ? JSON.stringify(sub_colors) : "[]";
       const lightsliderImagesJson = JSON.stringify(lightsliderImages);
 
       const result = await run(
@@ -495,8 +495,12 @@ router.put(
       // 注意：Base64圖片不需要文件系統操作，直接使用傳入的值
 
       // 處理顏色配置
-      const mainColorsJson = main_colors || existingProduct.main_colors;
-      const subColorsJson = sub_colors || existingProduct.sub_colors;
+      const mainColorsJson = main_colors
+        ? JSON.stringify(main_colors)
+        : existingProduct.main_colors;
+      const subColorsJson = sub_colors
+        ? JSON.stringify(sub_colors)
+        : existingProduct.sub_colors;
       const lightsliderImagesJson = JSON.stringify(lightsliderImages);
 
       // 準備更新資料（缺少的欄位沿用原值）
