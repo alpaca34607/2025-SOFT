@@ -60,10 +60,12 @@ app.get("/api/config", (req, res) => {
 const ordersRouter = require("./routes/orders");
 const productsRouter = require("./routes/products");
 const customersRouter = require("./routes/customers");
+const uploadsRouter = require("./routes/uploads");
 
 app.use("/api/orders", ordersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/customers", customersRouter);
+app.use("/api/uploads", uploadsRouter);
 
 // 調試：記錄所有 API 路由
 console.log("📋 已註冊的 API 路由:");
