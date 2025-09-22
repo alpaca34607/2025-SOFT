@@ -286,6 +286,8 @@ router.post(
   express.json(), // 支持JSON格式
   async (req, res) => {
     try {
+      console.log(`🔄 創建商品請求`);
+      console.log(`📋 請求資料:`, JSON.stringify(req.body, null, 2));
       const {
         product_id,
         name,
@@ -304,6 +306,8 @@ router.post(
         preorder_notes,
         main_colors,
         sub_colors,
+        thumbnail,
+        lightslider_images,
       } = req.body;
 
       if (
@@ -387,6 +391,8 @@ router.put(
   async (req, res) => {
     try {
       const { id } = req.params;
+      console.log(`🔄 更新商品請求: ${id}`);
+      console.log(`📋 請求資料:`, JSON.stringify(req.body, null, 2));
       const {
         name,
         price,
@@ -404,6 +410,8 @@ router.put(
         preorder_notes,
         main_colors,
         sub_colors,
+        thumbnail,
+        lightslider_images,
       } = req.body;
 
       // 檢查商品是否存在
@@ -488,9 +496,9 @@ router.put(
           thumbnailPath,
           lightsliderImagesJson,
           updatedSketchfab,
-          sketchfabBackgroundPath || sketchfab_background || null,
-          productIntroductionPath || product_introduction || null,
-          preorderNotesPath || preorder_notes || null,
+          sketchfabBackgroundPath,
+          productIntroductionPath,
+          preorderNotesPath,
           mainColorsJson,
           subColorsJson,
           id,
@@ -512,7 +520,14 @@ router.put(
       res.json({ success: true, product: processedProduct });
     } catch (error) {
       console.error("更新商品失敗:", error);
-      res.status(500).json({ error: "更新商品失敗", message: error.message });
+      console.error("錯誤堆疊:", error.stack);
+      console.error("請求資料:", JSON.stringify(req.body, null, 2));
+      res.status(500).json({
+        error: "更新商品失敗",
+        message: error.message,
+        details:
+          process.env.NODE_ENV === "development" ? error.stack : undefined,
+      });
     }
   }
 );
