@@ -117,6 +117,9 @@ async function initDatabase() {
           const { fixImageFields } = require("./migrate-fix-image-fields");
           await fixImageFields();
 
+          const { fixTriggerIssues } = require("./migrate-fix-trigger");
+          await fixTriggerIssues();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(
@@ -178,6 +181,9 @@ async function initDatabase() {
 
       const { fixImageFields } = require("./migrate-fix-image-fields");
       await fixImageFields();
+
+      const { fixTriggerIssues } = require("./migrate-fix-trigger");
+      await fixTriggerIssues();
 
       console.log("✅ 資料庫遷移完成");
     } catch (migrationError) {
