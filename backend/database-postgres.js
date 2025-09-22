@@ -120,6 +120,11 @@ async function initDatabase() {
           const { fixTriggerIssues } = require("./migrate-fix-trigger");
           await fixTriggerIssues();
 
+          const {
+            databaseHealthCheck,
+          } = require("./migrate-database-health-check");
+          await databaseHealthCheck();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(
@@ -184,6 +189,11 @@ async function initDatabase() {
 
       const { fixTriggerIssues } = require("./migrate-fix-trigger");
       await fixTriggerIssues();
+
+      const {
+        databaseHealthCheck,
+      } = require("./migrate-database-health-check");
+      await databaseHealthCheck();
 
       console.log("✅ 資料庫遷移完成");
     } catch (migrationError) {

@@ -182,6 +182,53 @@ router.post(
   }
 );
 
+// 調試端點 - 數據庫健康檢查
+router.get("/debug/health", async (req, res) => {
+  try {
+    console.log("🔍 執行數據庫健康檢查...");
+
+    // 基本連接測試
+    const connectionTest = await query(
+      "SELECT NOW() as current_time, version() as postgres_version"
+    );
+
+    // 檢查表格
+    const tablesCheck = await query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_type = 'BASE TABLE'
+      ORDER BY table_name
+    `);
+
+    // 檢查products表格
+    const productsCount = await query("SELECT COUNT(*) as count FROM products");
+
+    // 檢查orders表格
+    const ordersCount = await query("SELECT COUNT(*) as count FROM orders");
+
+    res.json({
+      success: true,
+      message: "數據庫健康檢查完成",
+      data: {
+        connection: connectionTest.rows[0],
+        tables: tablesCheck.rows.map((row) => row.table_name),
+        productsCount: productsCount.rows[0].count,
+        ordersCount: ordersCount.rows[0].count,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error("❌ 數據庫健康檢查失敗:", error);
+    res.status(500).json({
+      success: false,
+      error: "數據庫健康檢查失敗",
+      message: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+});
+
 // 檢查圖片文件是否存在（調試用）
 router.get("/debug/check-images/:productId", async (req, res) => {
   try {
