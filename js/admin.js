@@ -652,7 +652,7 @@ async function addProduct() {
 
     const thumbnailFile = document.getElementById("productThumbnail").files[0];
     if (thumbnailFile) {
-      formData.thumbnail = thumbnailFile;
+      formData.thumbnail_path = thumbnailFile;
     }
 
     const lightsliderFiles = document.getElementById(
@@ -1044,7 +1044,7 @@ async function updateProduct(productId) {
     const thumbnailFile = document.getElementById("editProductThumbnail")
       .files[0];
     if (thumbnailFile) {
-      formData.thumbnail = thumbnailFile;
+      formData.thumbnail_path = thumbnailFile;
     }
 
     const lightsliderFiles = document.getElementById(

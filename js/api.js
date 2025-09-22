@@ -189,7 +189,7 @@ class API {
 
     // 處理圖片文件，轉換為Base64
     const imageFields = [
-      "thumbnail",
+      "thumbnail_path",
       "sketchfab_background",
       "product_introduction",
       "preorder_notes",
@@ -248,7 +248,7 @@ class API {
 
     // 處理圖片文件，轉換為Base64
     const imageFields = [
-      "thumbnail",
+      "thumbnail_path",
       "sketchfab_background",
       "product_introduction",
       "preorder_notes",

@@ -306,7 +306,7 @@ router.post(
         preorder_notes,
         main_colors,
         sub_colors,
-        thumbnail,
+        thumbnail_path,
         lightslider_images,
       } = req.body;
 
@@ -329,7 +329,7 @@ router.post(
       }
 
       // 處理圖片路徑 (支持Base64和文件路徑)
-      let thumbnailPath = thumbnail || null;
+      let thumbnailPath = thumbnail_path || null;
       let lightsliderImages = lightslider_images || [];
       let sketchfabBackgroundPath = sketchfab_background || null;
       let productIntroductionPath = product_introduction || null;
@@ -410,7 +410,7 @@ router.put(
         preorder_notes,
         main_colors,
         sub_colors,
-        thumbnail,
+        thumbnail_path,
         lightslider_images,
       } = req.body;
 
@@ -425,7 +425,9 @@ router.put(
 
       // 處理圖片路徑 (支持Base64和文件路徑)
       let thumbnailPath =
-        thumbnail !== undefined ? thumbnail : existingProduct.thumbnail_path;
+        thumbnail_path !== undefined
+          ? thumbnail_path
+          : existingProduct.thumbnail_path;
       let lightsliderImages =
         lightslider_images !== undefined
           ? lightslider_images
