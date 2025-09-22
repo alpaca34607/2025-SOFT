@@ -5,12 +5,13 @@ const { run, query } = require("./database-adapter");
  * 1. 將 product_introduction 從 TEXT 改為 VARCHAR(500) (用於存儲圖片路徑)
  * 2. 將 image_path 的數據遷移到 thumbnail_path (統一使用 thumbnail_path)
  * 3. 刪除未使用的 image_path 欄位
+ * 4. 將所有圖片欄位調整為 TEXT 以支援 Base64 Data URL
  */
 async function fixImageFields() {
   try {
     console.log("🔄 開始修復圖片欄位...");
 
-    // 1. 檢查 product_introduction 欄位類型
+    // 1. 檢查 product_introduction 欄位類型（舊專案路徑型使用 VARCHAR(500)）
     const checkIntroColumn = await query(`
       SELECT data_type, character_maximum_length 
       FROM information_schema.columns 
@@ -29,15 +30,14 @@ async function fixImageFields() {
         })`
       );
 
-      if (columnInfo.data_type === "text") {
-        console.log("🔧 將 product_introduction 從 TEXT 改為 VARCHAR(500)...");
+      // 若為 text 則跳過此步（之後統一升級為 TEXT）
+      if (columnInfo.data_type === "character varying") {
+        console.log("🔧 將 product_introduction 從 VARCHAR 調整為 TEXT...");
         await run(`
           ALTER TABLE products 
-          ALTER COLUMN product_introduction TYPE VARCHAR(500)
+          ALTER COLUMN product_introduction TYPE TEXT
         `);
-        console.log("✅ product_introduction 欄位類型已修復");
-      } else {
-        console.log("✅ product_introduction 欄位類型已正確");
+        console.log("✅ product_introduction 欄位類型已設為 TEXT");
       }
     }
 
@@ -80,7 +80,7 @@ async function fixImageFields() {
       console.log("✅ 沒有需要遷移的 image_path 數據");
     }
 
-    // 3. 檢查 image_path 欄位是否還在使用
+    // 3. 檢查 image_path 欄位是否還在使用，若未使用則刪除
     const checkImagePathUsage = await query(`
       SELECT COUNT(*) as count 
       FROM products 
@@ -88,14 +88,39 @@ async function fixImageFields() {
     `);
 
     const usageCount = checkImagePathUsage.rows[0].count;
-    if (usageCount == 0) {
+    if (Number(usageCount) === 0) {
       console.log("🔧 刪除未使用的 image_path 欄位...");
-      await run(`
-        ALTER TABLE products DROP COLUMN image_path
-      `);
-      console.log("✅ image_path 欄位已刪除");
+      try {
+        await run(`
+          ALTER TABLE products DROP COLUMN image_path
+        `);
+        console.log("✅ image_path 欄位已刪除");
+      } catch (err) {
+        console.log("⚠️ 刪除 image_path 欄位失敗或已刪除:", err.message);
+      }
     } else {
       console.log(`⚠️ image_path 欄位仍有 ${usageCount} 個值在使用，保留欄位`);
+    }
+
+    // 4. 將所有圖片相關欄位類型統一調整為 TEXT，以支援 Base64 Data URL
+    const imageColumns = [
+      "thumbnail_path",
+      "sketchfab_background",
+      "product_introduction",
+      "preorder_notes",
+    ];
+
+    for (const col of imageColumns) {
+      try {
+        console.log(`🔧 調整欄位 ${col} 類型為 TEXT...`);
+        await run(`
+          ALTER TABLE products 
+          ALTER COLUMN ${col} TYPE TEXT
+        `);
+        console.log(`✅ 欄位 ${col} 已設為 TEXT`);
+      } catch (error) {
+        console.log(`⚠️ 調整欄位 ${col} 失敗（可能已是 TEXT）:`, error.message);
+      }
     }
 
     console.log("✅ 圖片欄位修復完成");
