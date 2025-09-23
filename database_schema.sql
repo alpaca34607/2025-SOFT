@@ -18,10 +18,25 @@ CREATE TABLE products (
     deposit INTEGER NOT NULL,
     max_quantity INTEGER DEFAULT 3,
     status TEXT CHECK(status IN ('available', 'sold_out', 'discontinued')) DEFAULT 'available',
-    description TEXT,
+    -- 新的狀態欄位
+    preorder_button_status TEXT CHECK(preorder_button_status IN ('select_style', 'sold_out')) DEFAULT 'select_style',
+    cell_open_status TEXT CHECK(cell_open_status IN ('preparing', 'open_for_preorder', 'stopped_selling')) DEFAULT 'preparing',
+    cell_remaining_status TEXT CHECK(cell_remaining_status IN ('still_available', 'sold_out')) DEFAULT 'still_available',
+    -- 商品資訊欄位
+    specifications TEXT, -- 原 description 改為 specifications (規格)
+    pickup_info TEXT, -- 預購取貨時間與地點
+    -- 圖片欄位
+    thumbnail_path VARCHAR(500), -- 商品縮圖
+    lightslider_images TEXT, -- JSON 格式儲存 LightSlider 圖片路徑陣列
+    -- 商品細節欄位
+    sketchfab_embed_link TEXT, -- sketchfab嵌入連結
+    sketchfab_background TEXT, -- sketchfab背景
+    product_introduction TEXT, -- 商品介紹
+    preorder_notes TEXT, -- 預購注意事項
+    -- 原有欄位
     main_colors TEXT, -- JSON 格式儲存主色選項
     sub_colors TEXT, -- JSON 格式儲存副色選項
-    image_path VARCHAR(500), -- 商品圖片路徑
+    image_path VARCHAR(500), -- 商品圖片路徑 (保留原有欄位)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -67,9 +82,9 @@ CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_order_items_order ON order_items(order_id);
 
 -- 插入預設商品資料
-INSERT INTO products (product_id, name, price, deposit, max_quantity, status, description, main_colors, sub_colors) VALUES
+INSERT INTO products (product_id, name, price, deposit, max_quantity, status, specifications, main_colors, sub_colors) VALUES
 ('product-SoftzillaOD', '監修中 | 戶外風軟吉拉', 2500, 300, 3, 'available', '戶外風格的軟吉拉公仔，適合戶外活動攜帶', '["black", "white"]', '["brown", "green"]'),
-('product-Softzilla', '2023出品|軟吉拉公仔', 1500, 300, 3, 'available', '2023年最新出品的軟吉拉公仔，多種顏色可選', '["black", "white"]', '["gold", "silver", "red", "orange", "yellow", "blue", "green"]'),
+('product-Softzilla', '2023出品|軟吉拉公仔', 1500, 300, 3, 'available', '寬5cm*高8cm / 模型光固化樹脂', '["black", "white"]', '["gold", "silver", "red", "orange", "yellow", "blue", "green"]'),
 ('product-Soft', '2019出品 | 軟筋臥佛公仔', 1200, 250, 0, 'sold_out', '2019年出品的經典軟筋臥佛公仔，已售完', '["white"]', '["red", "green", "blue"]'),
 ('product-Softtwice', '2018出品 | 小貓仔黏土偶', 300, 0, 0, 'sold_out', '2018年出品的小貓仔黏土偶，已售完', '["white"]', '["none"]'),
 ('product-Remain', '餘量釋出|軟吉拉公仔', 1000, 150, 3, 'available', '餘量釋出的軟吉拉公仔，價格優惠', '["black", "white"]', '["red", "blue", "green"]'); 

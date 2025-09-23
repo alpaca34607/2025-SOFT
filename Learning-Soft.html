@@ -1,161 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>理解軟筋</title>
-    <link rel="icon" href="./favicon.ico">
-    <link rel="stylesheet" href="./css/style.css">
-</head>
+    <link rel="icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
 
-<body>
+  <body>
     <main id="learning-soft">
-        <header id="topbar">
-            <!-- logo區 -->
-            <h1 class="logo">
-              <a href="./index.html">
-                <img src="./images/home/Logo.svg" alt="軟筋生物LOGO" title="軟筋生物LOGO">
-              </a>
-            </h1>
-      
-            <div class="navbar">
-              <a class="shop-icon" href="./Get-Soft.html"><img src="./images/home/shop-icon.svg" alt="shop-icon"></a>
-              <a target=”_blank” class="ig-icon" href="https://www.instagram.com/soft.ig/"><img src="./images/home/ig-icon.svg"
-                  alt="ig-icon"></a>
-              <button class="hamburger">
-                <span class="bar bar1"></span>
-                <span class="bar bar2"></span>
-                <span class="bar bar3"></span>
-              </button>
-              <!-- 導覽列 -->
-              <nav class="navigation">
-                <!-- 主選單 -->
-                <ul class="menu">
-                  <li><a href="./index.html#about-soft-intro">
-                      <img src="./images/home/menu1.svg" alt="關於軟筋LOGO">
-                      <div class="menu-title">
-                        <p>關於軟筋</p>
-                        <span>About Soft</span>
-                      </div>
-                    </a></li>
-                  <li><a href="./Learning-Soft.html ">
-                      <img src="./images/home/menu4.svg" alt="理解軟筋LOGO">
-                      <div class="menu-title">
-                        <p>理解軟筋</p>
-                        <span>learning Soft</span>
-                      </div>
-                    </a></li>
-                  <li><a href="./Becoming-Soft.html ">
-                      <img src="./images/home/menu2.svg" alt="成為軟筋LOGO">
-                      <div class="menu-title">
-                        <p>成為軟筋</p>
-                        <span>Becoming Soft</span>
-                      </div>
-                    </a></li>
-                  <li><a href="./Get-Soft.html">
-                      <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO">
-                      <div class="menu-title">
-                        <p>擁有軟筋</p>
-                        <span>Get Soft</span>
-                      </div>
-                    </a></li>
-                  <li><button id="open-contact">
-                      <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO">
-                      <div class="menu-title">
-                        <p>聯絡軟筋</p>
-                        <span>Contact Soft</span>
-                      </div>
-                    </button></li>
-                </ul>
-              </nav>
-            </div>
-          </header>
-          <!-- 彈窗區 -->
-          <div id="contact-popup" class="popup-container">
-            <div class="popup-content">
-              <button id="close-contact" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-              <h2>聯絡軟筋</h2>
-              <form id="contact-form">
-                <div class="form-group">
-                  <label for="name">姓名或暱稱 *</label>
-                  <input type="text" id="name" required>
-                </div>
-      
-                <div class="form-group">
-                  <label for="email">信箱 (選填)</label>
-                  <input type="email" id="email">
-                </div>
-      
-                <div class="form-group">
-                  <label for="subject">聯絡主旨 *</label>
-                  <div  class="select-wrapper">
-                    <select id="subject" required style="width: 100%;">
-                      <option class="op" value="">請選擇主旨</option>
-                      <option class="op" value="shopping">購物相關</option>
-                      <option class="op" value="cooperation">合作邀請</option>
-                      <option class="op" value="ip">角色IP</option>
-                      <option class="op" value="other">其他</option>
-                    </select>
+      <header id="topbar">
+        <!-- logo區 -->
+        <h1 class="logo">
+          <a href="./index.html">
+            <img
+              src="./images/home/Logo.svg"
+              alt="軟筋生物LOGO"
+              title="軟筋生物LOGO"
+            />
+          </a>
+        </h1>
+
+        <div class="navbar">
+          <a class="shop-icon" href="./Get-Soft.html"
+            ><img src="./images/home/shop-icon.svg" alt="shop-icon"
+          /></a>
+          <a
+            target="”_blank”"
+            class="ig-icon"
+            href="https://www.instagram.com/soft.ig/"
+            ><img src="./images/home/ig-icon.svg" alt="ig-icon"
+          /></a>
+          <button class="hamburger">
+            <span class="bar bar1"></span>
+            <span class="bar bar2"></span>
+            <span class="bar bar3"></span>
+          </button>
+          <!-- 導覽列 -->
+          <nav class="navigation">
+            <!-- 主選單 -->
+            <ul class="menu">
+              <li>
+                <a href="./index.html#about-soft-intro">
+                  <img src="./images/home/menu1.svg" alt="關於軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>關於軟筋</p>
+                    <span>About Soft</span>
                   </div>
-                  
-                </div>
-      
-                <div class="form-group">
-                  <label for="message">內容 *</label>
-                  <textarea id="message" maxlength="1000" required></textarea>
-                  <div class="char-count"><span id="char-count">0</span>/1000</div>
-                </div>
-      
-                <button type="submit" class="submit-btn">送出</button>
-                <p class="note">或是來信 soft-official@gmail.com</p>
-              </form>
+                </a>
+              </li>
+              <li>
+                <a href="./Learning-Soft.html ">
+                  <img src="./images/home/menu4.svg" alt="理解軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>理解軟筋</p>
+                    <span>learning Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Becoming-Soft.html ">
+                  <img src="./images/home/menu2.svg" alt="成為軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>成為軟筋</p>
+                    <span>Becoming Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a href="./Get-Soft.html">
+                  <img src="./images/home/menu8.svg" alt="擁有軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>擁有軟筋</p>
+                    <span>Get Soft</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <button id="open-contact">
+                  <img src="./images/home/menu6.svg" alt="聯絡軟筋LOGO" />
+                  <div class="menu-title">
+                    <p>聯絡軟筋</p>
+                    <span>Contact Soft</span>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <!-- 彈窗區 -->
+      <div id="contact-popup" class="popup-container">
+        <div class="popup-content">
+          <button id="close-contact" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h2>聯絡軟筋</h2>
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="name">姓名或暱稱 *</label>
+              <input type="text" id="name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">信箱 (選填)</label>
+              <input type="email" id="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="subject">聯絡主旨 *</label>
+              <div class="select-wrapper">
+                <select id="subject" required style="width: 100%">
+                  <option class="op" value="">請選擇主旨</option>
+                  <option class="op" value="shopping">購物相關</option>
+                  <option class="op" value="cooperation">合作邀請</option>
+                  <option class="op" value="ip">角色IP</option>
+                  <option class="op" value="other">其他</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">內容 *</label>
+              <textarea id="message" maxlength="1000" required></textarea>
+              <div class="char-count"><span id="char-count">0</span>/1000</div>
+            </div>
+
+            <button type="submit" class="submit-btn">送出</button>
+            <p class="note">或是來信 soft-official@gmail.com</p>
+          </form>
+        </div>
+      </div>
+      <div class="container">
+        <div class="gallery">
+          <div class="heading-left">
+            <img
+              src="./images/gallery/twins-soft.png"
+              alt=""
+              class="twins-soft"
+            />
+            <img
+              src="./images/gallery/LearnSoft-title.svg"
+              alt=""
+              class="LearnSoft-title"
+            />
+          </div>
+          <div class="cardgrid-wrapper">
+            <div class="card-grid" id="cardGrid"></div>
+            <div class="pagination">
+              <button id="prevPage" disabled>&lt;上一頁</button>
+              <span id="pageInfo">1 / 2</span>
+              <button id="nextPage">下一頁&gt</button>
             </div>
           </div>
-        <div class="container">
-            <div class="gallery">
-                <div class="heading-left">
-                    <img src="./images/gallery/twins-soft.png" alt="" class="twins-soft">
-                    <img src="./images/gallery/LearnSoft-title.svg" alt="" class="LearnSoft-title">
-                </div>
-                <div class="cardgrid-wrapper">
-                    <div class="card-grid" id="cardGrid"></div>
-                    <div class="pagination">
-                        <button id="prevPage" disabled>&lt;上一頁</button>
-                        <span id="pageInfo">1 / 2</span>
-                        <button id="nextPage">下一頁&gt</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="album-wrapper">
-                <div class="album-shadow">
-                    <div class="heading-right"><img src="./images/gallery/gallery-title.svg" alt=""></div>
-                    <div class="album-section" id="albumSection">
-                        <div class="album-content">
-                            <h2 class="character-name"></h2>
-                            <div class="main-photo"></div>
-                            <div class="ch-intro">
-                                <p class="character-sname"></p>
-                                <p class="character-description"></p>
-                            </div>
-                            <div class="thumbnail-list"></div>
-                        </div>
-                    </div>
-                    <img src="./images/gallery/noise-gradient.jpg" alt="grey-bg" class="grey-bg">
-                </div>
-                <div class="btn-group">
-                    <button class="nav-btn prev-btn" id="prevPhoto">&lt;</button>
-                    <p>切換造型</p>
-                    <button class="nav-btn next-btn" id="nextPhoto">&gt;</button>
-                </div>
-            </div>
         </div>
+
+        <div class="album-wrapper">
+          <div class="album-shadow">
+            <div class="heading-right">
+              <img src="./images/gallery/gallery-title.svg" alt="" />
+            </div>
+            <div class="album-section" id="albumSection">
+              <div class="album-content">
+                <h2 class="character-name"></h2>
+                <div class="main-photo"></div>
+                <div class="ch-intro">
+                  <p class="character-sname"></p>
+                  <p class="character-description"></p>
+                </div>
+                <div class="thumbnail-list"></div>
+              </div>
+            </div>
+            <img
+              src="./images/gallery/noise-gradient.jpg"
+              alt="grey-bg"
+              class="grey-bg"
+            />
+          </div>
+          <div class="btn-group">
+            <button class="nav-btn prev-btn" id="prevPhoto">&lt;</button>
+            <p>切換造型</p>
+            <button class="nav-btn next-btn" id="nextPhoto">&gt;</button>
+          </div>
+        </div>
+      </div>
     </main>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="./js/ch-gallery.js"></script>
     <script src="./js/contactsoft.js"></script>
     <script src="./js/script.js"></script>
-</body>
-
+  </body>
 </html>

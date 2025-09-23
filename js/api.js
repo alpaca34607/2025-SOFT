@@ -1,23 +1,67 @@
 // API 基礎設定
-const API_BASE_URL = "http://localhost:3000/api";
+// 注意：API_BASE_URL 現在通過 baseURL getter 動態獲取
 
 // API 請求工具函數
 class API {
   static get baseURL() {
-    // 自動檢測 API 基礎 URL
-    if (
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-    ) {
-      return "http://localhost:3000";
-    } else {
-      // 生產環境：使用相對路徑
-      return window.location.origin;
+    // 使用環境配置中的 API_BASE_URL
+    if (window.ENV_CONFIG && window.ENV_CONFIG.API_BASE_URL) {
+      console.log(`🔧 使用環境配置 API URL: ${window.ENV_CONFIG.API_BASE_URL}`);
+      return window.ENV_CONFIG.API_BASE_URL;
     }
+
+    // 智能預設值
+    const defaultURL = this.getSmartDefaultURL();
+    console.log(`🔧 使用智能預設 API URL: ${defaultURL}`);
+    return defaultURL;
+  }
+
+  // 智能判斷預設 URL
+  static getSmartDefaultURL() {
+    const hostname = window.location.hostname;
+
+    // 如果是 Vercel 部署
+    if (hostname.includes("vercel.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 如果是 Railway 部署
+    if (hostname.includes("railway.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
+
+    // 本地開發環境
+    return "http://localhost:3000";
+  }
+
+  // 動態獲取 API URL（用於確保獲取最新配置）
+  static async getDynamicBaseURL() {
+    try {
+      const response = await fetch("/api/config");
+      if (response.ok) {
+        const config = await response.json();
+        console.log(`🔧 動態獲取 API URL: ${config.API_BASE_URL}`);
+        return config.API_BASE_URL;
+      }
+    } catch (error) {
+      console.log("⚠️ 無法動態獲取配置，使用預設值");
+    }
+    return this.getSmartDefaultURL();
+  }
+
+  // 獲取當前環境資訊
+  static getEnvironmentInfo() {
+    const currentURL = this.baseURL;
+    return {
+      current: currentURL,
+      source: window.ENV_CONFIG?.API_BASE_URL ? "環境變數" : "預設值",
+    };
   }
 
   static async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    // 使用動態獲取的 URL 以確保獲取最新配置
+    const baseURL = await this.getDynamicBaseURL();
+    const url = `${baseURL}${endpoint}`;
 
     // 如果 body 是 FormData，不設置 Content-Type（讓瀏覽器自動處理）
     const isFormData = options.body instanceof FormData;
@@ -62,6 +106,44 @@ class API {
       console.error("API 請求失敗:", error);
       throw error;
     }
+  }
+
+  // 取得預簽名 URL（後端會回 uploadUrl/publicUrl）
+  static async getPresignedUrl(file, folder = "images/products") {
+    const payload = {
+      fileName: file.name,
+      contentType: file.type || "application/octet-stream",
+      folder,
+    };
+    return this.request("/api/uploads/presign", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // 直傳到 S3（PUT 預簽名 URL）
+  static async uploadToS3(uploadUrl, file) {
+    const resp = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(`S3 上傳失敗: ${resp.status} ${resp.statusText} ${text}`);
+    }
+    return true;
+  }
+
+  // 刪除 S3 物件：接受 key 或 URL
+  static async deleteS3Object(keyOrUrl) {
+    const payload = {};
+    if (keyOrUrl.startsWith("http")) payload.url = keyOrUrl;
+    else payload.key = keyOrUrl;
+    return this.request("/api/uploads/delete", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   }
 
   // 健康檢查
@@ -112,43 +194,167 @@ class API {
     return this.request(`/api/products/${productId}`);
   }
 
-  static async createProduct(productData) {
-    const formData = new FormData();
-
-    // 添加基本資料
-    Object.keys(productData).forEach((key) => {
-      if (key === "image" && productData[key] instanceof File) {
-        formData.append("image", productData[key]);
-      } else if (key === "main_colors" || key === "sub_colors") {
-        formData.append(key, JSON.stringify(productData[key]));
-      } else {
-        formData.append(key, productData[key]);
-      }
+  // 將文件轉換為Base64
+  static async fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
+  }
+
+  // 上傳圖片並獲取Base64 URL
+  static async uploadImageToBase64(file) {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`${this.baseURL}/api/products/upload-base64`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`圖片上傳失敗: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.imageUrl;
+  }
+
+  static async createProduct(productData) {
+    const processedData = { ...productData };
+
+    // 改為：S3 預簽名直傳，回貼 publicUrl
+    const imageFields = [
+      "thumbnail_path",
+      "sketchfab_background",
+      "product_introduction",
+      "preorder_notes",
+    ];
+
+    for (const field of imageFields) {
+      if (productData[field] instanceof File) {
+        const file = productData[field];
+        try {
+          const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+            file,
+            "images/products"
+          );
+          await this.uploadToS3(uploadUrl, file);
+          processedData[field] = publicUrl;
+        } catch (error) {
+          console.error(`S3 上傳 ${field} 失敗:`, error);
+          throw new Error(`上傳${field}圖片失敗: ${error.message}`);
+        }
+      }
+    }
+
+    // 多圖
+    if (
+      productData.lightslider_images &&
+      Array.isArray(productData.lightslider_images)
+    ) {
+      processedData.lightslider_images = [];
+      for (const item of productData.lightslider_images) {
+        if (item instanceof File) {
+          try {
+            const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+              item,
+              "images/products"
+            );
+            await this.uploadToS3(uploadUrl, item);
+            processedData.lightslider_images.push(publicUrl);
+          } catch (error) {
+            console.error("S3 上傳 LightSlider 圖片失敗:", error);
+            throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
+          }
+        } else {
+          processedData.lightslider_images.push(item);
+        }
+      }
+    }
+
+    // 轉換為JSON格式發送
+    const jsonData = {
+      ...processedData,
+      main_colors: processedData.main_colors,
+      sub_colors: processedData.sub_colors,
+    };
 
     return this.request("/api/products", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
     });
   }
 
   static async updateProduct(productId, productData) {
-    const formData = new FormData();
+    const processedData = { ...productData };
 
-    // 添加基本資料
-    Object.keys(productData).forEach((key) => {
-      if (key === "image" && productData[key] instanceof File) {
-        formData.append("image", productData[key]);
-      } else if (key === "main_colors" || key === "sub_colors") {
-        formData.append(key, JSON.stringify(productData[key]));
-      } else {
-        formData.append(key, productData[key]);
+    const imageFields = [
+      "thumbnail_path",
+      "sketchfab_background",
+      "product_introduction",
+      "preorder_notes",
+    ];
+
+    for (const field of imageFields) {
+      if (productData[field] instanceof File) {
+        const file = productData[field];
+        try {
+          const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+            file,
+            "images/products"
+          );
+          await this.uploadToS3(uploadUrl, file);
+          processedData[field] = publicUrl;
+        } catch (error) {
+          console.error(`S3 上傳 ${field} 失敗:`, error);
+          throw new Error(`上傳${field}圖片失敗: ${error.message}`);
+        }
       }
-    });
+    }
+
+    if (
+      productData.lightslider_images &&
+      Array.isArray(productData.lightslider_images)
+    ) {
+      processedData.lightslider_images = [];
+      for (const item of productData.lightslider_images) {
+        if (item instanceof File) {
+          try {
+            const { uploadUrl, publicUrl } = await this.getPresignedUrl(
+              item,
+              "images/products"
+            );
+            await this.uploadToS3(uploadUrl, item);
+            processedData.lightslider_images.push(publicUrl);
+          } catch (error) {
+            console.error("S3 上傳 LightSlider 圖片失敗:", error);
+            throw new Error(`上傳LightSlider圖片失敗: ${error.message}`);
+          }
+        } else {
+          processedData.lightslider_images.push(item);
+        }
+      }
+    }
+
+    // 轉換為JSON格式發送
+    const jsonData = {
+      ...processedData,
+      main_colors: processedData.main_colors,
+      sub_colors: processedData.sub_colors,
+    };
 
     return this.request(`/api/products/${productId}`, {
       method: "PUT",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
     });
   }
 

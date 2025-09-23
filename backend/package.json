@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "init-db": "node scripts/init-database.js",
+    "init-db": "node -e \"require('./database-adapter').setupDatabase().then(()=>console.log('DB ready')).catch(console.error)\"",
+    "migrate-add-columns": "node migrate-add-product-columns.js",
+    "migrate-add-order-number": "node migrate-add-order-number.js",
+    "migrate-schema": "node -e \"const fs=require('fs');const path=require('path');const {db}=require('./database');const schema=fs.readFileSync(path.join(__dirname,'../database_schema.sql'),'utf8');db.exec(schema,(e)=>{if(e){console.error(e);process.exit(1)}else{console.log('schema applied');process.exit(0)}})\"",
+    "migrate-images": "node migrate-existing-images.js",
     "build": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,11 +19,16 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.893.0",
+    "@aws-sdk/s3-request-presigner": "^3.893.0",
     "@supabase/supabase-js": "^2.53.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
     "express": "^4.18.2",
+    "form-data": "^4.0.4",
     "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
     "pg": "^8.16.3",
     "sqlite3": "^5.1.6",
     "uuid": "^9.0.1"
