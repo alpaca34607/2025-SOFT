@@ -4140,7 +4140,6 @@ textarea {
   position: relative;
   border-top: #FFFFFF 1.5px solid;
   width: 100%;
-  min-height: 100vh;
   padding-top: 7%;
   z-index: 0;
   overflow: visible;

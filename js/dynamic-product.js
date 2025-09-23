@@ -286,31 +286,34 @@ class DynamicProductLoader {
       );
       introImage.style.display = "block";
     } else if (introImage) {
-      // 如果沒有商品介紹圖片，隱藏該元素
+      // 如果有元素但沒有圖片資料，隱藏該元素
+      // 需要先檢查 introImage 是否存在，再隱藏，否則introImage 是 null 或 undefined會報錯
       introImage.style.display = "none";
     }
 
-    // 更新預購注意事項圖片（只更新showcase-wrap區域的圖片）
-    if (this.productData.preorder_notes) {
-      const noticeImage = document.querySelector(
-        '.showcase-wrap img[alt="預購注意事項"]'
-      );
-      if (noticeImage) {
-        noticeImage.src = this.buildImageUrl(this.productData.preorder_notes);
-      }
+    // 更新預購注意事項圖片
+    const noticeImage = document.getElementById("notice-img");
+    if (noticeImage && this.productData.preorder_notes) {
+      noticeImage.src = this.buildImageUrl(this.productData.preorder_notes);
+      noticeImage.style.display = "block";
+    } else if (noticeImage) {
+      noticeImage.style.display = "none";
     }
 
     // 更新 Sketchfab 背景圖片
-    if (this.productData.sketchfab_background) {
-      const sketchfabBackgroundImage = document.querySelector(
-        '.showcase-wrap img[alt="sketchfab背景"]'
+    const sketchfabBgImage = document.getElementById("sketchfab-bg");
+    if (sketchfabBgImage && this.productData.sketchfab_background) {
+      const sketchfabBgImage = document.getElementById(
+        "sketchfab-bg"
       );
-      if (sketchfabBackgroundImage) {
-        sketchfabBackgroundImage.src = this.buildImageUrl(
+      if (sketchfabBgImage) {
+        sketchfabBgImage.src = this.buildImageUrl(
           this.productData.sketchfab_background
         );
-        sketchfabBackgroundImage.style.display = "block";
+        sketchfabBgImage.style.display = "block";
       }
+    } else if (sketchfabBgImage) {
+      sketchfabBgImage.style.display = "none";
     }
   }
 
