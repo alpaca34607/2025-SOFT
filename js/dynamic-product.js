@@ -25,6 +25,20 @@ class DynamicProductLoader {
     this.loadingElement = null;
   }
 
+  // 確保資料為陣列（後端可能回字串 JSON 或 null）
+  ensureArray(value) {
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string") {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  }
+
   // 構建完整的圖片 URL
   buildImageUrl(imagePath) {
     if (!imagePath) return null;
@@ -94,6 +108,19 @@ class DynamicProductLoader {
   async loadProductData() {
     const response = await API.getProductById(this.productId);
     this.productData = response.product;
+
+    // 正規化欄位，避免前端 forEach 錯誤
+    if (this.productData) {
+      this.productData.main_colors = this.ensureArray(
+        this.productData.main_colors
+      );
+      this.productData.sub_colors = this.ensureArray(
+        this.productData.sub_colors
+      );
+      this.productData.lightslider_images = this.ensureArray(
+        this.productData.lightslider_images
+      );
+    }
 
     if (!this.productData) {
       throw new Error("商品資料不存在");
@@ -303,9 +330,7 @@ class DynamicProductLoader {
     // 更新 Sketchfab 背景圖片
     const sketchfabBgImage = document.getElementById("sketchfab-bg");
     if (sketchfabBgImage && this.productData.sketchfab_background) {
-      const sketchfabBgImage = document.getElementById(
-        "sketchfab-bg"
-      );
+      const sketchfabBgImage = document.getElementById("sketchfab-bg");
       if (sketchfabBgImage) {
         sketchfabBgImage.src = this.buildImageUrl(
           this.productData.sketchfab_background
@@ -324,9 +349,10 @@ class DynamicProductLoader {
     const quantitySelect = document.getElementById("quantity");
 
     // 更新主色選項
-    if (mainColorSelect && this.productData.main_colors) {
+    if (mainColorSelect) {
+      const mainColors = this.ensureArray(this.productData.main_colors);
       mainColorSelect.innerHTML = '<option value="">請選擇主色</option>';
-      this.productData.main_colors.forEach((color) => {
+      mainColors.forEach((color) => {
         const option = document.createElement("option");
         option.value = color;
         option.textContent = COLOR_NAMES[color] || color;
@@ -335,9 +361,10 @@ class DynamicProductLoader {
     }
 
     // 更新副色選項
-    if (subColorSelect && this.productData.sub_colors) {
+    if (subColorSelect) {
+      const subColors = this.ensureArray(this.productData.sub_colors);
       subColorSelect.innerHTML = '<option value="">請選擇副色</option>';
-      this.productData.sub_colors.forEach((color) => {
+      subColors.forEach((color) => {
         const option = document.createElement("option");
         option.value = color;
         option.textContent = COLOR_NAMES[color] || color;
