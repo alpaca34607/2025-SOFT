@@ -29,6 +29,14 @@ class API {
     if (hostname.includes("railway.app")) {
       return "https://2025-soft-staging.up.railway.app";
     }
+    // 正式：你的 Railway production 網域 → 用目前來源
+    if (hostname.endsWith("soft-creature.up.railway.app")) {
+      return window.location.origin;
+    }
+    // 其他 Railway 部署（預設視為 staging）
+    if (hostname.includes("railway.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
 
     // 本地開發環境
     return "http://localhost:3000";
