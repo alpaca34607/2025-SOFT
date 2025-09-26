@@ -67,13 +67,11 @@ function processProductImages(product) {
   }
 
   // 處理 lightsider_images 數組
-  product.lightslider_images = ensureArray(product.lightslider_images).map(
-    (img) => convertToFullUrl(img)
-  );
-
-  // 正規化顏色欄位為陣列
-  product.main_colors = ensureArray(product.main_colors);
-  product.sub_colors = ensureArray(product.sub_colors);
+  if (product.lightslider_images && Array.isArray(product.lightslider_images)) {
+    product.lightslider_images = product.lightslider_images.map((img) =>
+      convertToFullUrl(img)
+    );
+  }
 
   return product;
 }
@@ -293,7 +291,8 @@ router.get("/", async (req, res) => {
     );
     const products = productResult.rows || [];
 
-    // 處理圖片與欄位正規化
+    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // 處理圖片路徑，轉換為完整URL
     const processedProducts = products.map((product) =>
       processProductImages(product)
     );
@@ -317,7 +316,8 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "商品不存在" });
     }
 
-    // 處理圖片與欄位正規化
+    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // 處理圖片路徑，轉換為完整URL
     const processedProduct = processProductImages(product);
 
     res.json({ product: processedProduct });

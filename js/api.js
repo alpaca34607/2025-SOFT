@@ -20,11 +20,6 @@ class API {
   static getSmartDefaultURL() {
     const hostname = window.location.hostname;
 
-    // 如果是你的 Railway 正式網域，使用當前來源（避免請求到 localhost）
-    if (hostname.endsWith("soft-creature.up.railway.app")) {
-      return window.location.origin;
-    }
-
     // 如果是 Vercel 部署
     if (hostname.includes("vercel.app")) {
       return "https://2025-soft-staging.up.railway.app";
