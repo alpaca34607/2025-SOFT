@@ -44,6 +44,12 @@ window.ENV_CONFIG = {
     if (hostname.includes("railway.app")) {
       return "https://2025-soft-staging.up.railway.app";
     }
+    if (hostname.endsWith("soft-creature.up.railway.app")) {
+      return window.location.origin;
+    }
+    if (hostname.includes("railway.app")) {
+      return "https://2025-soft-staging.up.railway.app";
+    }
 
     // 本地開發環境
     return "http://localhost:3000";
@@ -53,6 +59,12 @@ window.ENV_CONFIG = {
   getDefaultEnvironment() {
     const hostname = window.location.hostname;
 
+    if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
+      return "staging";
+    }
+    if (hostname.endsWith("soft-creature.up.railway.app")) {
+      return "production";
+    }
     if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
       return "staging";
     }
