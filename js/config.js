@@ -35,6 +35,11 @@ window.ENV_CONFIG = {
   getDefaultAPIURL() {
     const hostname = window.location.hostname;
 
+    // 正式 Railway 網域 → 直接使用目前來源
+    if (hostname.endsWith("soft-creature.up.railway.app")) {
+      return window.location.origin;
+    }
+
     // 如果是 Vercel 部署
     if (hostname.includes("vercel.app")) {
       return "https://2025-soft-staging.up.railway.app";
@@ -58,6 +63,10 @@ window.ENV_CONFIG = {
   // 智能判斷環境
   getDefaultEnvironment() {
     const hostname = window.location.hostname;
+
+    if (hostname.endsWith("soft-creature.up.railway.app")) {
+      return "production";
+    }
 
     if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
       return "staging";
