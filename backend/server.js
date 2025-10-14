@@ -87,6 +87,8 @@ console.log("  - GET    /api/customers");
 console.log("  - POST   /api/customers");
 console.log("  - PUT    /api/customers/:id");
 console.log("  - DELETE /api/customers/:id");
+console.log("  - POST   /api/uploads/presign");
+console.log("  - POST   /api/uploads/delete");
 
 // 生產環境：所有非 API 路由都返回前端頁面
 if (process.env.NODE_ENV === "production") {

@@ -65,8 +65,6 @@ router.post("/presign", express.json(), async (req, res) => {
   }
 });
 
-module.exports = router;
-
 // 刪除 S3 物件
 router.post("/delete", express.json(), async (req, res) => {
   try {
@@ -96,3 +94,5 @@ router.post("/delete", express.json(), async (req, res) => {
     res.status(500).json({ error: "刪除 S3 物件失敗", message: error.message });
   }
 });
+
+module.exports = router;
