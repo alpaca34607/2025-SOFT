@@ -14,6 +14,16 @@ router.get("/test", (req, res) => {
   res.json({ success: true, message: "uploads 路由正常工作" });
 });
 
+// 添加 GET 版本的 presign 路由用于测试
+router.get("/presign", (req, res) => {
+  console.log("🧪 GET presign 測試路由被調用");
+  res.json({
+    success: true,
+    message: "presign 路由正常工作，但請使用 POST 請求",
+    method: "請使用 POST 請求到 /api/uploads/presign",
+  });
+});
+
 const requiredEnv = ["S3_BUCKET", "S3_REGION"];
 requiredEnv.forEach((k) => {
   if (!process.env[k]) {
