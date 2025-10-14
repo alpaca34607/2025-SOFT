@@ -90,6 +90,7 @@ console.log("  - POST   /api/customers");
 console.log("  - PUT    /api/customers/:id");
 console.log("  - DELETE /api/customers/:id");
 console.log("  - GET    /api/uploads/test");
+console.log("  - GET    /api/uploads/presign (測試用)");
 console.log("  - POST   /api/uploads/presign");
 console.log("  - POST   /api/uploads/delete");
 
