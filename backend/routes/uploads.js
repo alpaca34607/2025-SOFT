@@ -6,10 +6,20 @@ const crypto = require("crypto");
 
 const router = express.Router();
 
+console.log("🔧 初始化 uploads 路由...");
+
+// 添加测试路由
+router.get("/test", (req, res) => {
+  console.log("🧪 測試路由被調用");
+  res.json({ success: true, message: "uploads 路由正常工作" });
+});
+
 const requiredEnv = ["S3_BUCKET", "S3_REGION"];
 requiredEnv.forEach((k) => {
   if (!process.env[k]) {
     console.warn(`⚠️ 缺少環境變數 ${k}，請於部署環境設定`);
+  } else {
+    console.log(`✅ 環境變數 ${k} 已設置`);
   }
 });
 
@@ -26,6 +36,7 @@ const s3 = new S3Client({
 
 // 產生預簽名 URL，前端用 PUT 直接上傳到 S3
 router.post("/presign", express.json(), async (req, res) => {
+  console.log("📤 收到 presign 請求:", req.body);
   try {
     const {
       fileName,
@@ -33,6 +44,7 @@ router.post("/presign", express.json(), async (req, res) => {
       folder = "images/products",
     } = req.body || {};
     if (!fileName || !contentType) {
+      console.log("❌ 缺少必要參數:", { fileName, contentType });
       return res.status(400).json({ error: "缺少 fileName 或 contentType" });
     }
 
