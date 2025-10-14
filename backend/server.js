@@ -60,7 +60,9 @@ app.get("/api/config", (req, res) => {
 const ordersRouter = require("./routes/orders");
 const productsRouter = require("./routes/products");
 const customersRouter = require("./routes/customers");
+console.log("🔧 載入 uploads 路由...");
 const uploadsRouter = require("./routes/uploads");
+console.log("✅ uploads 路由載入完成");
 
 app.use("/api/orders", ordersRouter);
 app.use("/api/products", productsRouter);
@@ -87,6 +89,7 @@ console.log("  - GET    /api/customers");
 console.log("  - POST   /api/customers");
 console.log("  - PUT    /api/customers/:id");
 console.log("  - DELETE /api/customers/:id");
+console.log("  - GET    /api/uploads/test");
 console.log("  - POST   /api/uploads/presign");
 console.log("  - POST   /api/uploads/delete");
 
