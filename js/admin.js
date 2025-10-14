@@ -326,7 +326,13 @@ function displayProducts(products) {
   const container = document.getElementById("productsList");
 
   if (products.length === 0) {
-    container.innerHTML = "<p>沒有找到商品</p>";
+    container.innerHTML = `
+        <div style="margin-bottom: 20px;">
+            <button onclick="showAddProductForm()" class="btn-add">新增商品</button>
+            <button onclick="syncProductConfig()" class="btn-sync">同步前端配置</button>
+        </div>
+        <p>沒有找到商品</p>
+    `;
     return;
   }
 
