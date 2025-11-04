@@ -63,7 +63,7 @@
         align-items: center;
         margin-bottom: 10px;
 
-        a{
+        a {
           color: #007bff;
           text-decoration: none;
           font-weight: bold;
@@ -330,8 +330,24 @@
   <body>
     <div class="admin-container">
       <div class="admin-header">
-        <h1>軟筋生物 - 管理後台</h1>
-        <p>訂單管理與系統監控</p>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <h1>軟筋生物 - 管理後台</h1>
+            <p>訂單管理與系統監控</p>
+          </div>
+          <div>
+            <span id="userEmail" style="margin-right: 15px; color: #666"></span>
+            <button id="logoutButton" class="btn-delete" style="margin-top: 0">
+              登出
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="admin-nav">
@@ -423,8 +439,135 @@
       </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <!-- Firebase 配置和認證模組 -->
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/firebase-auth.js"></script>
+
     <script src="./js/config.js"></script>
     <script src="./js/api.js"></script>
     <script src="./js/admin.js"></script>
+
+    <!-- 身份驗證保護 -->
+    <script>
+      // 防止重複執行的標誌
+      let authCheckCompleted = false;
+      let authStateListenerRegistered = false;
+
+      // 檢查登入狀態
+      async function checkAuthAndRedirect() {
+        // 防止重複執行
+        if (authCheckCompleted) {
+          return;
+        }
+
+        try {
+          // 初始化 Firebase Auth
+          const initSuccess = await window.FirebaseAuth.init();
+
+          if (!initSuccess) {
+            throw new Error("Firebase Auth 初始化失敗");
+          }
+
+          // 只註冊一次監聽器
+          if (!authStateListenerRegistered) {
+            authStateListenerRegistered = true;
+
+            // 監聽身份驗證狀態
+            window.FirebaseAuth.onAuthStateChanged((user) => {
+              // 防止在處理過程中重複觸發
+              if (authCheckCompleted && user) {
+                return;
+              }
+
+              if (!user) {
+                // 未登入，重定向到登入頁面
+                if (
+                  window.location.pathname !== "/admin-login.html" &&
+                  !window.location.pathname.endsWith("admin-login.html")
+                ) {
+                  authCheckCompleted = true;
+                  window.location.href = "./admin-login.html";
+                }
+              } else {
+                // 已登入，顯示用戶資訊
+                const userEmail = document.getElementById("userEmail");
+                if (userEmail) {
+                  userEmail.textContent = user.email;
+                }
+
+                // 顯示管理後台內容
+                document.body.style.display = "block";
+                authCheckCompleted = true;
+              }
+            });
+          }
+
+          // 立即檢查當前用戶狀態（如果已初始化）
+          const currentUser = window.FirebaseAuth.getCurrentUser();
+          if (currentUser) {
+            const userEmail = document.getElementById("userEmail");
+            if (userEmail) {
+              userEmail.textContent = currentUser.email;
+            }
+            document.body.style.display = "block";
+            authCheckCompleted = true;
+          } else {
+            // 如果沒有用戶，等待 onAuthStateChanged 觸發
+            // 但在開發環境中，如果 Firebase 配置錯誤，允許訪問
+            if (
+              window.location.hostname === "localhost" ||
+              window.location.hostname === "127.0.0.1"
+            ) {
+              console.warn("開發環境：未檢測到用戶，但允許訪問");
+              document.body.style.display = "block";
+              authCheckCompleted = true;
+            }
+          }
+
+          // 登出按鈕（只綁定一次）
+          const logoutButton = document.getElementById("logoutButton");
+          if (logoutButton && !logoutButton.hasAttribute("data-bound")) {
+            logoutButton.setAttribute("data-bound", "true");
+            logoutButton.addEventListener("click", async () => {
+              if (confirm("確定要登出嗎？")) {
+                const result = await window.FirebaseAuth.signOut();
+                if (result.success) {
+                  authCheckCompleted = false;
+                  window.location.href = "./admin-login.html";
+                } else {
+                  alert("登出失敗：" + result.error);
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error("身份驗證檢查失敗:", error);
+          // 如果 Firebase 配置錯誤，仍然允許訪問（開發環境）
+          // 生產環境應該重定向到登入頁面
+          if (
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+          ) {
+            console.warn("開發環境：跳過身份驗證");
+            document.body.style.display = "block";
+            authCheckCompleted = true;
+          } else {
+            window.location.href = "./admin-login.html";
+          }
+        }
+      }
+
+      // 頁面載入時隱藏內容，等待驗證
+      document.body.style.display = "none";
+
+      // 執行身份驗證檢查
+      document.addEventListener("DOMContentLoaded", () => {
+        checkAuthAndRedirect();
+      });
+    </script>
   </body>
 </html>

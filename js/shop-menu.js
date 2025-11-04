@@ -336,19 +336,30 @@ async function searchOrderHistory() {
                 `;
 
           // 訂單商品詳情
-          const orderItems = order.items
-            .map(
-              (item) => `
+          const orderItems = (order.items || [])
+            .map((item) => {
+              // 兼容驼峰和下划线命名格式
+              const productName =
+                item.product_name || item.productName || "未知商品";
+              const mainColorName =
+                item.main_color_name || item.mainColorName || "未選擇";
+              const subColorName =
+                item.sub_color_name || item.subColorName || "未選擇";
+              const quantity = item.quantity || 0;
+              const unitPrice = item.unit_price || item.unitPrice || 0;
+              const unitDeposit = item.unit_deposit || item.unitDeposit || 0;
+
+              return `
                     <div class="history-item">
-                        <h3>${item.product_name}</h3>
-                        <p>主色: ${item.main_color_name}</p>
-                        <p>副色: ${item.sub_color_name}</p>
-                        <p>數量: ${item.quantity}</p>
-                        <p>單價: NT$ ${item.unit_price}</p>
-                        <p>單件訂金: NT$ ${item.unit_deposit}</p>
+                        <h3>${productName}</h3>
+                        <p>主色: ${mainColorName}</p>
+                        <p>副色: ${subColorName}</p>
+                        <p>數量: ${quantity}</p>
+                        <p>單價: NT$ ${unitPrice}</p>
+                        <p>單件訂金: NT$ ${unitDeposit}</p>
                     </div>
-                `
-            )
+                `;
+            })
             .join("");
 
           // 訂單客戶資訊
