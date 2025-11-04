@@ -342,7 +342,9 @@ function displayProducts(products) {
         <div class="order-item">
             <div class="order-header">
                 <div>
-                    <strong>${product.name}</strong><br>
+                    <a href="./product.html?id=${
+                      product.product_id
+                    }" target="_blank">${product.name}</a>
                     <small>商品ID: ${product.product_id}</small>
                 </div>
                 <div>
