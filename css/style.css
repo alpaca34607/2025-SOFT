@@ -1562,38 +1562,40 @@ textarea {
 }
 #home #learning-soft-intro .book-wrapper {
   position: relative;
-  height: 100vh;
   animation: bookwrapper 3s infinite;
+  width: 75%;
+  bottom: -30%;
+  left: -20%;
 }
 #home #learning-soft-intro .book-wrapper .left-page {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 4;
   animation: leftpage 3s infinite;
   pointer-events: none;
 }
 #home #learning-soft-intro .book-wrapper .left-page2 {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 2;
   animation: leftpage2 3s infinite;
 }
 #home #learning-soft-intro .book-wrapper .left-page3 {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 1;
   animation: leftpage3 3s infinite;
 }
 #home #learning-soft-intro .book-wrapper .lying-soft {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 3;
   filter: drop-shadow(2px 4px 3px rgba(68, 64, 57, 0.315));
   pointer-events: none;
 }
 #home #learning-soft-intro .book-wrapper .right-page {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 2;
   animation: rightpage 3s infinite;
 }
@@ -1603,16 +1605,16 @@ textarea {
 }
 #home #learning-soft-intro .book-wrapper .right-page .right-page-content a {
   position: absolute;
-  bottom: 160px;
-  right: 200px;
+  bottom: 13%;
+  right: 12%;
+  transform: translate(-50%, -50%);
   z-index: 2;
+  width: 12%;
 }
 #home #learning-soft-intro .book-wrapper .right-page .right-page-content a img {
-  width: 128px;
-}
-#home #learning-soft-intro .book-wrapper .right-page .right-page-content a:hover img {
-  transform: scale(1.1);
-  filter: brightness(0) saturate(100%) invert(80%) sepia(56%) saturate(425%) hue-rotate(18deg) brightness(108%) contrast(106%);
+  width: 100%;
+  height: auto;
+  display: block;
 }
 #home #learning-soft-intro .book-wrapper .right-page .right-page-content .right-page-content-img {
   position: absolute;
@@ -1621,13 +1623,13 @@ textarea {
 }
 #home #learning-soft-intro .book-wrapper .right-page2 {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 1;
   animation: rightpage2 3s infinite;
 }
 #home #learning-soft-intro .book-wrapper .book {
   position: absolute;
-  width: auto;
+  width: 100%;
   z-index: 0;
 }
 @keyframes leftpage {
@@ -1794,18 +1796,15 @@ textarea {
   right: 10%;
 }
 @media (max-width: 1280px) {
-  #home #learning-soft-intro {
-    height: 100vh;
-  }
   @keyframes bookwrapper {
     0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px) translateX(-160px) scale(0.9);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(0.9);
     }
     50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(-50px) translateX(-160px) scale(0.85);
+      transform: rotateZ(-45deg) rotateX(15deg) scale(0.85);
     }
     100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px) translateX(-160px) scale(0.9);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(0.9);
     }
   }
 }
@@ -2020,13 +2019,13 @@ textarea {
 @media (max-width: 1440px) {
   @keyframes bookwrapper {
     0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-250px) translateX(-100px) scale(0.8);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(0.8);
     }
     50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(-150px) translateX(-100px) scale(0.75);
+      transform: rotateZ(-45deg) rotateX(15deg) scale(0.75);
     }
     100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-250px) translateX(-100px) scale(0.8);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(0.8);
     }
   }
 }
@@ -2061,16 +2060,25 @@ textarea {
   #home #learning-soft-intro {
     margin-top: 0;
   }
+  #home #learning-soft-intro .book-wrapper {
+    width: 100%;
+    bottom: -30%;
+    left: -50%;
+  }
   @keyframes bookwrapper {
     0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(200px) translateX(-20%) scale(1.05);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(1.05);
     }
     50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(250px) translateX(-20%) scale(1);
+      transform: rotateZ(-45deg) rotateX(15deg) scale(1);
     }
     100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(200px) translateX(-20%) scale(1.05);
+      transform: rotateZ(-40deg) rotateX(0deg) scale(1.05);
     }
+  }
+  #home #learning-soft-intro .lying-softzilla {
+    width: 40%;
+    right: 5%;
   }
   #home #becoming-Soft-intro {
     position: relative;
@@ -2131,12 +2139,8 @@ textarea {
     display: none;
   }
   #home .book-wrapper .right-page .right-page-content a {
-    bottom: 90px;
-    right: 120px;
-  }
-  #home .lying-softzilla {
-    width: 30%;
-    right: 5%;
+    bottom: 13%;
+    right: 12%;
   }
 }
 @media (max-width: 430px) {
@@ -2228,7 +2232,8 @@ textarea {
     display: none;
   }
   #home #learning-soft-intro .lying-softzilla {
-    display: none;
+    width: 40%;
+    right: 5%;
   }
 }
 @media (max-width: 390px) {
@@ -2299,17 +2304,6 @@ textarea {
   }
   #home #about-soft-intro {
     background: url(../images/home/about-soft-xxs.jpg);
-  }
-  @keyframes bookwrapper {
-    0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-250px) translateX(-100px) scale(0.8);
-    }
-    50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(-150px) translateX(-100px) scale(0.75);
-    }
-    100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-250px) translateX(-100px) scale(0.8);
-    }
   }
   #home #becoming-Soft-intro {
     align-items: center;
@@ -5082,4 +5076,4 @@ textarea {
 }
 .history-popup.show .history-content {
   left: 0;
-}/*# sourceMappingURL=style.css.map */
+}
