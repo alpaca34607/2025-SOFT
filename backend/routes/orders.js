@@ -359,8 +359,8 @@ router.patch("/:id/status", express.json(), async (req, res) => {
     const validStatuses = [
       "pending",
       "confirmed",
-      "deposit_paid",
-      "full_paid",
+      "depositPaid",
+      "fullPaid",
       "shipped",
       "completed",
       "cancelled",

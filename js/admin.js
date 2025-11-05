@@ -297,11 +297,11 @@ function displayOrders(orders) {
                         <option value="confirmed" ${
                           order.status === "confirmed" ? "selected" : ""
                         }>已確認</option>
-                        <option value="deposit_paid" ${
-                          order.status === "deposit_paid" ? "selected" : ""
+                        <option value="depositPaid" ${
+                          order.status === "depositPaid" ? "selected" : ""
                         }>已付訂金</option>
-                        <option value="full_paid" ${
-                          order.status === "full_paid" ? "selected" : ""
+                        <option value="fullPaid" ${
+                          order.status === "fullPaid" ? "selected" : ""
                         }>已付全款</option>
                         <option value="shipped" ${
                           order.status === "shipped" ? "selected" : ""
@@ -1395,8 +1395,8 @@ function getStatusText(status) {
   const statusMap = {
     pending: "待處理",
     confirmed: "已確認",
-    deposit_paid: "已付訂金",
-    full_paid: "已付全款",
+    depositPaid: "已付訂金",
+    fullPaid: "已付全款",
     shipped: "已出貨",
     completed: "已完成",
     cancelled: "已取消",

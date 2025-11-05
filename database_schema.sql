@@ -50,7 +50,7 @@ CREATE TABLE orders (
     deposit_amount INTEGER NOT NULL,
     pickup_method TEXT NOT NULL,
     payment_method TEXT NOT NULL,
-    status TEXT CHECK(status IN ('pending', 'confirmed', 'deposit_paid', 'full_paid', 'shipped', 'completed', 'cancelled')) DEFAULT 'pending',
+    status TEXT CHECK(status IN ('pending', 'confirmed', 'depositPaid', 'fullPaid', 'shipped', 'completed', 'cancelled')) DEFAULT 'pending',
     note TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

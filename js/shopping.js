@@ -938,8 +938,8 @@ function getStatusText(status) {
   const statusMap = {
     pending: "待確認",
     confirmed: "已確認",
-    deposit_paid: "已付訂金",
-    full_paid: "已付全款",
+    depositPaid: "已付訂金",
+    fullPaid: "已付全款",
     shipped: "已出貨",
     completed: "已完成",
     cancelled: "已取消",
