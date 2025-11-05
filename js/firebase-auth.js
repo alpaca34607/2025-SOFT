@@ -14,7 +14,7 @@ class FirebaseAuth {
   // 初始化 Firebase Auth
   async init() {
     if (this.initialized) {
-      return;
+      return true;
     }
 
     try {
@@ -38,12 +38,14 @@ class FirebaseAuth {
       this.initialized = true;
 
       // 監聽身份驗證狀態變化
+      // Firebase 的 onAuthStateChanged 會在初始化後自動觸發一次
       this.auth.onAuthStateChanged((user) => {
-        // 只在狀態真正改變時更新
-        if (this.user !== user) {
-          this.user = user;
-          this.notifyAuthStateListeners(user);
-        }
+        // 更新用戶狀態
+        const previousUser = this.user;
+        this.user = user;
+
+        // 通知所有監聽器（Firebase 會自動觸發，包括初始化時的觸發）
+        this.notifyAuthStateListeners(user);
       });
 
       console.log("✅ Firebase Auth 初始化成功");
@@ -59,18 +61,9 @@ class FirebaseAuth {
     // 添加監聽器
     this.authStateListeners.push(callback);
 
-    // 如果已經初始化且有用戶狀態，立即調用一次
-    // Firebase 的 onAuthStateChanged 會在初始化時自動觸發，所以這裡不需要立即調用
-    // 但如果用戶狀態已經存在，我們可以立即通知（避免等待 Firebase 的觸發）
-    if (this.initialized && this.auth) {
-      const currentUser = this.auth.currentUser;
-      if (currentUser !== null) {
-        // 使用 Promise.resolve().then() 確保在當前執行棧完成後調用
-        Promise.resolve().then(() => {
-          callback(currentUser);
-        });
-      }
-    }
+    // 注意：不需要在這裡立即調用，因為 Firebase 的 onAuthStateChanged
+    // 會在初始化後自動觸發一次，並且會通過 notifyAuthStateListeners 通知所有監聽器
+    // 如果立即調用可能會導致重複觸發
   }
 
   // 通知所有監聽器

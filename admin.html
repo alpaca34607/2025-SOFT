@@ -339,7 +339,7 @@
         >
           <div>
             <h1>軟筋生物 - 管理後台</h1>
-            <p>訂單管理與系統監控</p>
+            <p>訂單與商品管理</p>
           </div>
           <div>
             <span id="userEmail" style="margin-right: 15px; color: #666"></span>
@@ -360,7 +360,7 @@
       <div class="admin-content">
         <!-- 儀表板 -->
         <div id="dashboard" class="content-section">
-          <h2>系統概況</h2>
+          <h2>預購訂單概況</h2>
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-number" id="totalOrders">-</div>
@@ -398,7 +398,8 @@
               <option value="">所有狀態</option>
               <option value="pending">待處理</option>
               <option value="confirmed">已確認</option>
-              <option value="paid">已付款</option>
+              <option value="deposit_paid">已付訂金</option>
+              <option value="full_paid">已付全款</option>
               <option value="shipped">已出貨</option>
               <option value="completed">已完成</option>
               <option value="cancelled">已取消</option>
@@ -472,60 +473,69 @@
             throw new Error("Firebase Auth 初始化失敗");
           }
 
-          // 只註冊一次監聽器
+          // 只註冊一次監聽器（先註冊，讓 Firebase 的 onAuthStateChanged 自動觸發）
           if (!authStateListenerRegistered) {
             authStateListenerRegistered = true;
 
-            // 監聽身份驗證狀態
+            // 監聽身份驗證狀態變化
+            // Firebase 會在初始化後自動觸發一次，登入/登出時也會觸發
+            let isFirstCheck = true;
             window.FirebaseAuth.onAuthStateChanged((user) => {
-              // 防止在處理過程中重複觸發
-              if (authCheckCompleted && user) {
+              console.log(
+                "🔐 認證狀態變化:",
+                user ? `已登入: ${user.email}` : "未登入",
+                "isFirstCheck:",
+                isFirstCheck,
+                "authCheckCompleted:",
+                authCheckCompleted
+              );
+
+              // 如果已經在登入頁面，不執行任何操作
+              if (window.location.pathname.includes("admin-login.html")) {
                 return;
               }
 
-              if (!user) {
-                // 未登入，重定向到登入頁面
-                if (
-                  window.location.pathname !== "/admin-login.html" &&
-                  !window.location.pathname.endsWith("admin-login.html")
-                ) {
+              // 第一次認證檢查（初始化時）
+              if (isFirstCheck && !authCheckCompleted) {
+                isFirstCheck = false;
+
+                if (user) {
+                  console.log("✅ 已登入，顯示管理後台");
+                  // 已登入，顯示用戶資訊
+                  const userEmail = document.getElementById("userEmail");
+                  if (userEmail) {
+                    userEmail.textContent = user.email;
+                  }
+
+                  // 顯示管理後台內容
+                  document.body.style.display = "block";
+                  authCheckCompleted = true;
+                  // 設置認證標誌，讓 admin.js 知道可以開始加載數據
+                  window.adminAuthenticated = true;
+                  // 觸發認證完成事件
+                  window.dispatchEvent(new Event("adminAuthenticated"));
+                } else {
+                  console.log("❌ 未登入，重定向到登入頁面");
+                  // 未登入，立即重定向到登入頁面
                   authCheckCompleted = true;
                   window.location.href = "./admin-login.html";
                 }
-              } else {
-                // 已登入，顯示用戶資訊
-                const userEmail = document.getElementById("userEmail");
-                if (userEmail) {
-                  userEmail.textContent = user.email;
-                }
+                return;
+              }
 
-                // 顯示管理後台內容
-                document.body.style.display = "block";
-                authCheckCompleted = true;
+              // 後續的狀態變化（例如登出）
+              if (authCheckCompleted) {
+                if (!user) {
+                  // 用戶登出，重定向到登入頁面
+                  console.log("🔐 用戶已登出，重定向到登入頁面");
+                  window.adminAuthenticated = false;
+                  authCheckCompleted = false;
+                  window.location.href = "./admin-login.html";
+                }
+                // 如果用戶已登入，不執行任何操作（已經在管理後台）
+                return;
               }
             });
-          }
-
-          // 立即檢查當前用戶狀態（如果已初始化）
-          const currentUser = window.FirebaseAuth.getCurrentUser();
-          if (currentUser) {
-            const userEmail = document.getElementById("userEmail");
-            if (userEmail) {
-              userEmail.textContent = currentUser.email;
-            }
-            document.body.style.display = "block";
-            authCheckCompleted = true;
-          } else {
-            // 如果沒有用戶，等待 onAuthStateChanged 觸發
-            // 但在開發環境中，如果 Firebase 配置錯誤，允許訪問
-            if (
-              window.location.hostname === "localhost" ||
-              window.location.hostname === "127.0.0.1"
-            ) {
-              console.warn("開發環境：未檢測到用戶，但允許訪問");
-              document.body.style.display = "block";
-              authCheckCompleted = true;
-            }
           }
 
           // 登出按鈕（只綁定一次）
@@ -546,23 +556,16 @@
           }
         } catch (error) {
           console.error("身份驗證檢查失敗:", error);
-          // 如果 Firebase 配置錯誤，仍然允許訪問（開發環境）
-          // 生產環境應該重定向到登入頁面
-          if (
-            window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1"
-          ) {
-            console.warn("開發環境：跳過身份驗證");
-            document.body.style.display = "block";
-            authCheckCompleted = true;
-          } else {
-            window.location.href = "./admin-login.html";
-          }
+          // 無論開發環境或生產環境，認證失敗都重定向到登入頁面
+          window.location.href = "./admin-login.html";
         }
       }
 
       // 頁面載入時隱藏內容，等待驗證
       document.body.style.display = "none";
+
+      // 初始化認證標誌為 false
+      window.adminAuthenticated = false;
 
       // 執行身份驗證檢查
       document.addEventListener("DOMContentLoaded", () => {

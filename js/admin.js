@@ -59,13 +59,64 @@ function formatDateTime(dateString) {
   });
 }
 
-// 頁面載入時初始化
-document.addEventListener("DOMContentLoaded", async () => {
+// 等待認證完成後初始化
+async function initializeAdmin() {
+  // 檢查是否已認證
+  if (!window.adminAuthenticated) {
+    // 如果還沒有認證標誌，等待認證完成
+    // 這會在 admin.html 的認證檢查完成後設置
+    return;
+  }
+
   // 初始化 API base URL
   await initializeAPIBaseURL();
 
   initializeNavigation();
   loadDashboard();
+}
+
+// 頁面載入時初始化（但等待認證）
+document.addEventListener("DOMContentLoaded", async () => {
+  // 初始化認證標誌（如果還沒有設置）
+  if (typeof window.adminAuthenticated === "undefined") {
+    window.adminAuthenticated = false;
+  }
+
+  // 檢查認證狀態
+  if (window.adminAuthenticated) {
+    // 如果已經認證，立即初始化
+    await initializeAdmin();
+  } else {
+    // 如果還沒有認證標誌，等待認證完成
+    // 監聽認證完成事件（使用自定義事件）
+    const authCheckHandler = () => {
+      if (window.adminAuthenticated) {
+        window.removeEventListener("adminAuthenticated", authCheckHandler);
+        initializeAdmin();
+      }
+    };
+    window.addEventListener("adminAuthenticated", authCheckHandler);
+
+    // 也使用輪詢作為備用方案（以防事件沒有觸發）
+    const checkAuth = setInterval(() => {
+      if (window.adminAuthenticated) {
+        clearInterval(checkAuth);
+        window.removeEventListener("adminAuthenticated", authCheckHandler);
+        initializeAdmin();
+      }
+    }, 100);
+
+    // 設置超時，避免無限等待
+    // 如果超時仍未認證，應該已經被重定向到登入頁面
+    setTimeout(() => {
+      clearInterval(checkAuth);
+      window.removeEventListener("adminAuthenticated", authCheckHandler);
+      if (!window.adminAuthenticated) {
+        console.warn("認證檢查超時，如果未重定向到登入頁面，請檢查認證流程");
+        // 不再執行初始化，因為未認證的用戶應該已經被重定向
+      }
+    }, 3000);
+  }
 });
 
 // 初始化導航
@@ -246,9 +297,12 @@ function displayOrders(orders) {
                         <option value="confirmed" ${
                           order.status === "confirmed" ? "selected" : ""
                         }>已確認</option>
-                        <option value="paid" ${
-                          order.status === "paid" ? "selected" : ""
-                        }>已付款</option>
+                        <option value="deposit_paid" ${
+                          order.status === "deposit_paid" ? "selected" : ""
+                        }>已付訂金</option>
+                        <option value="full_paid" ${
+                          order.status === "full_paid" ? "selected" : ""
+                        }>已付全款</option>
                         <option value="shipped" ${
                           order.status === "shipped" ? "selected" : ""
                         }>已出貨</option>
@@ -1341,7 +1395,8 @@ function getStatusText(status) {
   const statusMap = {
     pending: "待處理",
     confirmed: "已確認",
-    paid: "已付款",
+    deposit_paid: "已付訂金",
+    full_paid: "已付全款",
     shipped: "已出貨",
     completed: "已完成",
     cancelled: "已取消",
