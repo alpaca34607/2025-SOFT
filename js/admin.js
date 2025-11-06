@@ -59,13 +59,64 @@ function formatDateTime(dateString) {
   });
 }
 
-// 頁面載入時初始化
-document.addEventListener("DOMContentLoaded", async () => {
+// 等待認證完成後初始化
+async function initializeAdmin() {
+  // 檢查是否已認證
+  if (!window.adminAuthenticated) {
+    // 如果還沒有認證標誌，等待認證完成
+    // 這會在 admin.html 的認證檢查完成後設置
+    return;
+  }
+
   // 初始化 API base URL
   await initializeAPIBaseURL();
 
   initializeNavigation();
   loadDashboard();
+}
+
+// 頁面載入時初始化（但等待認證）
+document.addEventListener("DOMContentLoaded", async () => {
+  // 初始化認證標誌（如果還沒有設置）
+  if (typeof window.adminAuthenticated === "undefined") {
+    window.adminAuthenticated = false;
+  }
+
+  // 檢查認證狀態
+  if (window.adminAuthenticated) {
+    // 如果已經認證，立即初始化
+    await initializeAdmin();
+  } else {
+    // 如果還沒有認證標誌，等待認證完成
+    // 監聽認證完成事件（使用自定義事件）
+    const authCheckHandler = () => {
+      if (window.adminAuthenticated) {
+        window.removeEventListener("adminAuthenticated", authCheckHandler);
+        initializeAdmin();
+      }
+    };
+    window.addEventListener("adminAuthenticated", authCheckHandler);
+
+    // 也使用輪詢作為備用方案（以防事件沒有觸發）
+    const checkAuth = setInterval(() => {
+      if (window.adminAuthenticated) {
+        clearInterval(checkAuth);
+        window.removeEventListener("adminAuthenticated", authCheckHandler);
+        initializeAdmin();
+      }
+    }, 100);
+
+    // 設置超時，避免無限等待
+    // 如果超時仍未認證，應該已經被重定向到登入頁面
+    setTimeout(() => {
+      clearInterval(checkAuth);
+      window.removeEventListener("adminAuthenticated", authCheckHandler);
+      if (!window.adminAuthenticated) {
+        console.warn("認證檢查超時，如果未重定向到登入頁面，請檢查認證流程");
+        // 不再執行初始化，因為未認證的用戶應該已經被重定向
+      }
+    }, 3000);
+  }
 });
 
 // 初始化導航
@@ -239,18 +290,19 @@ function displayOrders(orders) {
                     <small>建立時間: ${formatDateTime(order.created_at)}</small>
                 </div>
                 <div>
-                    <select class="status-select" onchange="updateOrderStatus(${
-                      order.id
-                    }, this.value)">
+                    <select class="status-select" data-order-id="${order.id}">
                         <option value="pending" ${
                           order.status === "pending" ? "selected" : ""
                         }>待處理</option>
                         <option value="confirmed" ${
                           order.status === "confirmed" ? "selected" : ""
                         }>已確認</option>
-                        <option value="paid" ${
-                          order.status === "paid" ? "selected" : ""
-                        }>已付款</option>
+                        <option value="depositPaid" ${
+                          order.status === "depositPaid" ? "selected" : ""
+                        }>已付訂金</option>
+                        <option value="fullPaid" ${
+                          order.status === "fullPaid" ? "selected" : ""
+                        }>已付全款</option>
                         <option value="shipped" ${
                           order.status === "shipped" ? "selected" : ""
                         }>已出貨</option>
@@ -274,10 +326,52 @@ function displayOrders(orders) {
                 <p>取貨方式: ${getPickupMethodText(order.pickup_method)}</p>
                 <p>付款方式: ${getPaymentMethodText(order.payment_method)}</p>
                 ${order.note ? `<p>備註: ${order.note}</p>` : ""}
+                ${
+                  order.items && order.items.length > 0
+                    ? `
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                        <strong>商品明細:</strong>
+                        ${order.items
+                          .map((item) => {
+                            // 兼容驼峰和下划线命名格式
+                            const productName =
+                              item.product_name ||
+                              item.productName ||
+                              "未知商品";
+                            const mainColorName =
+                              item.main_color_name ||
+                              item.mainColorName ||
+                              "未選擇";
+                            const subColorName =
+                              item.sub_color_name ||
+                              item.subColorName ||
+                              "未選擇";
+                            const quantity = item.quantity || 0;
+                            const unitPrice =
+                              item.unit_price || item.unitPrice || 0;
+                            const unitDeposit =
+                              item.unit_deposit || item.unitDeposit || 0;
+
+                            return `
+                            <div style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                              <p><strong>${productName}</strong></p>
+                              <p>主色: ${mainColorName}</p>
+                              <p>副色: ${subColorName}</p>
+                              <p>數量: ${quantity}</p>
+                              <p>單價: NT$ ${unitPrice}</p>
+                              <p>單件訂金: NT$ ${unitDeposit}</p>
+                            </div>
+                          `;
+                          })
+                          .join("")}
+                    </div>
+                `
+                    : ""
+                }
             </div>
-             <button onclick="deleteOrder(${order.id}, '${
+             <button data-order-id="${order.id}" data-order-number="${
         order.order_number
-      }')" class="btn-delete" style="">🗑️ 刪除</button>
+      }" class="btn-delete delete-order-btn" style="">🗑️ 刪除</button>
         </div>
     `
     )
@@ -285,23 +379,137 @@ function displayOrders(orders) {
 
   container.innerHTML = `
         <div style="margin-bottom: 20px;">
-            <button onclick="deleteAllOrders()" class="btn-delete">⚠️ 清空所有訂單</button>
+            <button id="deleteAllOrdersBtn" class="btn-delete">⚠️ 清空所有訂單</button>
         </div>
         ${ordersHTML}
     `;
+
+  // 綁定狀態選擇器事件
+  const statusSelects = container.querySelectorAll(".status-select");
+  statusSelects.forEach((select) => {
+    select.addEventListener("change", async function () {
+      // orders 表的 id 是 UUID 類型，直接使用字串
+      const orderId = this.dataset.orderId;
+      const status = this.value;
+      console.log("🔔 狀態選擇器變更事件觸發:", { orderId, status });
+      await updateOrderStatus(orderId, status);
+    });
+  });
+
+  // 綁定刪除所有訂單按鈕事件
+  const deleteAllBtn = container.querySelector("#deleteAllOrdersBtn");
+  if (deleteAllBtn) {
+    deleteAllBtn.addEventListener("click", deleteAllOrders);
+  }
+
+  // 綁定單個訂單刪除按鈕事件
+  const deleteButtons = container.querySelectorAll(".delete-order-btn");
+  deleteButtons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      // orders 表的 id 是 UUID 類型，直接使用字串
+      const orderId = this.dataset.orderId;
+      const orderNumber = this.dataset.orderNumber;
+      deleteOrder(orderId, orderNumber);
+    });
+  });
 }
 
 // 更新訂單狀態
 async function updateOrderStatus(orderId, status) {
   try {
-    console.log("開始更新訂單狀態:", { orderId, status });
-    const result = await API.updateOrderStatus(orderId, status);
-    console.log("訂單狀態更新成功:", result);
-    // 重新載入訂單列表以顯示更新後的狀態
+    // orders 表的 id 是 UUID 類型，直接使用字串，不要轉換為數字
+    const orderIdStr = String(orderId);
+
+    // 驗證 UUID 格式（簡單檢查）
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(orderIdStr)) {
+      console.warn("⚠️ 訂單 ID 可能不是標準 UUID 格式:", orderIdStr);
+      // 不拋出錯誤，因為可能是舊格式的 ID
+    }
+
+    console.log("🔄 開始更新訂單狀態:", {
+      orderId: orderIdStr,
+      status,
+      orderIdType: typeof orderId,
+    });
+
+    // 保存當前篩選條件
+    const currentStatusFilter =
+      document.getElementById("statusFilter")?.value || "";
+    const currentPhoneFilter =
+      document.getElementById("phoneFilter")?.value || "";
+
+    // 調用 API 更新狀態
+    const result = await API.updateOrderStatus(orderIdStr, status);
+    console.log("📥 API 回應:", result);
+
+    // 驗證更新是否成功
+    if (!result) {
+      throw new Error("API 沒有返回結果");
+    }
+
+    if (!result.success) {
+      throw new Error(result.error || result.message || "更新失敗");
+    }
+
+    // 驗證返回的訂單狀態是否正確
+    if (result.order && result.order.status !== status) {
+      console.warn("⚠️ 狀態不一致:", {
+        期望: status,
+        實際: result.order.status,
+      });
+      // 不拋出錯誤，但記錄警告
+    }
+
+    // 如果當前有狀態篩選，且更新的訂單狀態與篩選不符，清除狀態篩選以顯示所有訂單
+    // 這樣可以確保更新後的訂單能被看到
+    if (currentStatusFilter && currentStatusFilter !== status) {
+      const statusFilterEl = document.getElementById("statusFilter");
+      if (statusFilterEl) {
+        statusFilterEl.value = "";
+        console.log("✅ 清除狀態篩選以顯示更新後的訂單");
+      }
+    }
+
+    // 顯示成功提示
+    showSuccessToast(`訂單狀態已更新為: ${getStatusText(status)}`);
+
+    // 等待一小段時間確保資料庫更新完成
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // 重新載入訂單列表
     await loadOrders();
+
+    // 在背景刷新儀表板數據，確保切換到儀表板時能看到最新狀態
+    // 使用 Promise.all 並行執行，提高效率
+    loadDashboard().catch((error) => {
+      console.warn("⚠️ 刷新儀表板數據失敗（不影響訂單更新）:", error);
+    });
   } catch (error) {
-    console.error("更新訂單狀態失敗:", error);
-    handleAPIError(error, "更新訂單狀態失敗");
+    console.error("❌ 更新訂單狀態失敗:", error);
+    console.error("錯誤詳情:", {
+      message: error.message,
+      status: error.status,
+      response: error.response,
+      stack: error.stack,
+    });
+
+    // 顯示詳細的錯誤訊息
+    let errorMessage = error.message || "更新訂單狀態失敗";
+    if (error.response) {
+      if (error.response.details) {
+        console.error("後端錯誤詳情:", error.response.details);
+        errorMessage =
+          error.response.details.detail ||
+          error.response.details.message ||
+          errorMessage;
+      } else if (error.response.message) {
+        errorMessage = error.response.message;
+      }
+    }
+
+    alert(`更新訂單狀態失敗: ${errorMessage}\n\n請查看控制台以獲取更多詳情。`);
     // 重新載入訂單列表以恢復原始狀態
     await loadOrders();
   }
@@ -342,7 +550,9 @@ function displayProducts(products) {
         <div class="order-item">
             <div class="order-header">
                 <div>
-                    <strong>${product.name}</strong><br>
+                    <a href="./product.html?id=${
+                      product.product_id
+                    }" target="_blank">${product.name}</a>
                     <small>商品ID: ${product.product_id}</small>
                 </div>
                 <div>
@@ -1185,7 +1395,8 @@ function getStatusText(status) {
   const statusMap = {
     pending: "待處理",
     confirmed: "已確認",
-    paid: "已付款",
+    depositPaid: "已付訂金",
+    fullPaid: "已付全款",
     shipped: "已出貨",
     completed: "已完成",
     cancelled: "已取消",
@@ -1269,32 +1480,58 @@ function showError(message) {
   }, 3000);
 }
 
-// 刪除單一訂單
-async function deleteOrder(orderId, orderNumber) {
-  const confirmed = confirm(
-    `確定要刪除訂單 ${orderNumber} 嗎？\n\n此操作無法復原！`
-  );
+// 內部工具：動態載入 SweetAlert2
+async function ensureSweetAlertLoaded() {
+  if (window.Swal) return;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
 
-  if (!confirmed) {
-    return;
-  }
+// 內部工具：SweetAlert2 確認對話框
+async function sweetConfirm({
+  title = "確定嗎？",
+  text = "此操作無法復原！",
+  icon = "warning",
+  confirmButtonText = "確認",
+  cancelButtonText = "取消",
+}) {
+  await ensureSweetAlertLoaded();
+  const result = await Swal.fire({
+    title,
+    text,
+    icon,
+    showCancelButton: true,
+    confirmButtonText,
+    cancelButtonText,
+    reverseButtons: true,
+    focusCancel: true,
+  });
+  return result.isConfirmed === true;
+}
+
+// 刪除單一訂單（SweetAlert 版）
+async function deleteOrder(orderId, orderNumber) {
+  const confirmed = await sweetConfirm({
+    title: `刪除訂單 ${orderNumber}？`,
+    text: "此操作無法復原！",
+    icon: "warning",
+    confirmButtonText: "確認",
+    cancelButtonText: "取消",
+  });
+
+  if (!confirmed) return;
 
   try {
     console.log(`開始刪除訂單: ${orderId} (${orderNumber})`);
 
-    const response = await fetch(`/api/orders/${orderId}`, {
+    const result = await API.request(`/api/orders/${orderId}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
-    }
-
-    const result = await response.json();
     console.log("刪除成功:", result);
 
     // 顯示成功訊息
@@ -1310,41 +1547,37 @@ async function deleteOrder(orderId, orderNumber) {
 
 // 批量刪除所有訂單 (危險操作)
 async function deleteAllOrders() {
-  const confirmed = confirm(
-    "⚠️ 警告：這將刪除所有訂單及相關資料！\n\n此操作無法復原，請再次確認是否要繼續？"
-  );
+  // 第一次警告
+  const confirmed = await sweetConfirm({
+    title: "清空所有訂單？",
+    text: "⚠️ 這將刪除所有訂單資料，此操作無法復原！",
+    icon: "warning",
+    confirmButtonText: "我了解，繼續",
+    cancelButtonText: "取消",
+  });
 
-  if (!confirmed) {
-    return;
-  }
+  if (!confirmed) return;
 
-  const doubleConfirmed = confirm(
-    "最後確認：真的要清空所有訂單嗎？\n\n這包括：\n- 所有訂單記錄\n- 所有訂單明細\n\n此操作無法復原！"
-  );
+  // 第二次最終確認
+  const doubleConfirmed = await sweetConfirm({
+    title: "最後確認",
+    text: "真的要清空所有訂單嗎？\n這包括：所有訂單記錄與明細（不可還原）",
+    icon: "warning",
+    confirmButtonText: "是，清空",
+    cancelButtonText: "取消",
+  });
 
-  if (!doubleConfirmed) {
-    return;
-  }
+  if (!doubleConfirmed) return;
 
   try {
     console.log("開始批量刪除所有訂單...");
 
-    const response = await fetch("/api/orders/batch/all", {
+    const result = await API.request("/api/orders/batch/all", {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         confirm: "DELETE_ALL_ORDERS",
       }),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
-    }
-
-    const result = await response.json();
     console.log("批量刪除成功:", result);
 
     // 顯示成功訊息

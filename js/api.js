@@ -102,11 +102,18 @@ class API {
         } catch {
           errorData = {
             error: `HTTP ${response.status}: ${response.statusText}`,
+            message: errorText.substring(0, 200),
           };
         }
-        throw new Error(
-          errorData.error || `HTTP error! status: ${response.status}`
-        );
+        const errorMessage =
+          errorData.message ||
+          errorData.error ||
+          `HTTP error! status: ${response.status}`;
+        const error = new Error(errorMessage);
+        // 保存完整的錯誤資料以便調試
+        error.response = errorData;
+        error.status = response.status;
+        throw error;
       }
 
       return await response.json();
@@ -173,8 +180,10 @@ class API {
     });
   }
 
-  static async getOrders() {
-    return this.request("/api/orders");
+  static async getOrders(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const endpoint = queryString ? `/api/orders?${queryString}` : "/api/orders";
+    return this.request(endpoint);
   }
 
   static async getOrderById(orderId) {

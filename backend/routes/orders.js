@@ -90,6 +90,24 @@ router.post(
         return res.status(400).json({ error: "缺少必要欄位" });
       }
 
+      // 驗證並記錄訂單項資訊
+      console.log("📦 訂單項資料:", JSON.stringify(items, null, 2));
+      items.forEach((item, index) => {
+        console.log(`📦 訂單項 ${index + 1}:`, {
+          productId: item.productId,
+          productName: item.productName,
+          mainColor: item.mainColor,
+          mainColorName: item.mainColorName,
+          subColor: item.subColor,
+          subColorName: item.subColorName,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          unitDeposit: item.unitDeposit,
+          totalPrice: item.totalPrice,
+          totalDeposit: item.totalDeposit,
+        });
+      });
+
       // 檢查客戶是否存在，不存在則建立
       let customer = await get("SELECT * FROM customers WHERE phone = ?", [
         customerInfo.phone,
@@ -223,7 +241,38 @@ router.get("/", async (req, res) => {
 
     // 取得每個訂單的明細
     for (const order of orders) {
-      order.items = order.order_items || [];
+      // 解析 order_items JSONB 字段
+      let orderItems = order.order_items || [];
+
+      // 如果是字符串，需要解析 JSON
+      if (typeof orderItems === "string") {
+        try {
+          orderItems = JSON.parse(orderItems);
+        } catch (e) {
+          console.error("解析 order_items 失敗:", e);
+          orderItems = [];
+        }
+      }
+
+      // 確保是陣列格式
+      if (!Array.isArray(orderItems)) {
+        orderItems = [];
+      }
+
+      // 轉換字段命名為下划线格式以兼容前端顯示
+      order.items = orderItems.map((item) => ({
+        product_id: item.productId || item.product_id,
+        product_name: item.productName || item.product_name,
+        main_color: item.mainColor || item.main_color,
+        main_color_name: item.mainColorName || item.main_color_name,
+        sub_color: item.subColor || item.sub_color,
+        sub_color_name: item.subColorName || item.sub_color_name,
+        quantity: item.quantity,
+        unit_price: item.unitPrice || item.unit_price,
+        unit_deposit: item.unitDeposit || item.unit_deposit,
+        total_price: item.totalPrice || item.total_price,
+        total_deposit: item.totalDeposit || item.total_deposit,
+      }));
     }
 
     res.json({ orders });
@@ -249,9 +298,38 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "訂單不存在" });
     }
 
-    const items = await query("SELECT * FROM order_items WHERE order_id = ?", [
-      id,
-    ]);
+    // 解析 order_items JSONB 字段
+    let orderItems = order.order_items || [];
+
+    // 如果是字符串，需要解析 JSON
+    if (typeof orderItems === "string") {
+      try {
+        orderItems = JSON.parse(orderItems);
+      } catch (e) {
+        console.error("解析 order_items 失敗:", e);
+        orderItems = [];
+      }
+    }
+
+    // 確保是陣列格式
+    if (!Array.isArray(orderItems)) {
+      orderItems = [];
+    }
+
+    // 轉換字段命名為下划线格式以兼容前端顯示
+    const items = orderItems.map((item) => ({
+      product_id: item.productId || item.product_id,
+      product_name: item.productName || item.product_name,
+      main_color: item.mainColor || item.main_color,
+      main_color_name: item.mainColorName || item.main_color_name,
+      sub_color: item.subColor || item.sub_color,
+      sub_color_name: item.subColorName || item.sub_color_name,
+      quantity: item.quantity,
+      unit_price: item.unitPrice || item.unit_price,
+      unit_deposit: item.unitDeposit || item.unit_deposit,
+      total_price: item.totalPrice || item.total_price,
+      total_deposit: item.totalDeposit || item.total_deposit,
+    }));
 
     res.json({ order: { ...order, items } });
   } catch (error) {
@@ -266,11 +344,11 @@ router.patch("/:id/status", express.json(), async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log("收到更新訂單狀態請求:", {
+    console.log("📝 收到更新訂單狀態請求:", {
       id,
+      idType: typeof id,
       status,
       body: req.body,
-      headers: req.headers,
     });
 
     if (!status) {
@@ -281,7 +359,8 @@ router.patch("/:id/status", express.json(), async (req, res) => {
     const validStatuses = [
       "pending",
       "confirmed",
-      "paid",
+      "depositPaid",
+      "fullPaid",
       "shipped",
       "completed",
       "cancelled",
@@ -290,30 +369,86 @@ router.patch("/:id/status", express.json(), async (req, res) => {
       return res.status(400).json({ error: "無效的狀態值" });
     }
 
-    // 檢查訂單是否存在
-    const existingOrder = await get("SELECT id FROM orders WHERE id = ?", [id]);
+    // orders 表的 id 是 UUID 類型，直接使用字串
+    const orderId = id;
+
+    // 驗證 UUID 格式（簡單檢查）
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(orderId)) {
+      console.error("❌ 訂單 ID 不是有效的 UUID:", orderId);
+      return res.status(400).json({ error: "無效的訂單 ID 格式" });
+    }
+
+    // 檢查訂單是否存在並獲取當前狀態
+    const existingOrder = await get(
+      "SELECT id, status FROM orders WHERE id = ?",
+      [orderId]
+    );
     if (!existingOrder) {
+      console.error("❌ 訂單不存在:", orderId);
       return res.status(404).json({ error: "訂單不存在" });
     }
 
-    const result = await run(
-      "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-      [status, id]
-    );
+    console.log("📋 訂單當前狀態:", existingOrder.status, "→ 新狀態:", status);
 
-    console.log("更新結果:", result);
-
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "訂單不存在或更新失敗" });
+    // 執行更新
+    let result;
+    try {
+      result = await run(
+        "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        [status, orderId]
+      );
+      console.log("✅ 更新結果:", {
+        changes: result.changes,
+        lastID: result.lastID,
+      });
+    } catch (updateError) {
+      console.error("❌ UPDATE 語句執行失敗:", updateError);
+      console.error(
+        "SQL:",
+        "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+      );
+      console.error("參數:", [status, orderId]);
+      throw updateError;
     }
 
-    // 取得更新後的訂單資訊
+    // 注意：PostgreSQL 的 rowCount 可能為 0 即使更新成功（如果新值與舊值相同）
+    // 但我們仍然需要驗證實際的狀態是否改變
+    if (result.changes === 0) {
+      console.warn("⚠️ 更新結果顯示沒有行被更新，但繼續驗證實際狀態...");
+    }
+
+    // 驗證更新是否成功：重新查詢訂單
     const updatedOrder = await get(
       `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
               FROM orders o 
               WHERE o.id = ?`,
-      [id]
+      [orderId]
     );
+
+    if (!updatedOrder) {
+      console.error("❌ 更新後無法取得訂單:", orderId);
+      return res.status(500).json({ error: "更新後無法取得訂單資訊" });
+    }
+
+    if (updatedOrder.status !== status) {
+      console.error("❌ 狀態驗證失敗:", {
+        期望: status,
+        實際: updatedOrder.status,
+      });
+      return res.status(500).json({
+        error: "狀態更新驗證失敗",
+        expected: status,
+        actual: updatedOrder.status,
+      });
+    }
+
+    console.log("✅ 訂單狀態更新成功並驗證通過:", {
+      orderId,
+      舊狀態: existingOrder.status,
+      新狀態: updatedOrder.status,
+    });
 
     res.json({
       success: true,
@@ -321,8 +456,32 @@ router.patch("/:id/status", express.json(), async (req, res) => {
       order: updatedOrder,
     });
   } catch (error) {
-    console.error("更新訂單狀態失敗:", error);
-    res.status(500).json({ error: "更新訂單狀態失敗", message: error.message });
+    console.error("❌ 更新訂單狀態失敗:", error);
+    console.error("錯誤名稱:", error.name);
+    console.error("錯誤訊息:", error.message);
+    console.error("錯誤堆疊:", error.stack);
+    console.error("錯誤詳情:", {
+      code: error.code,
+      detail: error.detail,
+      hint: error.hint,
+      position: error.position,
+    });
+
+    // 提供更詳細的錯誤訊息給前端
+    const errorMessage = error.detail || error.message || "更新訂單狀態失敗";
+    res.status(500).json({
+      error: "更新訂單狀態失敗",
+      message: errorMessage,
+      details:
+        process.env.NODE_ENV === "development"
+          ? {
+              code: error.code,
+              detail: error.detail,
+              hint: error.hint,
+              stack: error.stack,
+            }
+          : undefined,
+    });
   }
 });
 
@@ -343,7 +502,38 @@ router.get("/search/phone/:phone", async (req, res) => {
 
     // 取得每個訂單的明細
     for (const order of orders) {
-      order.items = order.order_items || [];
+      // 解析 order_items JSONB 字段
+      let orderItems = order.order_items || [];
+
+      // 如果是字符串，需要解析 JSON
+      if (typeof orderItems === "string") {
+        try {
+          orderItems = JSON.parse(orderItems);
+        } catch (e) {
+          console.error("解析 order_items 失敗:", e);
+          orderItems = [];
+        }
+      }
+
+      // 確保是陣列格式
+      if (!Array.isArray(orderItems)) {
+        orderItems = [];
+      }
+
+      // 轉換字段命名為下划线格式以兼容前端顯示
+      order.items = orderItems.map((item) => ({
+        product_id: item.productId || item.product_id,
+        product_name: item.productName || item.product_name,
+        main_color: item.mainColor || item.main_color,
+        main_color_name: item.mainColorName || item.main_color_name,
+        sub_color: item.subColor || item.sub_color,
+        sub_color_name: item.subColorName || item.sub_color_name,
+        quantity: item.quantity,
+        unit_price: item.unitPrice || item.unit_price,
+        unit_deposit: item.unitDeposit || item.unit_deposit,
+        total_price: item.totalPrice || item.total_price,
+        total_deposit: item.totalDeposit || item.total_deposit,
+      }));
     }
 
     res.json({ orders });
@@ -411,59 +601,6 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.error("取得訂單失敗:", error);
     res.status(500).json({ error: "取得訂單失敗", message: error.message });
-  }
-});
-
-// 更新訂單狀態 (必須在 GET /:id 之後)
-router.patch("/:id/status", express.json(), async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    console.log("收到更新訂單狀態請求:", { id, status, body: req.body });
-
-    if (!status) {
-      return res.status(400).json({ error: "缺少狀態參數" });
-    }
-
-    // 驗證狀態值是否有效
-    const validStatuses = [
-      "pending",
-      "confirmed",
-      "paid",
-      "shipped",
-      "completed",
-      "cancelled",
-    ];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ error: "無效的狀態值" });
-    }
-
-    // 檢查訂單是否存在
-    const existingOrder = await get("SELECT id FROM orders WHERE id = ?", [id]);
-    if (!existingOrder) {
-      return res.status(404).json({ error: "訂單不存在" });
-    }
-
-    const result = await run(
-      "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-      [status, id]
-    );
-
-    console.log("更新結果:", result);
-
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "訂單不存在或更新失敗" });
-    }
-
-    res.json({
-      success: true,
-      message: "訂單狀態更新成功",
-      status: status,
-    });
-  } catch (error) {
-    console.error("更新訂單狀態失敗:", error);
-    res.status(500).json({ error: "更新訂單狀態失敗", message: error.message });
   }
 });
 
