@@ -85,7 +85,9 @@ video {
   padding: 0;
   border: 0;
   font-size: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, "蘋方-繁", "PingFang TC", "黑體-繁", "Heiti TC", "微軟正黑體", "Microsoft JhengHei", "Noto Sans TC", sans-serif; /* 英文字擺在前，中文字擺第二，中文字要有引號 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu,
+    "Helvetica Neue", Helvetica, Arial, "蘋方-繁", "PingFang TC", "黑體-繁",
+    "Heiti TC", "微軟正黑體", "Microsoft JhengHei", "Noto Sans TC", sans-serif; /* 英文字擺在前，中文字擺第二，中文字要有引號 */
   font-optical-sizing: auto; /* 光學自動改變粗細 */
   line-height: 1.5;
 }
@@ -106,7 +108,8 @@ img {
 }
 
 /* 重置清單 */
-ul, ol {
+ul,
+ol {
   list-style-type: none; /* 移除項目符號 */
   padding: 0; /* 移除內邊距 */
   margin: 0; /* 移除外邊距 */
@@ -126,8 +129,8 @@ textarea {
 /* 卷軸樣式 */
 ::-webkit-scrollbar {
   height: 12px;
-  background: #FFFFFF;
-  border: 1px solid #2A5070;
+  background: #ffffff;
+  border: 1px solid #2a5070;
   z-index: 1; /* 設置較低的 z-index */
   cursor: default;
 }
@@ -142,14 +145,14 @@ textarea {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 99px;
-  background: #FDDA75;
-  border: 1.5px solid #2A5070;
+  background: #fdda75;
+  border: 1.5px solid #2a5070;
   z-index: 1; /* 設置較低的 z-index */
   cursor: default;
 }
 
 ::-webkit-scrollbar-corner {
-  background: #B3B3B3;
+  background: #b3b3b3;
   cursor: default;
 }
 
@@ -194,7 +197,7 @@ body {
   /* 系統預設的無襯線字 */
   font-size: 100%;
   line-height: 1.5;
-  background-color: #84D0FF;
+  background-color: #84d0ff;
   width: 100%;
   overflow-x: hidden;
 }
@@ -236,7 +239,7 @@ img {
 a {
   display: block;
   text-decoration: none;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 /* Menu */
@@ -278,7 +281,8 @@ a {
 }
 #topbar .navbar .ig-icon:hover,
 #topbar .navbar .shop-icon:hover {
-  filter: brightness(0) saturate(100%) invert(88%) sepia(79%) saturate(5081%) hue-rotate(312deg) brightness(100%) contrast(100%);
+  filter: brightness(0) saturate(100%) invert(88%) sepia(79%) saturate(5081%)
+    hue-rotate(312deg) brightness(100%) contrast(100%);
 }
 #topbar .navbar .ig-icon:active,
 #topbar .navbar .shop-icon:active {
@@ -357,8 +361,13 @@ a {
   display: flex;
   flex-direction: row;
   right: -180px;
-  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.45), rgba(153, 153, 153, 0.3));
-  box-shadow: 4px 4px 2px 0px rgba(32, 87, 114, 0.389), inset 1px 1px 3px rgba(255, 255, 255, 0.8);
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.45),
+    rgba(153, 153, 153, 0.3)
+  );
+  box-shadow: 4px 4px 2px 0px rgba(32, 87, 114, 0.389),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: brightness(100%) blur(3px);
   border-radius: 99px 0 0 99px;
@@ -369,7 +378,11 @@ a {
 }
 #topbar .navbar .navigation .menu li:hover {
   right: -2px;
-  background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.5)
+  );
 }
 #topbar .navbar .navigation .menu li:active img {
   transform: scale(1.2);
@@ -405,7 +418,7 @@ a {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
-  color: #2A5070;
+  color: #2a5070;
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -420,7 +433,7 @@ a {
   margin-top: 0;
   padding: 0;
   overflow: hidden;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #topbar .navbar .navigation .menu li a .menu-title2,
 #topbar .navbar .navigation .menu li button .menu-title2 {
@@ -436,7 +449,7 @@ a {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
-  color: #FDDA75;
+  color: #fdda75;
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -451,7 +464,7 @@ a {
   margin-top: 0;
   padding: 0;
   overflow: hidden;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #topbar .navbar .navigation .menu li a:hover p,
 #topbar .navbar .navigation .menu li button:hover p {
@@ -494,11 +507,11 @@ a {
     justify-content: center;
     align-items: center;
     box-shadow: none;
-    border: 2px solid #FDDA75;
+    border: 2px solid #fdda75;
   }
   #topbar .navbar .navigation .menu li:active a p,
   #topbar .navbar .navigation .menu li:active button p {
-    color: #FFFFFF;
+    color: #ffffff;
   }
   #topbar .navbar .navigation .menu li a,
   #topbar .navbar .navigation .menu li button {
@@ -557,14 +570,15 @@ a {
   #topbar .navbar .navigation .menu li button .menu-title2 p,
   #topbar .navbar .navigation .menu li a .menu-title p,
   #topbar .navbar .navigation .menu li a .menu-title2 p {
-    text-shadow: -2px -2px 0 #fff6dc, 2px -2px 0 #fff6dc, -2px 2px 0 #fff6dc, 2px 2px 0 #fff6dc;
+    text-shadow: -2px -2px 0 #fff6dc, 2px -2px 0 #fff6dc, -2px 2px 0 #fff6dc,
+      2px 2px 0 #fff6dc;
     padding: 0;
   }
   #topbar .navbar .navigation .menu li button .menu-title2 p,
   #topbar .navbar .navigation .menu li a .menu-title2 p {
     text-shadow: none;
     padding: 0 5px;
-    background: #2A5070;
+    background: #2a5070;
     border-radius: 99px;
   }
   #topbar .navbar .navigation .menu li:hover {
@@ -671,7 +685,7 @@ label {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 input,
@@ -687,13 +701,13 @@ textarea {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border: 1.5px solid #FDDA75;
+  border: 1.5px solid #fdda75;
 }
 
 .selcect-wrapper {
@@ -710,8 +724,8 @@ textarea {
 }
 
 .submit-btn {
-  background-color: #FDDA75;
-  color: #FFFFFF;
+  background-color: #fdda75;
+  color: #ffffff;
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -723,7 +737,7 @@ textarea {
 }
 
 .submit-btn:hover {
-  background-color: #00C7BE;
+  background-color: #00c7be;
 }
 
 .note {
@@ -755,13 +769,13 @@ textarea {
 
 .popup-content {
   position: relative;
-  background: #2A5070;
+  background: #2a5070;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   width: 60%;
   max-width: 600px;
-  border: 2px #FFFFFF solid;
+  border: 2px #ffffff solid;
 }
 .popup-content h2 {
   font-family: "Zen Maru Gothic", serif;
@@ -769,7 +783,7 @@ textarea {
   font-size: 1.5rem;
   letter-spacing: 0.05rem;
   text-align: center;
-  color: #ECFF5F;
+  color: #ecff5f;
   margin-bottom: 20px;
 }
 .popup-content p {
@@ -778,7 +792,7 @@ textarea {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 @media (max-width: 768px) {
   .popup-content {
@@ -804,16 +818,16 @@ textarea {
   width: 30px;
   padding: 10px;
   cursor: pointer;
-  color: #FFFFFF;
+  color: #ffffff;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #FDDA75;
-  border: #FFFFFF 2px solid;
+  background-color: #fdda75;
+  border: #ffffff 2px solid;
 }
 
 .close-btn:hover {
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 
 /* 首頁 */
@@ -822,7 +836,7 @@ textarea {
   width: 100%;
   z-index: 0;
   cursor: none;
-  background-color: #FFEDBA;
+  background-color: #ffedba;
   min-height: 100vh;
   /* 回到頂部按鈕 */
 }
@@ -915,7 +929,8 @@ textarea {
 }
 #home .ig-icon:hover,
 #home .shop-icon:hover {
-  filter: brightness(0) saturate(100%) invert(67%) sepia(90%) saturate(3316%) hue-rotate(136deg) brightness(97%) contrast(101%);
+  filter: brightness(0) saturate(100%) invert(67%) sepia(90%) saturate(3316%)
+    hue-rotate(136deg) brightness(97%) contrast(101%);
 }
 #home .hamburger {
   background-color: transparent;
@@ -923,14 +938,15 @@ textarea {
   cursor: pointer;
 }
 #home .hamburger:hover .bar {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(14%) saturate(1609%) hue-rotate(166deg) brightness(89%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(31%) sepia(14%) saturate(1609%)
+    hue-rotate(166deg) brightness(89%) contrast(99%);
 }
 #home #home-banner {
   position: relative;
   display: flex;
   width: 100%;
   height: 100vh;
-  background: #84D0FF;
+  background: #84d0ff;
   overflow: hidden;
   z-index: 1;
 }
@@ -958,7 +974,7 @@ textarea {
 #home #home-banner .home-middle .carousel-wrapper .circle-bg {
   position: absolute;
   top: 20%;
-  background-color: #FDDA75;
+  background-color: #fdda75;
   border-radius: 50%;
   width: 350px;
   height: 350px;
@@ -1010,11 +1026,21 @@ textarea {
 #home #home-banner .home-middle .carousel-wrapper .transition .slide.right {
   right: 0%;
 }
-#home #home-banner .home-middle .carousel-wrapper .transition .slide.shift-right {
+#home
+  #home-banner
+  .home-middle
+  .carousel-wrapper
+  .transition
+  .slide.shift-right {
   right: 100%;
   left: auto;
 }
-#home #home-banner .home-middle .carousel-wrapper .transition .slide.shift-left {
+#home
+  #home-banner
+  .home-middle
+  .carousel-wrapper
+  .transition
+  .slide.shift-left {
   left: 100%;
   right: auto;
 }
@@ -1059,7 +1085,7 @@ textarea {
   transition: border-color 0.3s ease-out;
 }
 #home #home-banner .home-middle .carousel-wrapper .arrow:hover {
-  border-color: #2A5070;
+  border-color: #2a5070;
 }
 #home #home-banner .home-middle .carousel-wrapper .arrow-left {
   left: 20px;
@@ -1117,7 +1143,7 @@ textarea {
   padding: 10px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.12);
-  border: 2px solid #ECFF5F;
+  border: 2px solid #ecff5f;
   margin-bottom: 10px;
 }
 #home #home-banner .home-middle .scroll-icon .scroll-circle .scroll-arrow {
@@ -1155,13 +1181,13 @@ textarea {
   font-size: 24px;
   font-optical-sizing: auto;
   font-style: normal;
-  color: #ECFF5F;
+  color: #ecff5f;
   overflow: hidden;
 }
 #home #home-banner .whats-new .slideText-heading hr {
   width: 80%;
   height: 2px;
-  background-color: #ECFF5F;
+  background-color: #ecff5f;
   margin: 0 0 10px 0;
   border: none;
 }
@@ -1187,7 +1213,7 @@ textarea {
   font-optical-sizing: auto;
   font-style: normal;
   letter-spacing: 0.25rem;
-  color: #2A5070;
+  color: #2a5070;
 }
 #home #home-banner .whats-new .news-more-btn i {
   width: 14px;
@@ -1196,7 +1222,7 @@ textarea {
   transform: scale(1.1);
 }
 #home #home-banner .whats-new .news-more-btn:hover span {
-  color: #FEBD59;
+  color: #febd59;
 }
 #home #home-banner .whats-new .news-more-btn:active {
   transform: translateY(2px);
@@ -1258,7 +1284,8 @@ textarea {
   background-size: cover;
   top: -10%;
   right: 75%;
-  animation: blob 8s ease-in-out infinite, float 250s ease-in-out infinite, colorCycle 10s infinite linear;
+  animation: blob 8s ease-in-out infinite, float 250s ease-in-out infinite,
+    colorCycle 10s infinite linear;
 }
 #home .blobs-box .blob-6 {
   height: 550px;
@@ -1266,7 +1293,8 @@ textarea {
   background: url(../images/home/pink-noisy-gradients.jpg);
   top: 50%;
   right: -10%;
-  animation: blob 5s ease-in-out infinite, float 240s ease-in-out infinite, colorCycle 10s infinite linear;
+  animation: blob 5s ease-in-out infinite, float 240s ease-in-out infinite,
+    colorCycle 10s infinite linear;
 }
 #home .blobs-box .blob-7 {
   height: 4rem;
@@ -1427,7 +1455,7 @@ textarea {
 #home #about-soft-intro #keyart-0 {
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom right, #FFEABF, #F5ECAE);
+  background: linear-gradient(to bottom right, #ffeabf, #f5ecae);
   transform: translateY(0);
   bottom: 0;
 }
@@ -1471,14 +1499,14 @@ textarea {
   z-index: 100;
 }
 #home #about-soft-intro #keyart-scrim {
-  background: linear-gradient(to bottom right, #FFEABF, #F5ECAE);
+  background: linear-gradient(to bottom right, #ffeabf, #f5ecae);
   opacity: 0;
 }
 @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
   #home #about-soft-intro #keyart-0 {
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom right, #FFEABF, #F5ECAE);
+    background: linear-gradient(to bottom right, #ffeabf, #f5ecae);
     transform: translateY(0);
     bottom: 0;
   }
@@ -1555,7 +1583,7 @@ textarea {
   position: relative;
   z-index: 101;
   margin-top: -120px;
-  background: #84D0FF;
+  background: #84d0ff;
   width: 100%;
   height: 110vh;
   overflow: hidden;
@@ -1616,7 +1644,12 @@ textarea {
   height: auto;
   display: block;
 }
-#home #learning-soft-intro .book-wrapper .right-page .right-page-content .right-page-content-img {
+#home
+  #learning-soft-intro
+  .book-wrapper
+  .right-page
+  .right-page-content
+  .right-page-content-img {
   position: absolute;
   z-index: 1;
   width: 100%;
@@ -1747,7 +1780,7 @@ textarea {
 #home #learning-soft-intro .bubble-box-wrapper .bubbles-box .bubble-2 {
   left: 20%;
   animation: up 4.5s infinite;
-  background-color: #1EA1FF;
+  background-color: #1ea1ff;
 }
 #home #learning-soft-intro .bubble-box-wrapper .bubbles-box .bubble-3 {
   left: 65%;
@@ -1762,7 +1795,7 @@ textarea {
 #home #learning-soft-intro .bubble-box-wrapper .bubbles-box .bubble-5 {
   left: 50%;
   animation: up 7.5s infinite;
-  background-color: #1EA1FF;
+  background-color: #1ea1ff;
 }
 #home #learning-soft-intro .bubble-box-wrapper .bubbles-box .bubble-6 {
   left: 30%;
@@ -1774,7 +1807,7 @@ textarea {
 #home #learning-soft-intro .bubble-box-wrapper .bubbles-box .bubble-7 {
   left: 75%;
   animation: up 6s infinite;
-  background-color: #1EA1FF;
+  background-color: #1ea1ff;
   width: 30px;
   height: 30px;
 }
@@ -1782,7 +1815,7 @@ textarea {
   left: 95%;
   opacity: 0.8;
   animation: up 6.5s infinite;
-  background-color: #1EA1FF;
+  background-color: #1ea1ff;
 }
 @keyframes up {
   100% {
@@ -1811,20 +1844,23 @@ textarea {
 @media (max-width: 1024px) {
   @keyframes bookwrapper {
     0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px) translateX(-160px) scale(1);
+      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px)
+        translateX(-160px) scale(1);
     }
     50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(-50px) translateX(-160px) scale(0.8);
+      transform: rotateZ(-45deg) rotateX(15deg) translateY(-50px)
+        translateX(-160px) scale(0.8);
     }
     100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px) translateX(-160px) scale(1);
+      transform: rotateZ(-40deg) rotateX(0deg) translateY(-150px)
+        translateX(-160px) scale(1);
     }
   }
 }
 #home #becoming-Soft-intro {
   display: flex;
   width: 100%;
-  background: linear-gradient(#FFEDBA, #FFFEF8);
+  background: linear-gradient(#ffedba, #fffef8);
   align-items: flex-start;
   justify-content: center;
   overflow: hidden;
@@ -1866,7 +1902,7 @@ textarea {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #home #becoming-Soft-intro .test-intro-middle .masked-content #test-gallery {
   margin: 30px auto;
@@ -1875,7 +1911,12 @@ textarea {
   height: 320px;
   padding: 10px;
 }
-#home #becoming-Soft-intro .test-intro-middle .masked-content #test-gallery > div {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .masked-content
+  #test-gallery
+  > div {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -1892,14 +1933,27 @@ textarea {
   justify-content: center;
   align-items: center;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .softtest-text {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .softtest-text {
   width: 157px;
   margin: 0;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .softtest-text img {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .softtest-text
+  img {
   width: 100%;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1915,16 +1969,31 @@ textarea {
   mask-repeat: no-repeat;
   margin-bottom: 0px;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container:hover .button_text_container {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container:hover
+  .button_text_container {
   transform: scale(1.1);
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .button_su {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .button_su {
   overflow: hidden;
   position: relative;
   display: inline-block;
   border-radius: 3px;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .su_button_circle {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .su_button_circle {
   background-color: rgb(255, 145, 0);
   border-radius: 1000px;
   position: absolute;
@@ -1936,7 +2005,12 @@ textarea {
   margin-top: 0px;
   pointer-events: none;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .test-button {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .test-button {
   display: inline-flex;
   background: url(../images/home/test-intro-start.png);
   background-size: 100% 100%;
@@ -1952,7 +2026,12 @@ textarea {
   text-decoration: none;
   z-index: 100;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .button_text_container {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .button_text_container {
   position: relative;
   z-index: 101;
   transition: 0.2s ease-out;
@@ -1962,7 +2041,13 @@ textarea {
   font-optical-sizing: auto;
   font-style: normal;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .button_text_container i {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .button_text_container
+  i {
   padding-left: 8px;
   font-size: 16px;
   animation: identifier 1s infinite;
@@ -1978,10 +2063,20 @@ textarea {
     transform: translateX(0);
   }
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .explode-circle {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .explode-circle {
   animation: explode 0.5s forwards;
 }
-#home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .desplode-circle {
+#home
+  #becoming-Soft-intro
+  .test-intro-middle
+  .test-intro-bottom
+  .button_container
+  .desplode-circle {
   animation: desplode 0.5s forwards;
 }
 @keyframes explode {
@@ -2207,11 +2302,20 @@ textarea {
     font-size: 0.875rem;
     letter-spacing: 0.05rem;
   }
-  #home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container {
+  #home
+    #becoming-Soft-intro
+    .test-intro-middle
+    .test-intro-bottom
+    .button_container {
     width: 180px;
     height: 90px;
   }
-  #home #becoming-Soft-intro .test-intro-middle .test-intro-bottom .button_container .test-button {
+  #home
+    #becoming-Soft-intro
+    .test-intro-middle
+    .test-intro-bottom
+    .button_container
+    .test-button {
     width: 180px;
   }
   #home #learning-soft-intro {
@@ -2219,13 +2323,16 @@ textarea {
   }
   @keyframes bookwrapper {
     0% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(80%) translateX(0%) scale(2.05);
+      transform: rotateZ(-40deg) rotateX(0deg) translateY(80%) translateX(0%)
+        scale(2.05);
     }
     50% {
-      transform: rotateZ(-45deg) rotateX(15deg) translateY(80%) translateX(0%) scale(2);
+      transform: rotateZ(-45deg) rotateX(15deg) translateY(80%) translateX(0%)
+        scale(2);
     }
     100% {
-      transform: rotateZ(-40deg) rotateX(0deg) translateY(80%) translateX(0%) scale(2.05);
+      transform: rotateZ(-40deg) rotateX(0deg) translateY(80%) translateX(0%)
+        scale(2.05);
     }
   }
   #home #learning-soft-intro .book-wrapper .right-page .right-page-content a {
@@ -2375,12 +2482,12 @@ textarea {
   cursor: pointer;
   background: none;
   padding: 10px 0 90px 35px;
-  border-left: #FFFFFF 3px solid;
+  border-left: #ffffff 3px solid;
   position: relative;
 }
 #whats-new .wrapper .news-button::before {
   content: "";
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   width: 20px;
   height: 20px;
   border-radius: 99px;
@@ -2389,7 +2496,7 @@ textarea {
   left: -12px;
 }
 #whats-new .wrapper .news-button h3 {
-  color: #ECFF5F;
+  color: #ecff5f;
   font-family: "Jacques Francois Shadow", serif;
   font-weight: 400;
   font-size: 32px;
@@ -2405,7 +2512,7 @@ textarea {
   bottom: 0;
   width: 100%;
   height: 1.5px;
-  background-color: #ECFF5F;
+  background-color: #ecff5f;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.3s ease-out;
@@ -2414,13 +2521,13 @@ textarea {
   transform: scaleX(1);
 }
 #whats-new .wrapper .news-button:hover h3:not(.active) {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #whats-new .wrapper .news-button.active {
   padding-bottom: 20px;
 }
 #whats-new .wrapper .news-button span {
-  color: #FFFFFF;
+  color: #ffffff;
   font-family: "Noto Sans TC", serif;
   font-weight: 700;
   font-size: 1.25rem;
@@ -2432,7 +2539,7 @@ textarea {
   overflow: hidden;
   padding: 0 35 0 0px;
   transition: max-height 0.3s ease-out;
-  border-left: #FFFFFF 3px dashed;
+  border-left: #ffffff 3px dashed;
 }
 #whats-new .wrapper .news-content ul li {
   padding: 8px;
@@ -2449,8 +2556,8 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 5px 0 20px 30PX;
-  color: #FFFFFF;
+  padding: 5px 0 20px 30px;
+  color: #ffffff;
   font-size: 18px;
 }
 #whats-new .wrapper .icon {
@@ -2565,7 +2672,7 @@ textarea {
   transition: border-color 0.3s ease-out;
 }
 #whats-new .news-carousel-wrapper .arrow:hover {
-  border-color: #2A5070;
+  border-color: #2a5070;
 }
 #whats-new .news-carousel-wrapper .arrow-left {
   left: 25%;
@@ -2665,7 +2772,7 @@ textarea {
   width: 100%;
   min-height: 100vh;
   overflow: auto;
-  background: linear-gradient(#FFEDBA, #FFFEF8);
+  background: linear-gradient(#ffedba, #fffef8);
 }
 .softtest #test {
   display: flex;
@@ -2737,11 +2844,11 @@ textarea {
   background: url(../images/softtest/comfirm-btn.svg);
   background-size: cover;
   border: none;
-  color: #2A2A2A;
+  color: #2a2a2a;
   justify-content: center;
   align-items: center;
   text-align: center;
-  filter: drop-shadow(4px 4px 0 #5B83A3);
+  filter: drop-shadow(4px 4px 0 #5b83a3);
   cursor: pointer;
   transition: ease-in-out 0.1s;
 }
@@ -2749,14 +2856,14 @@ textarea {
   background: url(../images/softtest/comfirm-btn-hover.png);
   transform: scale(1.1);
   background-size: cover;
-  filter: drop-shadow(3px 3px 0 #619ABD);
+  filter: drop-shadow(3px 3px 0 #619abd);
   padding: 10px 20px;
   color: #736262;
 }
 .softtest #test #start-screen .start-btn:active {
   background-size: cover;
   transform: scale(0.95) translateY(2px);
-  filter: drop-shadow(1px 1px 0 #5B83A3) hue-rotate(-10deg);
+  filter: drop-shadow(1px 1px 0 #5b83a3) hue-rotate(-10deg);
   padding: 10px 20px;
   color: #736262;
 }
@@ -2794,8 +2901,9 @@ textarea {
   font-size: 1.25rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #2A5070;
-  text-shadow: -2px -2px 0 #fff6dc, 2px -2px 0 #fff6dc, -2px 2px 0 #fff6dc, 2px 2px 0 #fff6dc;
+  color: #2a5070;
+  text-shadow: -2px -2px 0 #fff6dc, 2px -2px 0 #fff6dc, -2px 2px 0 #fff6dc,
+    2px 2px 0 #fff6dc;
 }
 .softtest #test .test-bg .question-container #options {
   display: flex;
@@ -2815,31 +2923,32 @@ textarea {
   margin: 15px 0;
   padding: 20px 30px;
   border-radius: 22px;
-  border: #FFFFFF 3px solid;
+  border: #ffffff 3px solid;
   cursor: pointer;
-  color: #2A5070;
+  color: #2a5070;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.18rem;
   background-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 4px 4px 0 #5B83A3;
+  box-shadow: 4px 4px 0 #5b83a3;
   backdrop-filter: brightness(120%) blur(6px);
   transition: 0.1s;
 }
 .softtest #test .test-bg .question-container #options .option-button:hover {
   background-color: rgba(255, 255, 255, 0.8);
   transform: scale(1.1);
-  box-shadow: 3px 3px 0 #619ABD;
+  box-shadow: 3px 3px 0 #619abd;
 }
-.softtest #test .test-bg .question-container #options .option-button.selected, .softtest #test .test-bg .question-container #options .option-button.active {
+.softtest #test .test-bg .question-container #options .option-button.selected,
+.softtest #test .test-bg .question-container #options .option-button.active {
   background: url(../images/softtest/select-bg.jpg);
   transform: scale(1);
   background-size: cover;
-  border: #2A5070 3px solid;
+  border: #2a5070 3px solid;
   background-position: center;
-  color: #FFFFFF;
-  box-shadow: 1px 1px 0 #5B83A3;
+  color: #ffffff;
+  box-shadow: 1px 1px 0 #5b83a3;
   filter: hue-rotate(-10deg);
 }
 .softtest #test .test-bg .question-container #confirm-button {
@@ -2857,11 +2966,11 @@ textarea {
   background: url(../images/softtest/comfirm-btn.svg);
   background-size: cover;
   border: none;
-  color: #2A2A2A;
+  color: #2a2a2a;
   justify-content: center;
   align-items: center;
   text-align: center;
-  filter: drop-shadow(3px 3px 0 #619ABD);
+  filter: drop-shadow(3px 3px 0 #619abd);
   cursor: pointer;
 }
 .softtest #test .test-bg .question-container #confirm-button:hover {
@@ -2869,14 +2978,14 @@ textarea {
   transform: scale(1.1);
   background-size: cover;
   transition: ease-in-out 0.1s;
-  filter: drop-shadow(3px 6px 0 #5B83A3);
+  filter: drop-shadow(3px 6px 0 #5b83a3);
   padding: 10px 20px;
   color: #736262;
 }
 .softtest #test .test-bg .question-container #confirm-button:active {
   background-size: cover;
   transform: scale(0.95) translateY(2px);
-  filter: drop-shadow(2px 2px 0 #5B83A3) hue-rotate(-10deg);
+  filter: drop-shadow(2px 2px 0 #5b83a3) hue-rotate(-10deg);
   padding: 10px 20px;
   color: #736262;
 }
@@ -2900,7 +3009,7 @@ textarea {
   font-size: 1.25rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #2A5070;
+  color: #2a5070;
   margin-bottom: 16px;
 }
 .softtest #test #result img {
@@ -2931,11 +3040,11 @@ textarea {
   background-position: center;
   background-repeat: no-repeat;
   border: none;
-  color: #2A2A2A;
+  color: #2a2a2a;
   justify-content: center;
   align-items: center;
   text-align: center;
-  filter: drop-shadow(3px 3px 0 #619ABD);
+  filter: drop-shadow(3px 3px 0 #619abd);
   cursor: pointer;
 }
 .softtest #test #result .result-buttons .result-button:hover {
@@ -2943,14 +3052,14 @@ textarea {
   transform: scale(1.1);
   background-size: cover;
   transition: ease-in-out 0.1s;
-  filter: drop-shadow(3px 6px 0 #5B83A3);
+  filter: drop-shadow(3px 6px 0 #5b83a3);
   padding: 10px 20px;
   color: #736262;
 }
 .softtest #test #result .result-buttons .result-button:active {
   background-size: cover;
   transform: scale(0.95) translateY(2px);
-  filter: drop-shadow(2px 2px 0 #5B83A3) hue-rotate(-10deg);
+  filter: drop-shadow(2px 2px 0 #5b83a3) hue-rotate(-10deg);
   padding: 10px 20px;
   color: #736262;
 }
@@ -3049,7 +3158,7 @@ textarea {
   background-size: cover;
   background-repeat: no-repeat;
   transition: transform 0.2s;
-  border: 3px solid #2A2A2A;
+  border: 3px solid #2a2a2a;
   box-shadow: 4px 4px 0 #3290dd;
   transition: 0.2s ease-out;
 }
@@ -3075,7 +3184,7 @@ textarea {
   background-repeat: no-repeat;
   transform: scale(1.05);
   box-shadow: 4px 4px 0 #64b2f1;
-  border: 3px solid #FEBD59;
+  border: 3px solid #febd59;
 }
 #learning-soft .gallery .cardgrid-wrapper .character-card.active img {
   filter: grayscale(0%);
@@ -3096,18 +3205,18 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #ECFF5F;
+  color: #ecff5f;
   cursor: pointer;
 }
 #learning-soft .gallery .pagination button:hover {
-  color: #FFFFFF;
+  color: #ffffff;
   transform: scale(1.1);
 }
 #learning-soft .gallery .pagination button:active {
   transform: translateY(2px);
 }
 #learning-soft .gallery .pagination button:disabled {
-  color: #5B83A3;
+  color: #5b83a3;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 1.125rem;
@@ -3116,7 +3225,7 @@ textarea {
   cursor: not-allowed;
 }
 #learning-soft .gallery .pagination button:disabled:hover {
-  color: #5B83A3;
+  color: #5b83a3;
   transform: scale(1);
 }
 #learning-soft .gallery .pagination #pageInfo {
@@ -3124,7 +3233,7 @@ textarea {
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 @media (max-width: 1240px) {
   #learning-soft .gallery {
@@ -3164,7 +3273,12 @@ textarea {
     background-size: 100% 100%;
     padding: 10px 15px 0 15px;
   }
-  #learning-soft .container .album-wrapper .album-section .album-content .character-name {
+  #learning-soft
+    .container
+    .album-wrapper
+    .album-section
+    .album-content
+    .character-name {
     height: 40px;
     font-family: "Zen Maru Gothic", serif;
     font-weight: 700;
@@ -3191,11 +3305,21 @@ textarea {
   #learning-soft .container .album-wrapper .album-content .thumbnail-list {
     gap: 6px;
   }
-  #learning-soft .container .album-wrapper .album-content .thumbnail-list .thumbnail-item {
+  #learning-soft
+    .container
+    .album-wrapper
+    .album-content
+    .thumbnail-list
+    .thumbnail-item {
     width: 20px;
     height: 20px;
   }
-  #learning-soft .container .album-wrapper .album-content .thumbnail-list .thumbnail-item.active {
+  #learning-soft
+    .container
+    .album-wrapper
+    .album-content
+    .thumbnail-list
+    .thumbnail-item.active {
     width: 30px;
     height: 30px;
   }
@@ -3220,7 +3344,12 @@ textarea {
   #learning-soft .container .gallery .cardgrid-wrapper .card-grid {
     gap: 10px;
   }
-  #learning-soft .container .gallery .cardgrid-wrapper .card-grid .character-card {
+  #learning-soft
+    .container
+    .gallery
+    .cardgrid-wrapper
+    .card-grid
+    .character-card {
     min-width: 60px;
     max-width: 80px;
   }
@@ -3233,7 +3362,12 @@ textarea {
   #learning-soft .container .gallery .cardgrid-wrapper {
     margin: 0;
   }
-  #learning-soft .container .gallery .cardgrid-wrapper .card-grid .character-card {
+  #learning-soft
+    .container
+    .gallery
+    .cardgrid-wrapper
+    .card-grid
+    .character-card {
     min-width: 50px;
     max-width: 60px;
   }
@@ -3334,7 +3468,7 @@ textarea {
   letter-spacing: 0.05rem;
   line-height: 2;
   line-height: 1.5;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 #learning-soft .album-wrapper .album-content .thumbnail-list {
   display: flex;
@@ -3346,19 +3480,28 @@ textarea {
   width: 100%;
 }
 #learning-soft .album-wrapper .album-content .thumbnail-list .thumbnail-item {
-  background-color: #B3B3B3;
+  background-color: #b3b3b3;
   border-radius: 4px;
   width: 30px;
   height: 30px;
-  border: 2px solid #2A2A2A;
+  border: 2px solid #2a2a2a;
 }
-#learning-soft .album-wrapper .album-content .thumbnail-list .thumbnail-item img {
+#learning-soft
+  .album-wrapper
+  .album-content
+  .thumbnail-list
+  .thumbnail-item
+  img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   cursor: pointer;
 }
-#learning-soft .album-wrapper .album-content .thumbnail-list .thumbnail-item.active {
+#learning-soft
+  .album-wrapper
+  .album-content
+  .thumbnail-list
+  .thumbnail-item.active {
   border: 3px solid #70005d;
   width: 50px;
   height: 50px;
@@ -3380,7 +3523,7 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: default;
 }
 #learning-soft .album-wrapper .btn-group button {
@@ -3391,18 +3534,18 @@ textarea {
   font-size: 1.5rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #ECFF5F;
+  color: #ecff5f;
   cursor: pointer;
 }
 #learning-soft .album-wrapper .btn-group button:hover {
-  color: #FFFFFF;
+  color: #ffffff;
   transform: scale(1.1);
 }
 #learning-soft .album-wrapper .btn-group button:active {
   transform: translateY(2px);
 }
 #learning-soft .album-wrapper .btn-group button:disabled {
-  color: #5B83A3;
+  color: #5b83a3;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 1.125rem;
@@ -3411,7 +3554,7 @@ textarea {
   cursor: not-allowed;
 }
 #learning-soft .album-wrapper .btn-group button:disabled:hover {
-  color: #5B83A3;
+  color: #5b83a3;
   transform: scale(1);
 }
 #learning-soft .album-wrapper .btn-group.prev-btn {
@@ -3441,8 +3584,8 @@ textarea {
   align-items: center;
   width: 100%;
   padding: 40px 0;
-  border-top: 1.5px solid #FFFFFF;
-  border-bottom: 1.5px solid #FFFFFF;
+  border-top: 1.5px solid #ffffff;
+  border-bottom: 1.5px solid #ffffff;
 }
 .shop-menu .links-group ul {
   padding: 0;
@@ -3456,7 +3599,7 @@ textarea {
   align-items: center;
   gap: 8px;
   background: none;
-  color: #FFFFFF;
+  color: #ffffff;
   padding: 0;
   margin: 0;
   border: none;
@@ -3469,7 +3612,7 @@ textarea {
   line-height: 1.5;
 }
 .shop-menu .links-group ul li button:hover {
-  color: #ECFF5F;
+  color: #ecff5f;
 }
 .shop-menu .links-group ul li button img {
   width: 24px;
@@ -3483,7 +3626,7 @@ textarea {
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
-  color: #84D0FF;
+  color: #84d0ff;
 }
 .shop-menu .product-side {
   width: 100%;
@@ -3497,7 +3640,7 @@ textarea {
   justify-content: space-between;
   width: 100%;
   padding: 8% 10%;
-  background-color: #2A5070;
+  background-color: #2a5070;
 }
 #shop-list .container {
   width: 70%;
@@ -3523,10 +3666,10 @@ textarea {
 #shop-list .container .controls .control-group .sort-button {
   margin-right: 20px;
   padding: 8px 16px;
-  background: #FDDA75;
-  border: 2px solid #FDDA75;
+  background: #fdda75;
+  border: 2px solid #fdda75;
   border-radius: 4px;
-  color: #2A5070;
+  color: #2a5070;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3538,42 +3681,51 @@ textarea {
   letter-spacing: 0rem;
 }
 #shop-list .container .controls .control-group .sort-button:hover {
-  border: 2px solid #FDDA75;
+  border: 2px solid #fdda75;
   background: none;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #shop-list .container .controls .control-group .sort-button .sort-icon {
   display: inline-block;
   transition: transform 0.3s ease;
 }
-#shop-list .container .controls .control-group .sort-button .sort-icon.descending {
+#shop-list
+  .container
+  .controls
+  .control-group
+  .sort-button
+  .sort-icon.descending {
   transform: rotate(180deg);
 }
 #shop-list .container .controls .control-group .sort-button.active {
-  background-color: #FDDA75;
-  color: #2A5070;
+  background-color: #fdda75;
+  color: #2a5070;
 }
 #shop-list .container .controls .control-group label {
   width: 3rem;
-  color: #FDDA75;
+  color: #fdda75;
   margin: 0;
 }
-#shop-list .container .controls .control-group input[type=search] {
+#shop-list .container .controls .control-group input[type="search"] {
   padding: 6px 12px;
-  border: 2px solid #FDDA75;
+  border: 2px solid #fdda75;
   background: none;
   border-radius: 4px;
-  color: #FDDA75;
+  color: #fdda75;
 }
-#shop-list .container .controls .control-group input[type=search]::placeholder {
+#shop-list
+  .container
+  .controls
+  .control-group
+  input[type="search"]::placeholder {
   font-family: "Noto Sans TC", serif;
   font-weight: 400;
   font-size: 0.875rem;
   letter-spacing: 0rem;
 }
-#shop-list .container .controls .control-group input[type=search]:focus {
+#shop-list .container .controls .control-group input[type="search"]:focus {
   outline: none;
-  border-color: #FFFFFF;
+  border-color: #ffffff;
 }
 #shop-list .container .product-table {
   width: 100%;
@@ -3602,7 +3754,7 @@ textarea {
   height: 301px;
   cursor: pointer;
   margin-bottom: 40px;
-  filter: drop-shadow(8px 4px 0 #619ABD);
+  filter: drop-shadow(8px 4px 0 #619abd);
   transition: all 0.3s ease;
 }
 #shop-list .container .product-table table tbody tr:hover {
@@ -3628,89 +3780,171 @@ textarea {
   height: auto;
   padding: 0;
 }
-#shop-list .container .product-table table tbody tr .product-cell .status-avalible {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .status-avalible {
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
-  background-color: #2A5070;
+  background-color: #2a5070;
   border-radius: 2px 10px;
   width: max-content;
   margin: 11px 18px;
   padding: 3px 6px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
-#shop-list .container .product-table table tbody tr .product-cell .status-soldout {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .status-soldout {
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
-  background-color: #B3B3B3;
+  background-color: #b3b3b3;
   border-radius: 2px 10px;
   width: max-content;
   margin: 11px 18px;
   padding: 3px 6px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure {
   display: flex;
   flex-direction: column;
   width: 100%;
   margin: 0;
   align-items: center;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  .img-wrapper {
   position: relative;
   border-radius: 5px;
   overflow: hidden;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper .markerLight {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  .img-wrapper
+  .markerLight {
   position: absolute;
   bottom: 6px;
   right: 6px;
   z-index: 1;
-  background-color: #FDDA75;
+  background-color: #fdda75;
   border-radius: 5px;
   padding: 4px 6px;
   font-size: 12px;
   font-weight: 500;
   font-family: "Noto Sans TC";
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper .markerGrey {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  .img-wrapper
+  .markerGrey {
   position: absolute;
   bottom: 6px;
   right: 6px;
   z-index: 1;
-  background-color: #B3B3B3;
+  background-color: #b3b3b3;
   border-radius: 5px;
   padding: 4px 6px;
   font-size: 12px;
   font-weight: 500;
   font-family: "Noto Sans TC";
-  color: #FFFFFF;
+  color: #ffffff;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper img {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  .img-wrapper
+  img {
   max-width: 180px;
   max-height: 180px;
   object-fit: cover;
   vertical-align: top;
   transition: all 0.3s ease;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  figcaption {
   margin: 12px 0;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .product-title {
-  color: #2A2A2A;
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  figcaption
+  .product-title {
+  color: #2a2a2a;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
 }
-#shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .price-cell {
+#shop-list
+  .container
+  .product-table
+  table
+  tbody
+  tr
+  .product-cell
+  .product-figure
+  figcaption
+  .price-cell {
   width: 100%;
   text-align: center;
-  color: #2A2A2A;
+  color: #2a2a2a;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 900;
   font-size: 1rem;
@@ -3734,7 +3968,16 @@ textarea {
     width: auto;
     gap: 25px 20px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .product-title {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    figcaption
+    .product-title {
     font-family: "Zen Maru Gothic", serif;
     font-weight: 600;
     font-size: 1rem;
@@ -3813,18 +4056,50 @@ textarea {
   #shop-list .container .product-table table tbody tr .product-cell {
     padding: 0 10px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .status-avalible,
-  #shop-list .container .product-table table tbody tr .product-cell .status-soldout {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .status-avalible,
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .status-soldout {
     font-size: 10px;
     margin: 5px 0;
     border-radius: 0 6px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .product-title {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    figcaption
+    .product-title {
     font-size: 12px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .price-cell {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    figcaption
+    .price-cell {
     font-size: 14px;
-    color: #00C7BE;
+    color: #00c7be;
     overflow: hidden;
   }
 }
@@ -3839,10 +4114,27 @@ textarea {
     width: 160px;
     height: 238px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    .img-wrapper {
     width: 130px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure figcaption .product-title {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    figcaption
+    .product-title {
     font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3863,7 +4155,15 @@ textarea {
     width: 160px;
     height: 238px;
   }
-  #shop-list .container .product-table table tbody tr .product-cell .product-figure .img-wrapper {
+  #shop-list
+    .container
+    .product-table
+    table
+    tbody
+    tr
+    .product-cell
+    .product-figure
+    .img-wrapper {
     width: 130px;
   }
 }
@@ -3875,7 +4175,7 @@ textarea {
   justify-content: center;
   width: 100%;
   padding: 8% 10%;
-  background-color: #2A5070;
+  background-color: #2a5070;
 }
 #product-page .shop-menu {
   position: fixed;
@@ -3905,7 +4205,7 @@ textarea {
   font-size: 1rem;
   letter-spacing: 0.05rem;
   line-height: 2;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #product-page .product-container .product-info .book-area {
   display: flex;
@@ -3917,7 +4217,7 @@ textarea {
   font-weight: 700;
   font-size: 1.5rem;
   letter-spacing: 0.05rem;
-  color: #FDDA75;
+  color: #fdda75;
 }
 #product-page .product-container .product-info .book-area .poduct-title {
   display: inline-flex;
@@ -3933,14 +4233,14 @@ textarea {
   font-weight: 400;
   font-size: 32px;
   font-style: normal;
-  color: #84D0FF;
+  color: #84d0ff;
 }
 #product-page .product-container .product-info .book-area .price-area h2 span {
   font-family: "Trade Winds";
   font-weight: 400;
   font-size: 32px;
   font-style: normal;
-  color: #84D0FF;
+  color: #84d0ff;
 }
 #product-page .product-container .product-info .book-area .price-area h3 {
   font-family: "Zen Maru Gothic", serif;
@@ -3948,7 +4248,7 @@ textarea {
   font-size: 1.25rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #ECFF5F;
+  color: #ecff5f;
 }
 #product-page .product-container .product-info .book-area .price-area h3 span {
   font-family: "Zen Maru Gothic", serif;
@@ -3958,7 +4258,7 @@ textarea {
   line-height: 1.5;
 }
 #product-page .product-container .product-info .book-area .type {
-  color: #FFFFFF;
+  color: #ffffff;
   gap: 8px;
 }
 #product-page .product-container .product-info .book-area .type h4 {
@@ -3980,35 +4280,64 @@ textarea {
   margin-top: 8px;
   gap: 16px;
 }
-#product-page .product-container .product-info .book-area .color-option .form-group {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .color-option
+  .form-group {
   display: flex;
   gap: 8px;
 }
-#product-page .product-container .product-info .book-area .color-option .form-group select {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .color-option
+  .form-group
+  select {
   width: 100px;
   padding: 5px;
 }
-#product-page .product-container .product-info .book-area .color-option .form-group select:focus {
-  border: #FDDA75 2px solid;
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .color-option
+  .form-group
+  select:focus {
+  border: #fdda75 2px solid;
   outline: none;
 }
 #product-page .product-container .product-info .book-area .num {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #product-page .product-container .product-info .book-area .num .form-group {
   display: flex;
   gap: 8px;
 }
-#product-page .product-container .product-info .book-area .num .form-group select {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .num
+  .form-group
+  select {
   width: 50px;
   padding: 5px;
 }
-#product-page .product-container .product-info .book-area .num .form-group select:focus {
-  border: #FDDA75 2px solid;
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .num
+  .form-group
+  select:focus {
+  border: #fdda75 2px solid;
   outline: none;
 }
 #product-page .product-container .product-info .book-area .notice {
-  border: #FFFFFF 1.5px solid;
+  border: #ffffff 1.5px solid;
   border-radius: 10px;
   padding: 16px;
   margin-top: 12px;
@@ -4037,31 +4366,46 @@ textarea {
   line-height: 1;
 }
 #product-page .product-container .product-info .book-area .checkout button {
-  border: #FFFFFF 3px solid;
+  border: #ffffff 3px solid;
   border-radius: 10px;
-  background-color: #FDDA75;
+  background-color: #fdda75;
   font-family: "Zen Maru Gothic", serif;
   font-weight: 700;
   font-size: 1.25rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #2A5070;
+  color: #2a5070;
   padding: 0 25px;
   transition: all 0.3s ease;
   cursor: pointer;
 }
-#product-page .product-container .product-info .book-area .checkout button:hover {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .checkout
+  button:hover {
   color: #736262;
   background: url(../images/shop/yellow-noisy-gradients.jpg);
   transform: scale(1.1);
 }
-#product-page .product-container .product-info .book-area .checkout button.disabled {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .checkout
+  button.disabled {
   background-color: #cccccc;
   opacity: 0.7;
   pointer-events: none;
   cursor: not-allowed;
 }
-#product-page .product-container .product-info .book-area .checkout button.disabled:hover {
+#product-page
+  .product-container
+  .product-info
+  .book-area
+  .checkout
+  button.disabled:hover {
   background-color: #cccccc;
   cursor: not-allowed;
 }
@@ -4072,10 +4416,20 @@ textarea {
   background-image: url("../images/shop/arrow-left.svg");
   background-size: 100%;
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSPrev:hover {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSAction
+  > .lSPrev:hover {
   filter: brightness(0.5);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSPrev:active {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSAction
+  > .lSPrev:active {
   filter: brightness(3) hue-rotate(200deg);
 }
 #product-page .product-container .product-info .gallery .lSAction > .lSNext {
@@ -4083,10 +4437,20 @@ textarea {
   background-size: 100%;
   filter: brightness(120%);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSNext:hover {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSAction
+  > .lSNext:hover {
   filter: brightness(0.5);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSNext:active {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSAction
+  > .lSNext:active {
   filter: brightness(3) hue-rotate(200deg);
 }
 #product-page .product-container .product-info .gallery .lslide img {
@@ -4094,7 +4458,12 @@ textarea {
   height: 100%;
   object-fit: cover;
 }
-#product-page .product-container .product-info .gallery .lSSlideOuter .lSSlideWrapper {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSSlideOuter
+  .lSSlideWrapper {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -4122,7 +4491,13 @@ textarea {
   flex-direction: row;
   height: 115px;
 }
-#product-page .product-container .product-info .gallery .lSSlideOuter .lSGallery li {
+#product-page
+  .product-container
+  .product-info
+  .gallery
+  .lSSlideOuter
+  .lSGallery
+  li {
   object-fit: cover;
   margin-right: 10px !important;
 }
@@ -4132,7 +4507,7 @@ textarea {
 }
 #product-page .product-container .product-showcase .showcase-wrap {
   position: relative;
-  border-top: #FFFFFF 1.5px solid;
+  border-top: #ffffff 1.5px solid;
   width: 100%;
   padding-top: 7%;
   z-index: 0;
@@ -4142,7 +4517,11 @@ textarea {
   display: block;
   width: 100%;
 }
-#product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
+#product-page
+  .product-container
+  .product-showcase
+  .showcase-wrap
+  .sketchfab-embed-wrapper {
   position: absolute;
   display: flex;
   align-items: center;
@@ -4155,16 +4534,30 @@ textarea {
   aspect-ratio: 17/9;
   /* 保持固定比例 */
 }
-#product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper iframe {
+#product-page
+  .product-container
+  .product-showcase
+  .showcase-wrap
+  .sketchfab-embed-wrapper
+  iframe {
   width: 100%;
   height: 100%;
 }
-#product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper-softzilla {
+#product-page
+  .product-container
+  .product-showcase
+  .showcase-wrap
+  .sketchfab-embed-wrapper-softzilla {
   z-index: 1;
   overflow: visible;
   aspect-ratio: 17/9;
 }
-#product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper-softzilla iframe {
+#product-page
+  .product-container
+  .product-showcase
+  .showcase-wrap
+  .sketchfab-embed-wrapper-softzilla
+  iframe {
   width: 100%;
   height: 100%;
 }
@@ -4189,16 +4582,29 @@ textarea {
   #product-page .product-container .product-info .book-area {
     width: 440px;
   }
-  #product-page .product-container .product-info .book-area .gallery .lSSlideWrapper {
+  #product-page
+    .product-container
+    .product-info
+    .book-area
+    .gallery
+    .lSSlideWrapper {
     width: 100%;
   }
-  #product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
+  #product-page
+    .product-container
+    .product-showcase
+    .showcase-wrap
+    .sketchfab-embed-wrapper {
     top: 0%;
     width: 100%;
     aspect-ratio: 17/9;
     /* 保持固定比例 */
   }
-  #product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper-softzilla {
+  #product-page
+    .product-container
+    .product-showcase
+    .showcase-wrap
+    .sketchfab-embed-wrapper-softzilla {
     top: 0%;
     width: 100%;
     aspect-ratio: 17/9;
@@ -4228,13 +4634,20 @@ textarea {
   #product-page .product-info .checkout {
     width: 520px;
   }
-  #product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
+  #product-page
+    .product-container
+    .product-showcase
+    .showcase-wrap
+    .sketchfab-embed-wrapper {
     top: 0;
     width: 100%;
     aspect-ratio: 17/9;
     /* 保持固定比例 */
   }
-  #product-page .product-container .product-showcase .sketchfab-embed-wrapper-softzilla {
+  #product-page
+    .product-container
+    .product-showcase
+    .sketchfab-embed-wrapper-softzilla {
     top: 0%;
     width: 100%;
     aspect-ratio: 17/9;
@@ -4302,7 +4715,12 @@ textarea {
   #product-page .product-container .product-info .book-area {
     width: 100%;
   }
-  #product-page .product-container .product-info .book-area .gallery .lSSlideWrapper {
+  #product-page
+    .product-container
+    .product-info
+    .book-area
+    .gallery
+    .lSSlideWrapper {
     width: 100%;
   }
 }
@@ -4313,7 +4731,7 @@ textarea {
   display: flex;
   width: 100%;
   padding: 8% 10%;
-  background-color: #2A5070;
+  background-color: #2a5070;
 }
 #checkout-page .form-area {
   display: flex;
@@ -4329,14 +4747,14 @@ textarea {
   font-weight: 300;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 #checkout-page .form-area .form-section h2 {
   font-family: "Noto Sans TC", serif;
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 #checkout-page .form-area .form-section .form-group {
   display: flex;
@@ -4366,7 +4784,7 @@ textarea {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 5px;
 }
 #checkout-page .form-area .form-section .radio input {
@@ -4442,8 +4860,8 @@ textarea {
   color: white;
 }
 #checkout-page .form-area button {
-  background-color: #2A2A2A;
-  color: #FEBD59;
+  background-color: #2a2a2a;
+  color: #febd59;
   padding: 18px 40px;
   border-radius: 7px;
   width: max-content;
@@ -4459,7 +4877,7 @@ textarea {
   border: none;
 }
 #checkout-page .form-area button:hover {
-  background-color: #2A5070;
+  background-color: #2a5070;
   transform: scale(1.2);
 }
 #checkout-page .checkout-container {
@@ -4474,7 +4892,7 @@ textarea {
 }
 #checkout-page .checkout-container #checkoutForm {
   display: inline-flex;
-  background-color: #FEBD59;
+  background-color: #febd59;
 }
 #checkout-page .checkout-container #checkoutForm .form-area {
   flex: 5;
@@ -4495,16 +4913,33 @@ textarea {
   gap: 28px;
   margin-bottom: 20px;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .num-img-wrapper {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .num-img-wrapper {
   position: relative;
   width: 78px;
   height: 78px;
-  border: #FFFFFF 2px solid;
+  border: #ffffff 2px solid;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .num-img-wrapper img {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .num-img-wrapper
+  img {
   width: 100%;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .num-img-wrapper p {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .num-img-wrapper
+  p {
   position: absolute;
   top: -15%;
   right: -15%;
@@ -4512,68 +4947,123 @@ textarea {
   font-weight: 500;
   font-size: 0.875rem;
   letter-spacing: 0.05rem;
-  background-color: #00C7BE;
+  background-color: #00c7be;
   width: 24px;
   height: 24px;
   border-radius: 99px;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
   z-index: 1;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .details {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details h3 {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .details
+  h3 {
   font-family: "Noto Sans TC", serif;
   font-weight: 700;
   font-size: 1.125rem;
   letter-spacing: 0.05rem;
   line-height: 1.5;
-  color: #FFFFFF;
+  color: #ffffff;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details .color-detail {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .details
+  .color-detail {
   display: flex;
   gap: 8px;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details .color-detail p {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .details
+  .color-detail
+  p {
   font-family: "Noto Sans TC", serif;
   font-weight: 400;
   font-size: 0.875rem;
   letter-spacing: 0rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details .per-price {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  .detail-area
+  .details
+  .per-price {
   font-family: "Noto Sans TC", serif;
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #00C7BE;
+  color: #00c7be;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary #productSummary {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  #productSummary {
   padding: 30px;
   border-radius: 5px;
-  background: #B3B3B3;
+  background: #b3b3b3;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary #productSummary .num-img-wrapper p {
-  background-color: #2A2A2A;
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  #productSummary
+  .num-img-wrapper
+  p {
+  background-color: #2a2a2a;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary #productSummary .total-area p {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  #productSummary
+  .total-area
+  p {
   color: #2b2b2b;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary #productSummary .per-price {
-  color: #619ABD;
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  #productSummary
+  .per-price {
+  color: #619abd;
 }
-#checkout-page .checkout-container #checkoutForm .order-summary #depositSummary {
+#checkout-page
+  .checkout-container
+  #checkoutForm
+  .order-summary
+  #depositSummary {
   padding: 30px;
   border-radius: 5px;
-  background: #2A5070;
+  background: #2a5070;
 }
 #checkout-page .total-area {
   display: flex;
   justify-content: space-between;
-  border-top: #FFFFFF 1.5px solid;
+  border-top: #ffffff 1.5px solid;
   padding-top: 30px;
   align-items: end;
 }
@@ -4582,17 +5072,17 @@ textarea {
   font-weight: 400;
   font-size: 0.875rem;
   letter-spacing: 0rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #checkout-page .total-area p {
   font-family: "Noto Sans TC", serif;
   font-weight: 700;
   font-size: 2.25rem;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 #checkout-page .checkout-notice {
   padding: 30px;
-  border: #FFFFFF 2px solid;
+  border: #ffffff 2px solid;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.12);
   box-shadow: 4px 5px 0 rgba(43, 43, 43, 0.25);
@@ -4603,7 +5093,7 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.05rem;
   line-height: 1.5;
-  color: #2A5070;
+  color: #2a5070;
 }
 #checkout-page .checkout-notice p {
   margin-top: 20px;
@@ -4611,7 +5101,7 @@ textarea {
   font-weight: 400;
   font-size: 0.875rem;
   letter-spacing: 0rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 @media (max-width: 1440px) {
   #checkout-page .checkout-container {
@@ -4623,10 +5113,18 @@ textarea {
   #checkout-page .checkout-container #checkoutForm .order-summary {
     padding: 40px 20px;
   }
-  #checkout-page .checkout-container #checkoutForm .order-summary #productSummary {
+  #checkout-page
+    .checkout-container
+    #checkoutForm
+    .order-summary
+    #productSummary {
     padding: 20px;
   }
-  #checkout-page .checkout-container #checkoutForm .order-summary #depositSummary {
+  #checkout-page
+    .checkout-container
+    #checkoutForm
+    .order-summary
+    #depositSummary {
     padding: 20px;
   }
 }
@@ -4684,11 +5182,22 @@ textarea {
   #checkout-page .checkout-container {
     margin: 0px;
   }
-  #checkout-page .checkout-container #checkoutForm .order-summary .detail-area .num-img-wrapper {
+  #checkout-page
+    .checkout-container
+    #checkoutForm
+    .order-summary
+    .detail-area
+    .num-img-wrapper {
     width: 60px;
     height: 60px;
   }
-  #checkout-page .checkout-container #checkoutForm .order-summary .detail-area .details h3 {
+  #checkout-page
+    .checkout-container
+    #checkoutForm
+    .order-summary
+    .detail-area
+    .details
+    h3 {
     font-size: 14px;
   }
   #checkout-page .checkout-container .total-area p {
@@ -4724,7 +5233,7 @@ textarea {
   padding: 20px;
   width: 40%;
   max-width: 400px;
-  background-color: #FDDA75;
+  background-color: #fdda75;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
   transition: left 0.3s ease-in-out;
   overflow-y: auto;
@@ -4745,8 +5254,8 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #FFFFFF;
-  background: #2A5070;
+  color: #ffffff;
+  background: #2a5070;
   padding: 5px 10px;
   border-radius: 5px;
 }
@@ -4783,7 +5292,7 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.05rem;
   line-height: 1.5;
-  color: #2A5070;
+  color: #2a5070;
 }
 .cart-popup .cart-content .item-info p {
   margin: 5px 0;
@@ -4796,7 +5305,7 @@ textarea {
 .cart-popup .cart-content .remove-btn {
   background: none;
   border: none;
-  color: #FFFFFF;
+  color: #ffffff;
   font-family: "Noto Sans TC", serif;
   font-weight: 700;
   font-size: 1.125rem;
@@ -4804,7 +5313,7 @@ textarea {
   line-height: 1.5;
   cursor: pointer;
   padding: 5px;
-  color: #2A5070;
+  color: #2a5070;
   line-height: 1;
 }
 .cart-popup .cart-content .cart-footer {
@@ -4825,7 +5334,7 @@ textarea {
 .cart-popup .cart-content .checkout-btn {
   width: 100%;
   padding: 10px;
-  background-color: #2A5070;
+  background-color: #2a5070;
   color: white;
   border: none;
   border-radius: 4px;
@@ -4837,8 +5346,8 @@ textarea {
   line-height: 1.5;
 }
 .cart-popup .cart-content .checkout-btn:hover {
-  background-color: #00C7BE;
-  color: #2A5070;
+  background-color: #00c7be;
+  color: #2a5070;
 }
 .cart-popup .cart-content .empty-cart {
   text-align: center;
@@ -4919,10 +5428,10 @@ textarea {
 .history-popup .search-section button {
   border: none;
   height: 24px;
-  background-color: #2A5070;
+  background-color: #2a5070;
   width: 50px;
   padding-inline: 0;
-  color: #FFFFFF;
+  color: #ffffff;
   line-height: 1rem;
   font-family: "Noto Sans TC", serif;
   font-weight: 400;
@@ -4944,14 +5453,14 @@ textarea {
   border-radius: 5px;
 }
 .history-popup #searchPhoneNumber::placeholder {
-  color: #B3B3B3;
+  color: #b3b3b3;
   font-family: "Noto Sans TC", serif;
   font-weight: 300;
   font-size: 1rem;
   letter-spacing: 0.05rem;
 }
 .history-popup #searchPhoneNumber:focus {
-  border: #FEBD59 1.5px solid;
+  border: #febd59 1.5px solid;
   outline: none;
 }
 .history-popup .history-content {
@@ -4964,7 +5473,7 @@ textarea {
   padding: 20px;
   width: 40%;
   max-width: 400px;
-  background-color: #FDDA75;
+  background-color: #fdda75;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
   transition: left 0.3s ease-in-out;
   overflow-y: auto;
@@ -4984,14 +5493,14 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.18rem;
   line-height: 1.5;
-  color: #FFFFFF;
-  background: #2A5070;
+  color: #ffffff;
+  background: #2a5070;
   padding: 5px 10px;
   border-radius: 5px;
 }
 .history-popup .history-records {
   overflow-y: auto;
-  border-top: 2px solid #FFFFFF;
+  border-top: 2px solid #ffffff;
   padding-top: 24px;
 }
 .history-popup .history-records p {
@@ -5005,7 +5514,7 @@ textarea {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
-  border-bottom: 2px solid #FFFFFF;
+  border-bottom: 2px solid #ffffff;
 }
 .history-popup .history-records .order-container .order-header {
   display: flex;
@@ -5017,14 +5526,14 @@ textarea {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 .history-popup .history-records .order-container .order-header .order-date {
   font-family: "Noto Sans TC", serif;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.05rem;
-  color: #00C7BE;
+  color: #00c7be;
   margin-bottom: 16px;
 }
 .history-popup .history-records .order-container .history-item {
@@ -5038,7 +5547,7 @@ textarea {
   font-size: 1.125rem;
   letter-spacing: 0.05rem;
   line-height: 1.5;
-  color: #2A5070;
+  color: #2a5070;
   margin: 0 0 8px 0;
 }
 .history-popup .history-records .order-container .customer-info {
@@ -5051,7 +5560,7 @@ textarea {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 0.05rem;
-  color: #2A2A2A;
+  color: #2a2a2a;
 }
 .history-popup .close-btn {
   font-family: "Zen Maru Gothic", serif;

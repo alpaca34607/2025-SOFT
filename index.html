@@ -23,6 +23,11 @@
       href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/163697/normalize.css"
     />
     <link rel="stylesheet" href="./css/style.css" />
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
   </head>
 
   <body>
@@ -380,21 +385,33 @@
         </svg>
         <div class="test-intro-middle">
           <div class="masked-content">
-            <div id="test-gallery">
-              <div class="block">
-                <img src="./images/home/soft-rabbit.png" alt="" />
-              </div>
-              <div class="block">
-                <img src="./images/home/soft-chips.png" alt="" />
-              </div>
-              <div class="block">
-                <img src="./images/home/soft-heart.png" alt="" />
-              </div>
-              <div class="block">
-                <img src="./images/home/soft-paca.png" alt="" />
-              </div>
-              <div class="block">
-                <img src="./images/home/soft-frog.png" alt="" />
+            <div class="swiper test-gallery-swiper" id="test-gallery">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <div class="block">
+                    <img src="./images/home/soft-rabbit.png" alt="" />
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="block">
+                    <img src="./images/home/soft-chips.png" alt="" />
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="block">
+                    <img src="./images/home/soft-heart.png" alt="" />
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="block">
+                    <img src="./images/home/soft-paca.png" alt="" />
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="block">
+                    <img src="./images/home/soft-frog.png" alt="" />
+                  </div>
+                </div>
               </div>
             </div>
             <p>
@@ -445,6 +462,8 @@
     ></script>
     <script src="./js/email-config.js"></script>
     <script src="./js/contactsoft.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="./js/script.js"></script>
 
     <script>
