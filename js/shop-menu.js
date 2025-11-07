@@ -120,13 +120,25 @@ function addToCart() {
 
   // 驗證選擇
   if (!mainColor || !subColor || !quantity) {
-    alert("請完成所有選擇！");
+    Swal.fire({
+      icon: "warning",
+      title: "請完成所有選擇",
+      text: "請選擇主色、副色和數量",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
   // 檢查商品是否可購買
   if (productConfig.maxQuantity === 0) {
-    alert("很抱歉，此商品已售完！");
+    Swal.fire({
+      icon: "error",
+      title: "商品已售完",
+      text: "很抱歉，此商品已售完！",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
@@ -152,7 +164,13 @@ function addToCart() {
   const totalQuantity =
     cartItems.reduce((sum, item) => sum + item.quantity, 0) + quantity;
   if (totalQuantity > 3) {
-    alert("購物車商品總數不能超過3件");
+    Swal.fire({
+      icon: "warning",
+      title: "購物車商品總數超過限制",
+      text: "購物車商品總數不能超過3件",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
@@ -160,7 +178,15 @@ function addToCart() {
   cartItems.push(cartItem);
   localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
-  alert("已加入購物車！");
+  Swal.fire({
+    icon: "success",
+    title: "已加入購物車",
+    text: "商品已成功加入購物車！",
+    confirmButtonText: "確定",
+    confirmButtonColor: "#3085d6",
+    timer: 2000,
+    timerProgressBar: true,
+  });
   updateCartCount();
   updateCartDisplay();
 }
@@ -225,12 +251,24 @@ function updateCartDisplay() {
 function cartCheckout() {
   const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
   if (cartItems.length === 0) {
-    alert("購物車是空的！");
+    Swal.fire({
+      icon: "warning",
+      title: "購物車是空的",
+      text: "請先選擇商品加入購物車",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
   if (cartItems.length > 3) {
-    alert("購物車商品不能超過3件");
+    Swal.fire({
+      icon: "warning",
+      title: "購物車商品超過限制",
+      text: "購物車商品不能超過3件",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
@@ -284,7 +322,13 @@ async function searchOrderHistory() {
   const historyRecords = document.getElementById("historyRecords");
 
   if (!phoneNumber) {
-    alert("請輸入手機號碼");
+    Swal.fire({
+      icon: "warning",
+      title: "請輸入手機號碼",
+      text: "請輸入您的手機號碼以查詢訂單",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 

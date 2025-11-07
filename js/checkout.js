@@ -147,13 +147,25 @@ async function validateAndSubmitForm(event) {
     !formData.get("phone") ||
     !formData.get("email")
   ) {
-    alert("請填寫必要欄位！");
+    Swal.fire({
+      icon: "warning",
+      title: "請填寫必要欄位",
+      text: "請填寫姓名、手機號碼和電子郵件",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
   // 檢查 API 模組是否可用
   if (typeof API === "undefined" || typeof API.createOrder !== "function") {
-    alert("系統服務暫時無法使用，請稍後再試或聯繫客服！");
+    Swal.fire({
+      icon: "error",
+      title: "系統服務暫時無法使用",
+      text: "請稍後再試或聯繫客服！",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
@@ -192,8 +204,15 @@ async function validateAndSubmitForm(event) {
     submitButton.disabled = false;
 
     // 顯示成功訊息
-    alert(`訂單建立成功！\n訂單編號: ${result.order.order_number}`);
-    window.location.href = "./Get-Soft.html";
+    Swal.fire({
+      icon: "success",
+      title: "訂單建立成功！",
+      html: `訂單編號: <strong>${result.order.order_number}</strong>`,
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    }).then(() => {
+      window.location.href = "./Get-Soft.html";
+    });
   } catch (error) {
     console.error("表單提交過程中發生錯誤:", error);
 
@@ -210,7 +229,13 @@ async function validateAndSubmitForm(event) {
       errorMessage += `: ${error.message}`;
     }
 
-    alert(errorMessage + "\n請稍後再試或聯繫客服！");
+    Swal.fire({
+      icon: "error",
+      title: "表單提交失敗",
+      html: `${errorMessage}<br>請稍後再試或聯繫客服！`,
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    });
   }
 }
 
@@ -251,7 +276,13 @@ function submitToLocalStorage(formData) {
   localStorage.removeItem("cartItems");
   localStorage.removeItem("checkoutItems");
 
-  alert("表單提交失敗，請稍後再試或聯繫客服！");
+  Swal.fire({
+    icon: "error",
+    title: "表單提交失敗",
+    text: "請稍後再試或聯繫客服！",
+    confirmButtonText: "確定",
+    confirmButtonColor: "#3085d6",
+  });
   // 不跳轉頁面，讓用戶可以重試
 }
 
@@ -259,8 +290,15 @@ function submitToLocalStorage(formData) {
 document.addEventListener("DOMContentLoaded", () => {
   // 檢查是否有商品選擇
   if (!checkoutItems || checkoutItems.length === 0) {
-    alert("未找到商品選擇資訊！");
-    window.location.href = "products.html";
+    Swal.fire({
+      icon: "warning",
+      title: "未找到商品選擇資訊",
+      text: "請先選擇商品",
+      confirmButtonText: "確定",
+      confirmButtonColor: "#3085d6",
+    }).then(() => {
+      window.location.href = "Get-Soft.html";
+    });
     return;
   }
 

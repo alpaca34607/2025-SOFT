@@ -561,7 +561,13 @@ class DynamicProductLoader {
 
     // 驗證是否已選擇所有必要選項
     if (!mainColor || !subColor || !quantity) {
-      alert("請完成所有選擇！");
+      Swal.fire({
+        icon: "warning",
+        title: "請完成所有選擇",
+        text: "請選擇主色、副色和數量",
+        confirmButtonText: "確定",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
@@ -570,7 +576,13 @@ class DynamicProductLoader {
       this.productData.preorder_button_status === "sold_out" ||
       this.productData.max_quantity === 0
     ) {
-      alert("很抱歉，此商品已售完！");
+      Swal.fire({
+        icon: "error",
+        title: "商品已售完",
+        text: "很抱歉，此商品已售完！",
+        confirmButtonText: "確定",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
