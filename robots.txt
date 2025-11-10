@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /
+
+# TODO: 在正式站改為開放該爬的頁面，例如：
+# User-agent: *
+# Allow: /
+# Disallow: /checkout.html
+
+Sitemap: https://soft-creature.up.railway.app/sitemap.xml
+
