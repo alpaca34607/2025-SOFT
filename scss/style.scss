@@ -2300,7 +2300,7 @@ textarea {
 
             .test-intro-middle {
                 margin: 0;
-                padding: 60px 0 0 0;
+                padding: 100px 0 0 0;
 
             }
         }
@@ -2727,9 +2727,12 @@ textarea {
         .news-content {
             max-height: 0;
             overflow: hidden;
-            padding: 0 35 0 0px;
-            transition: max-height 0.3s ease-out;
+            padding: 0 35px 0 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0s linear 0.4s;
             border-left: $light 3px dashed;
+            will-change: max-height;
 
             ul {
                 li {
@@ -2741,7 +2744,10 @@ textarea {
         }
 
         .news-content.active {
-            max-height: 100%;
+            max-height: 800px;
+            opacity: 1;
+            visibility: visible;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
         }
 
         .news-content-inner {
