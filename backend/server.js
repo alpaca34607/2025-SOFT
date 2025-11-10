@@ -5,6 +5,7 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
 
 // 使用資料庫適配器
 const { setupDatabase } = require("./database-adapter");
@@ -94,15 +95,88 @@ console.log("  - GET    /api/uploads/presign (測試用)");
 console.log("  - POST   /api/uploads/presign");
 console.log("  - POST   /api/uploads/delete");
 
+function loadStaticFile(possiblePaths, fallbackContent, type) {
+  for (const filePath of possiblePaths) {
+    try {
+      if (fs.existsSync(filePath)) {
+        return fs.readFileSync(filePath, "utf8");
+      }
+    } catch (error) {
+      console.warn(`⚠️ 無法讀取 ${type} 檔案：${filePath}`, error.message);
+    }
+  }
+  console.warn(`⚠️ 找不到 ${type} 檔案，改用預設內容`);
+  return fallbackContent;
+}
+
+const sitemapContent = loadStaticFile(
+  [
+    path.join(__dirname, "../sitemap.xml"),
+    path.join(__dirname, "sitemap.xml"),
+    path.join(process.cwd(), "sitemap.xml"),
+  ],
+  `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://soft-creature.up.railway.app/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://soft-creature.up.railway.app/Learning-Soft.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soft-creature.up.railway.app/Becoming-Soft.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://soft-creature.up.railway.app/Get-Soft.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soft-creature.up.railway.app/WhatsNew.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://soft-creature.up.railway.app/product.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
+`,
+  "sitemap.xml"
+);
+
+const robotsContent = loadStaticFile(
+  [
+    path.join(__dirname, "../robots.txt"),
+    path.join(__dirname, "robots.txt"),
+    path.join(process.cwd(), "robots.txt"),
+  ],
+  `User-agent: *
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /checkout.html
+
+Sitemap: https://soft-creature.up.railway.app/sitemap.xml
+`,
+  "robots.txt"
+);
+
 // Sitemap 與 robots 專用路由（避免被 SPA fallback 攔截）
 app.get("/sitemap.xml", (req, res) => {
   res.type("application/xml");
-  res.sendFile(path.join(__dirname, "../", "sitemap.xml"));
+  res.send(sitemapContent);
 });
 
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
-  res.sendFile(path.join(__dirname, "../", "robots.txt"));
+  res.send(robotsContent);
 });
 
 // 生產環境：所有非 API 路由都返回前端頁面
