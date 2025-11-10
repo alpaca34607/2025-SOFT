@@ -1252,6 +1252,7 @@ textarea {
             top: -10%;
             right: 75%;
             animation: blob 8s ease-in-out infinite, float 250s ease-in-out infinite, colorCycle 10s infinite linear;
+
             @media (max-width: 430px) {
                 display: none;
             }
