@@ -94,6 +94,17 @@ console.log("  - GET    /api/uploads/presign (測試用)");
 console.log("  - POST   /api/uploads/presign");
 console.log("  - POST   /api/uploads/delete");
 
+// Sitemap 與 robots 專用路由（避免被 SPA fallback 攔截）
+app.get("/sitemap.xml", (req, res) => {
+  res.type("application/xml");
+  res.sendFile(path.join(__dirname, "../", "sitemap.xml"));
+});
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.sendFile(path.join(__dirname, "../", "robots.txt"));
+});
+
 // 生產環境：所有非 API 路由都返回前端頁面
 if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
