@@ -2193,6 +2193,9 @@ textarea {
   #home #home-banner .home-middle .scroll-icon {
     display: none;
   }
+  #home #about-soft-intro {
+    min-height: 1000px;
+  }
   #home #becoming-Soft-intro {
     height: 100vh;
     min-height: 840px;
@@ -2347,6 +2350,11 @@ textarea {
   padding-bottom: 20px;
   align-items: center;
 }
+@media (max-width: 1023px) {
+  #whats-new .wrapper .news-area {
+    width: 90%;
+  }
+}
 #whats-new .wrapper .news-area .news-heading {
   width: 443px;
 }
@@ -2439,9 +2447,11 @@ textarea {
 #whats-new .wrapper .news-content {
   max-height: 0;
   overflow: hidden;
-  padding: 0 35 0 0px;
-  transition: max-height 0.3s ease-out;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0s linear 0.4s;
   border-left: #FFFFFF 3px dashed;
+  will-change: max-height;
 }
 #whats-new .wrapper .news-content ul li {
   padding: 8px;
@@ -2452,7 +2462,10 @@ textarea {
   line-height: 2;
 }
 #whats-new .wrapper .news-content.active {
-  max-height: 100%;
+  max-height: fit-content;
+  opacity: 1;
+  visibility: visible;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
 }
 #whats-new .wrapper .news-content-inner {
   display: flex;
@@ -2662,6 +2675,11 @@ textarea {
 @media (max-width: 1023px) {
   #whats-new .news-carousel-wrapper {
     display: none;
+  }
+}
+@media (max-width: 1023px) {
+  #whats-new {
+    padding: 5% 10%;
   }
 }
 
@@ -2988,6 +3006,9 @@ textarea {
   }
   .softtest #test .test-bg .question-container #confirm-button {
     margin-bottom: 60px;
+  }
+  .softtest #test #result .result-buttons .result-button {
+    font-size: 16px;
   }
   .softtest #test #result .result-buttons .result-button:hover {
     transform: scale(1);

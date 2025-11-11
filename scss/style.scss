@@ -2417,6 +2417,10 @@ textarea {
             }
         }
 
+        #about-soft-intro {
+            min-height: 1000px;
+        }
+
         #becoming-Soft-intro {
             height: 100vh;
             min-height: 840px;
@@ -2615,6 +2619,10 @@ textarea {
             padding-bottom: 20px;
             align-items: center;
 
+            @media (max-width:1023px) {
+                width: 90%;
+            }
+
             .news-heading {
                 width: 443px;
 
@@ -2731,9 +2739,11 @@ textarea {
         .news-content {
             max-height: 0;
             overflow: hidden;
-            padding: 0 35 0 0px;
-            transition: max-height 0.3s ease-out;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0s linear 0.4s;
             border-left: $light 3px dashed;
+            will-change: max-height;
 
             ul {
                 li {
@@ -2745,7 +2755,10 @@ textarea {
         }
 
         .news-content.active {
-            max-height: 100%;
+            max-height: fit-content;
+            opacity: 1;
+            visibility: visible;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
         }
 
         .news-content-inner {
@@ -3005,7 +3018,9 @@ textarea {
         }
     }
 
-
+    @media (max-width:1023px) {
+        padding: 5% 10%;
+    }
 
 }
 
@@ -3387,6 +3402,8 @@ textarea {
         }
 
         #test #result .result-buttons .result-button {
+            font-size: 16px;
+
             &:hover {
                 transform: scale(1);
                 background-size: contain;
