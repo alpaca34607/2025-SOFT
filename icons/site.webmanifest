@@ -1,0 +1,20 @@
+{
+  "name": "軟筋生物",
+  "short_name": "軟筋生物",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffc7d6",
+  "theme_color": "#8c5cae",
+  "icons": [
+    {
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

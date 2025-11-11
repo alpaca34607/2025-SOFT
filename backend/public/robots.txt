@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /checkout.html
+
+Sitemap: https://soft-creature.up.railway.app/sitemap.xml
+
