@@ -515,6 +515,11 @@ a {
 
 /* footer */
 footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -1252,6 +1257,7 @@ textarea {
             top: -10%;
             right: 75%;
             animation: blob 8s ease-in-out infinite, float 250s ease-in-out infinite, colorCycle 10s infinite linear;
+
             @media (max-width: 430px) {
                 display: none;
             }
@@ -1414,7 +1420,7 @@ textarea {
         position: relative;
 
         .keyart-container {
-            height: 130vh;
+            height: 1420px;
             /* 這個高度決定了視差效果的總範圍 */
             position: relative;
             overflow: hidden;
@@ -1601,7 +1607,7 @@ textarea {
 
         @media (max-width:1280px) {
             #keyart-5 {
-                background-position: 60% -100%;
+                background-position: 50% 0%;
 
             }
         }
@@ -1997,8 +2003,8 @@ textarea {
                 align-items: center;
                 justify-content: flex-start;
                 width: 600px;
-                height: 670px;
                 overflow: hidden;
+                min-height: 670px;
                 background: url(../images/home/purple-noisy-gradients.jpg);
                 mask: url(#svg-mask);
                 -webkit-mask: url(#svg-mask);
@@ -2014,7 +2020,7 @@ textarea {
                     margin: 30px auto;
                     position: relative;
                     width: 550px;
-                    height: 320px;
+                    height: 360px;
                     padding: 10px;
                 }
 
@@ -2240,9 +2246,11 @@ textarea {
         #about-soft-intro {
             width: 100%;
             height: 100vh;
+            min-height: 1200px;
             background: url(../images/home/about-soft.jpg);
             background-size: cover;
             background-repeat: no-repeat;
+            background-position: center;
 
             .keyart-container {
                 display: none;
@@ -2285,6 +2293,7 @@ textarea {
             position: relative;
             width: 100%;
             height: 100vh;
+            min-height: 1200px;
             justify-content: center;
             padding-top: 100px;
 
@@ -2299,8 +2308,13 @@ textarea {
             }
 
             .test-intro-middle {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                padding: 0;
                 margin: 0;
-                padding: 60px 0 0 0;
 
             }
         }
@@ -2341,11 +2355,13 @@ textarea {
         }
 
         #about-soft-intro {
-            width: 100%;
-            height: 100vh;
-            background: url(../images/home/about-soft.jpg);
+            min-height: 1200px;
+            background: url(../images/home/about-soft-s.jpg);
             background-size: cover;
+            background-position: bottom;
             background-repeat: no-repeat;
+
+
 
             .keyart-container {
                 display: none;
@@ -2401,16 +2417,9 @@ textarea {
             }
         }
 
-        #about-soft-intro {
-            width: 100%;
-            background: url(../images/home/about-soft-s.jpg);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
         #becoming-Soft-intro {
             height: 100vh;
+            min-height: 840px;
 
             .becoming-left {
                 z-index: 0;
@@ -2419,11 +2428,11 @@ textarea {
 
             .test-intro-middle {
                 .masked-content {
-                    height: 100%;
                     width: 100%;
                     mask: none;
                     background: none;
                     padding: 30px;
+                    min-height: 0;
 
 
                     #test-gallery {
@@ -2522,11 +2531,6 @@ textarea {
             margin-bottom: 20px;
         }
 
-        #about-soft-intro {
-            background: url(../images/home/about-soft-xs.jpg);
-            background-size: cover;
-            background-repeat: no-repeat;
-        }
 
         #becoming-Soft-intro {
             padding-top: 60px;
