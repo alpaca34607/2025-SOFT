@@ -1,10 +1,21 @@
 User-agent: *
-Disallow: /
+# 允許訪問所有公開頁面
+Allow: /
 
-# TODO: 在正式站改為開放該爬的頁面，例如：
-# User-agent: *
-# Allow: /
-# Disallow: /checkout.html
+# 阻止訪問敏感頁面和管理頁面
+Disallow: /checkout.html
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /create-qrcode-placeholders.html
 
+# 阻止訪問 API 和後端目錄
+Disallow: /api/
+Disallow: /backend/
+
+# 阻止訪問管理相關資源（如果需要）
+Disallow: /*?admin
+Disallow: /*?checkout
+
+# 網站地圖
 Sitemap: https://soft-creature.up.railway.app/sitemap.xml
 
