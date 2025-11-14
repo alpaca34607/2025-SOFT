@@ -21,12 +21,31 @@
       property="og:description"
       content="了解軟筋家族成員、最新玩具介紹與參加心理測驗，快來認領屬於你的軟筋生物。"
     />
+    <!-- Open Graph 圖片（Google 搜尋結果縮圖） -->
     <meta
       property="og:image"
       content="https://soft-creature.up.railway.app/images/home/soft_share.png"
     />
+    <meta
+      property="og:image:secure_url"
+      content="https://soft-creature.up.railway.app/images/home/soft_share.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
+    />
     <meta property="og:url" content="https://soft-creature.up.railway.app/" />
+    <meta property="og:site_name" content="軟筋生物" />
+    <!-- Twitter Card 圖片 -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://soft-creature.up.railway.app/images/home/soft_share.png"
+    />
+    <meta name="twitter:image:alt" content="軟筋生物官方網站" />
     <meta name="application-name" content="軟筋生物" />
     <!-- Favicon for search engines (Google requires absolute URL and proper order) -->
     <link
@@ -113,13 +132,54 @@
         "name": "軟筋生物",
         "url": "https://soft-creature.up.railway.app/",
         "logo": "https://soft-creature.up.railway.app/images/home/Logo.svg",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://soft-creature.up.railway.app/images/home/soft_share.png",
+          "width": 1200,
+          "height": 630,
+          "alt": "軟筋生物官方網站"
+        },
         "sameAs": ["https://www.instagram.com/soft.ig/"],
         "description": "軟筋生物打造療癒角色與限量收藏品，帶來柔軟又溫暖的故事與作品。"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "軟筋生物官方網站",
+        "url": "https://soft-creature.up.railway.app/",
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://soft-creature.up.railway.app/images/home/soft_share.png",
+          "width": 1200,
+          "height": 630,
+          "alt": "軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
+        },
+        "description": "軟筋生物官方網站，認識軟筋生物系列角色、參加心理測驗，發掘屬於你的軟魂，並不定時推出限量玩具。"
       }
     </script>
   </head>
 
   <body>
+    <!-- 主要圖片（供搜尋引擎使用，隱藏但可見於 HTML） -->
+    <img
+      src="https://soft-creature.up.railway.app/images/home/soft_share.png"
+      alt="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
+      itemscope
+      itemtype="https://schema.org/ImageObject"
+      itemprop="image"
+      style="
+        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      "
+      width="1200"
+      height="630"
+    />
     <main id="home">
       <div class="cursor"></div>
       <header id="topbar">
@@ -401,7 +461,13 @@
           />
         </div>
         <div class="book-wrapper">
-          <img src="./images/home/left-page.png" alt="左頁" class="left-page" />
+          <img
+            src="./images/home/left-page.png"
+            alt="左頁"
+            class="left-page"
+            data-nosnippet
+            loading="lazy"
+          />
           <img
             src="./images/home/left-page2.png"
             alt="左2頁"
