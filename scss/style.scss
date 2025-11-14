@@ -2423,7 +2423,7 @@ textarea {
 
         #becoming-Soft-intro {
             height: 100vh;
-            min-height: 840px;
+            min-height: 860px;
 
             .becoming-left {
                 z-index: 0;
@@ -2435,13 +2435,14 @@ textarea {
                     width: 100%;
                     mask: none;
                     background: none;
-                    padding: 30px;
+                    padding: 30px 20px;
                     min-height: 0;
 
 
                     #test-gallery {
                         width: 100%;
                         height: 30vh;
+                        min-height: 240px;
                         margin: 0;
                         padding: 0;
                     }
