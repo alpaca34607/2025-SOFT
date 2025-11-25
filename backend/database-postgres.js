@@ -1,7 +1,13 @@
-const { Pool } = require("pg");
+const { Pool, types } = require("pg");
 const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
 const path = require("path");
+
+// 讓 PostgreSQL NUMERIC/DECIMAL 直接以 JavaScript number 回傳
+const NUMERIC_OID = 1700;
+types.setTypeParser(NUMERIC_OID, (value) =>
+  value === null ? null : parseFloat(value)
+);
 
 // 環境變數配置
 const DATABASE_URL =
