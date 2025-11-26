@@ -41,6 +41,21 @@ function checkImageExists(imagePath) {
 function processProductImages(product) {
   if (!product) return product;
 
+  // 處理價格和訂金，將 DECIMAL 值轉換為整數
+  if (product.price !== undefined && product.price !== null) {
+    // 如果是字串（如 "3800.00"），先轉為數字再轉為整數
+    // 如果是數字，直接轉為整數
+    product.price = Number.isInteger(product.price)
+      ? product.price
+      : parseInt(Number(product.price), 10);
+  }
+
+  if (product.deposit !== undefined && product.deposit !== null) {
+    product.deposit = Number.isInteger(product.deposit)
+      ? product.deposit
+      : parseInt(Number(product.deposit), 10);
+  }
+
   // 處理各種圖片路徑
   if (product.thumbnail_path) {
     product.thumbnail_path = convertToFullUrl(product.thumbnail_path);

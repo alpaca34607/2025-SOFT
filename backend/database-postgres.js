@@ -4,10 +4,21 @@ const fs = require("fs");
 const path = require("path");
 
 // 讓 PostgreSQL NUMERIC/DECIMAL 直接以 JavaScript number 回傳
+// 如果值沒有小數部分（如 "3800.00"），返回整數；否則返回浮點數
 const NUMERIC_OID = 1700;
-types.setTypeParser(NUMERIC_OID, (value) =>
-  value === null ? null : parseFloat(value)
-);
+types.setTypeParser(NUMERIC_OID, (value) => {
+  if (value === null) return null;
+  const num = parseFloat(value);
+  // 如果字串值不包含小數點，或小數點後都是 0，返回整數
+  const str = String(value).trim();
+  if (str && !str.includes(".")) {
+    return parseInt(str, 10);
+  }
+  // 如果有小數點，檢查是否實際為整數
+  const intValue = parseInt(str, 10);
+  const floatValue = parseFloat(str);
+  return floatValue === intValue ? intValue : floatValue;
+});
 
 // 環境變數配置
 const DATABASE_URL =
