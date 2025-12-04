@@ -7,6 +7,10 @@
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="./favicon.ico" />
     <link rel="stylesheet" href="./css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <style>
       select,
       input {
@@ -63,12 +67,41 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+        cursor: pointer;
 
         a {
           color: #007bff;
           text-decoration: none;
           font-weight: bold;
         }
+      }
+
+      .order-header-toggle {
+        margin-right: 10px;
+        color: #666;
+        transition: transform 0.3s ease;
+        font-size: 14px;
+      }
+
+      .order-header-toggle.collapsed {
+        transform: rotate(-90deg);
+      }
+
+      .order-details {
+        transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease,
+          padding 0.3s ease;
+        overflow: hidden;
+        max-height: 2000px;
+        opacity: 1;
+      }
+
+      .order-details.collapsed {
+        max-height: 0;
+        opacity: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
       }
 
       .order-status {

@@ -220,19 +220,28 @@ function updateRecentOrders(orders) {
     .map(
       (order) => `
         <div class="order-item">
-            <div class="order-header">
-                <div>
-                    <strong>訂單編號: ${order.order_number}</strong><br>
-                    <small>客戶: ${order.customer_name} (${
+            <div class="order-header" onclick="toggleOrderDetails('recent-order-${
+              order.id
+            }')">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <i class="fa-solid fa-angle-down order-header-toggle collapsed" id="toggle-recent-order-${
+                      order.id
+                    }"></i>
+                    <div>
+                        <strong>訂單編號: ${order.order_number}</strong><br>
+                        <small>客戶: ${order.customer_name} (${
         order.phone
       })</small><br>
-                    <small>建立時間: ${formatDateTime(order.created_at)}</small>
+                        <small>建立時間: ${formatDateTime(
+                          order.created_at
+                        )}</small>
+                    </div>
                 </div>
                 <span class="order-status status-${
                   order.status
                 }">${getStatusText(order.status)}</span>
             </div>
-            <div class="order-details">
+            <div class="order-details collapsed" id="recent-order-${order.id}">
                 <p><strong>總金額: NT$ ${parseFloat(
                   order.total_amount || 0
                 ).toLocaleString()}</strong></p>
@@ -282,18 +291,29 @@ function displayOrders(orders) {
 
   const ordersHTML = orders
     .map(
-      (order) => `
+      (order, index) => `
         <div class="order-item">
-            <div class="order-header">
-                <div>
-                    <strong>訂單編號: ${order.order_number}</strong><br>
-                    <small>客戶: ${order.customer_name} (${
+            <div class="order-header" onclick="toggleOrderDetails('order-${
+              order.id
+            }')">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <i class="fa-solid fa-angle-down order-header-toggle collapsed" id="toggle-order-${
+                      order.id
+                    }"></i>
+                    <div>
+                        <strong>訂單編號: ${order.order_number}</strong><br>
+                        <small>客戶: ${order.customer_name} (${
         order.phone
       })</small><br>
-                    <small>建立時間: ${formatDateTime(order.created_at)}</small>
+                        <small>建立時間: ${formatDateTime(
+                          order.created_at
+                        )}</small>
+                    </div>
                 </div>
                 <div>
-                    <select class="status-select" data-order-id="${order.id}">
+                    <select class="status-select" data-order-id="${
+                      order.id
+                    }" onclick="event.stopPropagation();">
                         <option value="pending" ${
                           order.status === "pending" ? "selected" : ""
                         }>待處理</option>
@@ -319,7 +339,7 @@ function displayOrders(orders) {
 
                 </div>
             </div>
-            <div class="order-details">
+            <div class="order-details collapsed" id="order-${order.id}">
                 <p><strong>總金額: NT$ ${parseFloat(
                   order.total_amount || 0
                 ).toLocaleString()}</strong></p>
@@ -374,7 +394,7 @@ function displayOrders(orders) {
             </div>
              <button data-order-id="${order.id}" data-order-number="${
         order.order_number
-      }" class="btn-delete delete-order-btn" style="">🗑️ 刪除</button>
+      }" class="btn-delete delete-order-btn" onclick="event.stopPropagation();" style="">🗑️ 刪除</button>
         </div>
     `
     )
@@ -415,6 +435,31 @@ function displayOrders(orders) {
       deleteOrder(orderId, orderNumber);
     });
   });
+}
+
+// 切換訂單詳情展開/收合
+function toggleOrderDetails(orderId) {
+  const detailsElement = document.getElementById(orderId);
+  const toggleIcon = document.getElementById(`toggle-${orderId}`);
+
+  if (!detailsElement) return;
+
+  // 切換收合狀態
+  const isCollapsed = detailsElement.classList.contains("collapsed");
+
+  if (isCollapsed) {
+    // 展開
+    detailsElement.classList.remove("collapsed");
+    if (toggleIcon) {
+      toggleIcon.classList.remove("collapsed");
+    }
+  } else {
+    // 收合
+    detailsElement.classList.add("collapsed");
+    if (toggleIcon) {
+      toggleIcon.classList.add("collapsed");
+    }
+  }
 }
 
 // 更新訂單狀態
@@ -562,23 +607,34 @@ function displayProducts(products) {
     .map(
       (product) => `
         <div class="order-item">
-            <div class="order-header">
-                <div>
-                    <a href="./product.html?id=${
+            <div class="order-header" onclick="toggleOrderDetails('product-${
+              product.product_id
+            }')">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <i class="fa-solid fa-angle-down order-header-toggle collapsed" id="toggle-product-${
                       product.product_id
-                    }" target="_blank">${product.name}</a>
-                    <small>商品ID: ${product.product_id}</small>
+                    }"></i>
+                    <div>
+                        <a href="./product.html?id=${
+                          product.product_id
+                        }" target="_blank" onclick="event.stopPropagation();">${
+        product.name
+      }</a>
+                        <small>商品ID: ${product.product_id}</small>
+                    </div>
                 </div>
                 <div>
-                    <button onclick="editProduct('${
+                    <button onclick="event.stopPropagation(); editProduct('${
                       product.product_id
                     }')" class="btn-edit">編輯</button>
-                    <button onclick="deleteProduct('${
+                    <button onclick="event.stopPropagation(); deleteProduct('${
                       product.product_id
                     }')" class="btn-delete">刪除</button>
                 </div>
             </div>
-            <div class="order-details">
+            <div class="order-details collapsed" id="product-${
+              product.product_id
+            }">
                 <p>價格: NT$ ${product.price.toLocaleString()}</p>
                 <p>訂金: NT$ ${product.deposit.toLocaleString()}</p>
                 <p>最大數量: ${product.max_quantity}</p>
@@ -2007,7 +2063,7 @@ function displayBannerManagement(bannerData, productSideData) {
           <label>目前 Product-Side 圖片:</label>
           ${
             productSideImage
-              ? `<div class="current-image">
+              ? `<div class="current-image" style="width:183px">
                   <img src="${productSideImage}" alt="${productSideAlt}" style="max-width: 100%; max-height: 400px; border: 1px solid #ccc; margin: 10px 0;">
                   <p>圖片路徑: ${productSideImagePath}</p>
                   <p>連結: ${productSideLink}</p>
