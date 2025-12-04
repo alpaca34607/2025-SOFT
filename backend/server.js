@@ -64,11 +64,15 @@ const customersRouter = require("./routes/customers");
 console.log("🔧 載入 uploads 路由...");
 const uploadsRouter = require("./routes/uploads");
 console.log("✅ uploads 路由載入完成");
+console.log("🔧 載入 banner 路由...");
+const bannerRouter = require("./routes/banner");
+console.log("✅ banner 路由載入完成");
 
 app.use("/api/orders", ordersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/customers", customersRouter);
 app.use("/api/uploads", uploadsRouter);
+app.use("/api/banner", bannerRouter);
 
 // 調試：記錄所有 API 路由
 console.log("📋 已註冊的 API 路由:");
@@ -94,6 +98,10 @@ console.log("  - GET    /api/uploads/test");
 console.log("  - GET    /api/uploads/presign (測試用)");
 console.log("  - POST   /api/uploads/presign");
 console.log("  - POST   /api/uploads/delete");
+console.log("  - GET    /api/banner");
+console.log("  - PUT    /api/banner");
+console.log("  - GET    /api/banner/product-side");
+console.log("  - PUT    /api/banner/product-side");
 
 function loadStaticFile(possiblePaths, fallbackContent, type) {
   for (const filePath of possiblePaths) {

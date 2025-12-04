@@ -191,8 +191,8 @@
           </ul>
         </div>
         <div class="product-side">
-          <a href="./product.html?id=product-Remain"
-            ><img src="/images/shop/product-side.jpg" alt="餘量釋出連結圖片"
+          <a id="productSideLink" href="./product.html?id=product-Remain"
+            ><img id="productSideImage" src="/images/shop/product-side.jpg" alt="餘量釋出連結圖片"
           /></a>
         </div>
       </div>
@@ -243,7 +243,7 @@
 
       <div class="container">
         <heading class="banner">
-          <img src="images/shop/AD-banner.jpg" alt="戶外風軟吉拉橫幅" />
+          <img id="bannerImage" src="images/shop/AD-banner.jpg" alt="戶外風軟吉拉橫幅" />
         </heading>
         <div class="controls">
           <div class="control-group">
@@ -284,5 +284,41 @@
     <script src="./js/email-config.js"></script>
     <script src="./js/contactsoft.js"></script>
     <script src="./js/script.js"></script>
+    <script>
+      // 動態載入 Banner 圖片和 Product-Side 設定
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          // 載入 Banner 圖片
+          const bannerData = await API.getBanner();
+          const bannerImg = document.getElementById("bannerImage");
+          if (bannerImg && bannerData.bannerImage) {
+            bannerImg.src = bannerData.bannerImage;
+            bannerImg.alt = bannerData.bannerImagePath || "Banner 圖片";
+          }
+        } catch (error) {
+          console.warn("載入 Banner 圖片失敗，使用預設圖片:", error);
+          // 失敗時使用預設圖片，不需要額外處理
+        }
+
+        try {
+          // 載入 Product-Side 設定
+          const productSideData = await API.getProductSide();
+          const productSideLink = document.getElementById("productSideLink");
+          const productSideImage = document.getElementById("productSideImage");
+          
+          if (productSideLink && productSideData.productSideLink) {
+            productSideLink.href = productSideData.productSideLink;
+          }
+          
+          if (productSideImage && productSideData.productSideImage) {
+            productSideImage.src = productSideData.productSideImage;
+            productSideImage.alt = productSideData.productSideAlt || "餘量釋出連結圖片";
+          }
+        } catch (error) {
+          console.warn("載入 Product-Side 設定失敗，使用預設值:", error);
+          // 失敗時使用預設值，不需要額外處理
+        }
+      });
+    </script>
   </body>
 </html>

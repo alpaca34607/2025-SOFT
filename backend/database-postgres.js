@@ -147,6 +147,9 @@ async function initDatabase() {
           } = require("./migrate-fix-order-number-nullable");
           await fixOrderNumberNullable();
 
+          const { addSiteConfigTable } = require("./migrate-add-site-config");
+          await addSiteConfigTable();
+
           console.log("✅ 資料庫遷移完成");
         } catch (migrationError) {
           console.warn(

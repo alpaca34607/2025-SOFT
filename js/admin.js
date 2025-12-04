@@ -152,6 +152,9 @@ function initializeNavigation() {
         case "customers":
           loadCustomers();
           break;
+        case "banner":
+          loadBannerManagement();
+          break;
       }
     });
   });
@@ -1694,5 +1697,232 @@ async function deleteAllImages(imageType, productId) {
   } catch (error) {
     console.error("刪除圖片失敗:", error);
     alert("刪除圖片失敗: " + error.message);
+  }
+}
+
+// 載入 Banner 管理界面
+async function loadBannerManagement() {
+  const container = document.getElementById("bannerManagement");
+  container.innerHTML = '<div class="loading">載入中...</div>';
+
+  try {
+    const [bannerData, productSideData] = await Promise.all([
+      API.getBanner(),
+      API.getProductSide(),
+    ]);
+    displayBannerManagement(bannerData, productSideData);
+  } catch (error) {
+    handleAPIError(error, "載入設定失敗");
+    container.innerHTML = '<div class="error">載入設定失敗</div>';
+  }
+}
+
+// 顯示 Banner 管理界面
+function displayBannerManagement(bannerData, productSideData) {
+  const container = document.getElementById("bannerManagement");
+  const bannerImage = bannerData.bannerImage || "";
+  const bannerImagePath = bannerData.bannerImagePath || "";
+  const productSideLink =
+    productSideData?.productSideLink || "./product.html?id=product-Remain";
+  const productSideImage = productSideData?.productSideImage || "";
+  const productSideImagePath =
+    productSideData?.productSideImagePath || "/images/shop/product-side.jpg";
+  const productSideAlt = productSideData?.productSideAlt || "餘量釋出連結圖片";
+
+  container.innerHTML = `
+    <div class="product-form">
+      <h3>Banner 圖片設定</h3>
+      <form id="bannerForm">
+        <div class="form-group">
+          <label>目前 Banner 圖片:</label>
+          ${
+            bannerImage
+              ? `<div class="current-image">
+                  <img src="${bannerImage}" alt="Banner 圖片" style="max-width: 100%; max-height: 400px; border: 1px solid #ccc; margin: 10px 0;">
+                  <p>圖片路徑: ${bannerImagePath}</p>
+                </div>`
+              : "<p>目前無 Banner 圖片</p>"
+          }
+        </div>
+        <div class="form-group">
+          <label>上傳新的 Banner 圖片:</label>
+          <input type="file" id="bannerImageFile" accept="image/*">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            建議尺寸：寬度 1200px 以上，高度 300-600px
+          </p>
+        </div>
+        <div class="form-group">
+          <label>或輸入圖片路徑 (URL 或相對路徑):</label>
+          <input type="text" id="bannerImagePath" value="${bannerImagePath}" placeholder="/images/shop/AD-banner.jpg">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            可以輸入完整的 URL (http://...) 或相對路徑 (/images/...)
+          </p>
+        </div>
+        <div class="form-actions">
+          <button type="submit">更新 Banner</button>
+          <button type="button" onclick="loadBannerManagement()">取消</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="product-form" style="margin-top: 30px;">
+      <h3>Product-Side 設定</h3>
+      <form id="productSideForm">
+        <div class="form-group">
+          <label>目前 Product-Side 圖片:</label>
+          ${
+            productSideImage
+              ? `<div class="current-image">
+                  <img src="${productSideImage}" alt="${productSideAlt}" style="max-width: 100%; max-height: 400px; border: 1px solid #ccc; margin: 10px 0;">
+                  <p>圖片路徑: ${productSideImagePath}</p>
+                  <p>連結: ${productSideLink}</p>
+                  <p>Alt 文本: ${productSideAlt}</p>
+                </div>`
+              : "<p>目前無 Product-Side 圖片</p>"
+          }
+        </div>
+        <div class="form-group">
+          <label>連結 URL:</label>
+          <input type="text" id="productSideLink" value="${productSideLink}" placeholder="./product.html?id=product-Remain">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            例如: ./product.html?id=product-Remain 或完整的 URL
+          </p>
+        </div>
+        <div class="form-group">
+          <label>上傳新的 Product-Side 圖片:</label>
+          <input type="file" id="productSideImageFile" accept="image/*">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            建議尺寸：寬度 400-600px，高度 300-500px
+          </p>
+        </div>
+        <div class="form-group">
+          <label>或輸入圖片路徑 (URL 或相對路徑):</label>
+          <input type="text" id="productSideImagePath" value="${productSideImagePath}" placeholder="/images/shop/product-side.jpg">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            可以輸入完整的 URL (http://...) 或相對路徑 (/images/...)
+          </p>
+        </div>
+        <div class="form-group">
+          <label>圖片 Alt 文本:</label>
+          <input type="text" id="productSideAlt" value="${productSideAlt}" placeholder="餘量釋出連結圖片">
+          <p style="color: #666; font-size: 12px; margin-top: 5px;">
+            用於圖片無法顯示時的替代文字
+          </p>
+        </div>
+        <div class="form-actions">
+          <button type="submit">更新 Product-Side</button>
+          <button type="button" onclick="loadBannerManagement()">取消</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  // 綁定表單提交事件
+  document
+    .getElementById("bannerForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await updateBanner();
+    });
+
+  document
+    .getElementById("productSideForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await updateProductSide();
+    });
+}
+
+// 更新 Banner
+async function updateBanner() {
+  try {
+    const fileInput = document.getElementById("bannerImageFile");
+    const pathInput = document.getElementById("bannerImagePath");
+    let bannerImagePath = pathInput.value.trim();
+
+    // 如果上傳了文件，先上傳到 S3
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      try {
+        // 使用 S3 預簽名 URL 上傳
+        const { uploadUrl, publicUrl } = await API.getPresignedUrl(
+          file,
+          "images/shop"
+        );
+        await API.uploadToS3(uploadUrl, file);
+        bannerImagePath = publicUrl;
+        showSuccessToast("圖片上傳成功！");
+      } catch (error) {
+        console.error("圖片上傳失敗:", error);
+        alert("圖片上傳失敗: " + error.message);
+        return;
+      }
+    }
+
+    if (!bannerImagePath) {
+      alert("請上傳圖片或輸入圖片路徑");
+      return;
+    }
+
+    // 更新 banner 配置
+    await API.updateBanner(bannerImagePath);
+    showSuccessToast("Banner 更新成功！");
+    loadBannerManagement();
+  } catch (error) {
+    handleAPIError(error, "更新 Banner 失敗");
+  }
+}
+
+// 更新 Product-Side
+async function updateProductSide() {
+  try {
+    const linkInput = document.getElementById("productSideLink");
+    const fileInput = document.getElementById("productSideImageFile");
+    const pathInput = document.getElementById("productSideImagePath");
+    const altInput = document.getElementById("productSideAlt");
+
+    const productSideLink = linkInput.value.trim();
+    let productSideImagePath = pathInput.value.trim();
+    const productSideAlt = altInput.value.trim() || "餘量釋出連結圖片";
+
+    if (!productSideLink) {
+      alert("請輸入連結 URL");
+      return;
+    }
+
+    // 如果上傳了文件，先上傳到 S3
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      try {
+        // 使用 S3 預簽名 URL 上傳
+        const { uploadUrl, publicUrl } = await API.getPresignedUrl(
+          file,
+          "images/shop"
+        );
+        await API.uploadToS3(uploadUrl, file);
+        productSideImagePath = publicUrl;
+        showSuccessToast("圖片上傳成功！");
+      } catch (error) {
+        console.error("圖片上傳失敗:", error);
+        alert("圖片上傳失敗: " + error.message);
+        return;
+      }
+    }
+
+    if (!productSideImagePath) {
+      alert("請上傳圖片或輸入圖片路徑");
+      return;
+    }
+
+    // 更新 product-side 配置
+    await API.updateProductSide(
+      productSideLink,
+      productSideImagePath,
+      productSideAlt
+    );
+    showSuccessToast("Product-Side 更新成功！");
+    loadBannerManagement();
+  } catch (error) {
+    handleAPIError(error, "更新 Product-Side 失敗");
   }
 }

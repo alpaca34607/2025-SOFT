@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>軟筋生物 - 管理後台</title>
-    <meta
-      name="robots"
-      content="noindex, nofollow"
-    />
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="./favicon.ico" />
     <link rel="stylesheet" href="./css/style.css" />
     <style>
@@ -359,6 +356,7 @@
         <button class="nav-btn" data-section="orders">訂單管理</button>
         <button class="nav-btn" data-section="products">商品管理</button>
         <button class="nav-btn" data-section="customers">客戶管理</button>
+        <button class="nav-btn" data-section="banner">Banner 管理</button>
       </div>
 
       <div class="admin-content">
@@ -438,6 +436,15 @@
           </div>
 
           <div id="customersList">
+            <div class="loading">載入中...</div>
+          </div>
+        </div>
+
+        <!-- Banner 管理 -->
+        <div id="banner" class="content-section" style="display: none">
+          <h2>Banner 圖片管理</h2>
+          <p>管理 Get-Soft.html 頁面的 banner 圖片</p>
+          <div id="bannerManagement">
             <div class="loading">載入中...</div>
           </div>
         </div>

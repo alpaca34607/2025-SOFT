@@ -429,6 +429,34 @@ class API {
       method: "DELETE",
     });
   }
+
+  // Banner 相關 API
+  static async getBanner() {
+    return this.request("/api/banner");
+  }
+
+  static async updateBanner(bannerImagePath) {
+    return this.request("/api/banner", {
+      method: "PUT",
+      body: JSON.stringify({ bannerImagePath }),
+    });
+  }
+
+  // Product-side 相關 API
+  static async getProductSide() {
+    return this.request("/api/banner/product-side");
+  }
+
+  static async updateProductSide(productSideLink, productSideImagePath, productSideAlt) {
+    return this.request("/api/banner/product-side", {
+      method: "PUT",
+      body: JSON.stringify({
+        productSideLink,
+        productSideImagePath,
+        productSideAlt,
+      }),
+    });
+  }
 }
 
 // 全域 API 健康檢查函數
