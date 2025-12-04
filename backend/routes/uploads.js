@@ -65,10 +65,17 @@ router.post("/presign", express.json(), async (req, res) => {
       Bucket: process.env.S3_BUCKET,
       Key: key,
       ContentType: contentType,
-      // 設置為公開讀取，以便通過 publicUrl 訪問
-      // 注意：如果 S3 bucket 禁用了 ACL（新 bucket 的默認設置），
-      // 需要在 S3 bucket 設置中啟用 ACL，或配置 bucket 策略允許公共讀取
-      ACL: "public-read",
+      // 注意：此 bucket 不支持 ACL，需要通過 bucket 策略來設置公開讀取
+      // 請確保 S3 bucket 策略允許公共讀取，例如：
+      // {
+      //   "Version": "2012-10-17",
+      //   "Statement": [{
+      //     "Effect": "Allow",
+      //     "Principal": "*",
+      //     "Action": "s3:GetObject",
+      //     "Resource": "arn:aws:s3:::your-bucket-name/*"
+      //   }]
+      // }
     });
 
     const expiresIn = 60 * 3; // 3 分鐘
