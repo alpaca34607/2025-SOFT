@@ -4675,24 +4675,71 @@ textarea {
             .gallery {
                 width: 520px;
 
-                .lSAction>.lSPrev {
+                /* Swiper 主輪播樣式 */
+                .product-main-swiper {
+                    width: 100%;
+                    margin-bottom: 10px;
+                    aspect-ratio: 1 / 1;
+                    overflow: hidden;
+                    border-radius: 5px;
+
+                    .swiper-wrapper {
+                        border-radius: 5px;
+                    }
+
+                    .swiper-slide {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        overflow: hidden;
+                        border-radius: 5px;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            display: block;
+                            border-radius: 5px;
+                        }
+                    }
+                }
+
+                /* Swiper 導航按鈕樣式 */
+                .product-main-swiper .swiper-button-prev,
+                .product-main-swiper .swiper-button-next {
+                    width: 32px;
+                    height: 32px;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    color: transparent;
+                    margin-top: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+
+                    &::after {
+                        display: none;
+                    }
+                }
+
+                .product-main-swiper .swiper-button-prev {
                     background-image: url('../images/shop/arrow-left.svg');
-                    background-size: 100%;
+                    left: 10px;
 
                     &:hover {
                         filter: brightness(0.5);
-
                     }
 
                     &:active {
                         filter: brightness(3) hue-rotate(200deg);
                     }
-
                 }
 
-                .lSAction>.lSNext {
+                .product-main-swiper .swiper-button-next {
                     background-image: url('../images/shop/arrow_right.svg');
-                    background-size: 100%;
+                    right: 10px;
                     filter: brightness(120%);
 
                     &:hover {
@@ -4704,51 +4751,34 @@ textarea {
                     }
                 }
 
-                .lslide img {
+                /* Swiper 縮圖樣式 */
+                .product-thumbs-swiper {
                     width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .lSSlideOuter .lSSlideWrapper {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    border-radius: 5px;
-                }
-
-
-                ul {
-                    list-style: none outside none;
-                    width: 100%;
-                    padding-left: 0;
-                    margin-bottom: 0;
-                }
-
-                li {
-                    display: block;
-                    float: left;
-                    cursor: pointer;
-                    border-radius: 5px;
-                }
-
-                img {
-                    display: block;
-                    height: auto;
-                    max-width: 100%;
-                }
-
-
-                .lSGallery {
-                    display: flex;
-                    flex-direction: row;
                     height: 115px;
 
-                }
+                    .swiper-slide {
+                        width: 115px;
+                        height: 115px;
+                        aspect-ratio: 1 / 1;
+                        cursor: pointer;
+                        border-radius: 5px;
+                        overflow: hidden;
+                        margin-right: 10px;
+                        filter: brightness(0.5);
+                        transition: filter 0.3s ease;
 
-                .lSSlideOuter .lSGallery li {
-                    object-fit: cover;
-                    margin-right: 10px !important;
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            display: block;
+                            border-radius: 5px;
+                        }
+                    }
+
+                    .swiper-slide-thumb-active {
+                        filter: brightness(1);
+                    }
                 }
 
 
@@ -4835,8 +4865,14 @@ textarea {
                     width: 440px;
 
                     .gallery {
-                        .lSSlideWrapper {
+                        .product-main-swiper {
                             width: 100%;
+                        }
+
+                        .product-thumbs-swiper {
+                            .swiper-slide {
+                                aspect-ratio: 1 / 1;
+                            }
                         }
                     }
                 }
@@ -4870,6 +4906,12 @@ textarea {
     @media (max-width: 1439px) {
         .product-container .product-info .gallery {
             width: 100%;
+
+            .product-thumbs-swiper {
+                .swiper-slide {
+                    aspect-ratio: 1 / 1;
+                }
+            }
         }
 
         .product-container {
@@ -4978,8 +5020,14 @@ textarea {
                     width: 100%;
 
                     .gallery {
-                        .lSSlideWrapper {
+                        .product-main-swiper {
                             width: 100%;
+                        }
+
+                        .product-thumbs-swiper {
+                            .swiper-slide {
+                                aspect-ratio: 1 / 1;
+                            }
                         }
                     }
                 }

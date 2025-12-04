@@ -32,7 +32,7 @@
     <link rel="icon" href="./favicon.ico" />
     <link
       rel="stylesheet"
-      href="//sachinchoolur.github.io/lightslider/dist/css/lightslider.css"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -248,9 +248,18 @@
       <div class="product-container">
         <section class="product-info">
           <div class="gallery">
-            <ul id="lightSlider">
-              <!-- 圖片將由動態載入器填充 -->
-            </ul>
+            <div class="swiper product-main-swiper">
+              <div class="swiper-wrapper" id="productMainSwiper">
+                <!-- 圖片將由動態載入器填充 -->
+              </div>
+              <div class="swiper-button-prev"></div>
+              <div class="swiper-button-next"></div>
+            </div>
+            <div class="swiper product-thumbs-swiper">
+              <div class="swiper-wrapper" id="productThumbsSwiper">
+                <!-- 縮圖將由動態載入器填充 -->
+              </div>
+            </div>
           </div>
           <div class="book-area">
             <div class="poduct-title">
@@ -347,7 +356,7 @@
       type="text/javascript"
       src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"
     ></script>
-    <script src="//sachinchoolur.github.io/lightslider/dist/js/lightslider.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="./js/api.js"></script>
     <script src="./js/shopping.js"></script>
     <script src="js/lightSlider.js"></script>

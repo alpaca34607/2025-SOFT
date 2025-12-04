@@ -4098,64 +4098,97 @@ textarea {
 }
 #product-page .product-container .product-info .gallery {
   width: 520px;
+  /* Swiper 主輪播樣式 */
+  /* Swiper 導航按鈕樣式 */
+  /* Swiper 縮圖樣式 */
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSPrev {
+#product-page .product-container .product-info .gallery .product-main-swiper {
+  width: 100%;
+  margin-bottom: 10px;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  border-radius: 5px;
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-wrapper {
+  border-radius: 5px;
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 5px;
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 5px;
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-prev,
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-next {
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: transparent;
+  margin-top: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-prev::after,
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-next::after {
+  display: none;
+}
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-prev {
   background-image: url("../images/shop/arrow-left.svg");
-  background-size: 100%;
+  left: 10px;
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSPrev:hover {
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-prev:hover {
   filter: brightness(0.5);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSPrev:active {
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-prev:active {
   filter: brightness(3) hue-rotate(200deg);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSNext {
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-next {
   background-image: url("../images/shop/arrow_right.svg");
-  background-size: 100%;
+  right: 10px;
   filter: brightness(120%);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSNext:hover {
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-next:hover {
   filter: brightness(0.5);
 }
-#product-page .product-container .product-info .gallery .lSAction > .lSNext:active {
+#product-page .product-container .product-info .gallery .product-main-swiper .swiper-button-next:active {
   filter: brightness(3) hue-rotate(200deg);
 }
-#product-page .product-container .product-info .gallery .lslide img {
+#product-page .product-container .product-info .gallery .product-thumbs-swiper {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-#product-page .product-container .product-info .gallery .lSSlideOuter .lSSlideWrapper {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 5px;
-}
-#product-page .product-container .product-info .gallery ul {
-  list-style: none outside none;
-  width: 100%;
-  padding-left: 0;
-  margin-bottom: 0;
-}
-#product-page .product-container .product-info .gallery li {
-  display: block;
-  float: left;
-  cursor: pointer;
-  border-radius: 5px;
-}
-#product-page .product-container .product-info .gallery img {
-  display: block;
-  height: auto;
-  max-width: 100%;
-}
-#product-page .product-container .product-info .gallery .lSGallery {
-  display: flex;
-  flex-direction: row;
   height: 115px;
 }
-#product-page .product-container .product-info .gallery .lSSlideOuter .lSGallery li {
+#product-page .product-container .product-info .gallery .product-thumbs-swiper .swiper-slide {
+  width: 115px;
+  height: 115px;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 10px;
+  filter: brightness(0.5);
+  transition: filter 0.3s ease;
+}
+#product-page .product-container .product-info .gallery .product-thumbs-swiper .swiper-slide img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  margin-right: 10px !important;
+  display: block;
+  border-radius: 5px;
+}
+#product-page .product-container .product-info .gallery .product-thumbs-swiper .swiper-slide-thumb-active {
+  filter: brightness(1);
 }
 #product-page .product-container .product-showcase {
   display: flex;
@@ -4220,8 +4253,11 @@ textarea {
   #product-page .product-container .product-info .book-area {
     width: 440px;
   }
-  #product-page .product-container .product-info .book-area .gallery .lSSlideWrapper {
+  #product-page .product-container .product-info .book-area .gallery .product-main-swiper {
     width: 100%;
+  }
+  #product-page .product-container .product-info .book-area .gallery .product-thumbs-swiper .swiper-slide {
+    aspect-ratio: 1/1;
   }
   #product-page .product-container .product-showcase .showcase-wrap .sketchfab-embed-wrapper {
     top: 0%;
@@ -4246,6 +4282,9 @@ textarea {
 @media (max-width: 1439px) {
   #product-page .product-container .product-info .gallery {
     width: 100%;
+  }
+  #product-page .product-container .product-info .gallery .product-thumbs-swiper .swiper-slide {
+    aspect-ratio: 1/1;
   }
   #product-page .product-container {
     width: 50%;
@@ -4333,8 +4372,11 @@ textarea {
   #product-page .product-container .product-info .book-area {
     width: 100%;
   }
-  #product-page .product-container .product-info .book-area .gallery .lSSlideWrapper {
+  #product-page .product-container .product-info .book-area .gallery .product-main-swiper {
     width: 100%;
+  }
+  #product-page .product-container .product-info .book-area .gallery .product-thumbs-swiper .swiper-slide {
+    aspect-ratio: 1/1;
   }
 }
 
@@ -5107,4 +5149,4 @@ textarea {
 }
 .history-popup.show .history-content {
   left: 0;
-}/*# sourceMappingURL=style.css.map */
+}

@@ -520,6 +520,17 @@ async function updateOrderStatus(orderId, status) {
 
 // 載入商品列表
 async function loadProducts() {
+  // 清理 LightSlider 預覽狀態和 Object URL
+  if (window.lightsliderPreviewUrls) {
+    window.lightsliderPreviewUrls.forEach((url) => {
+      if (url.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+    });
+    window.lightsliderPreviewUrls = null;
+  }
+  window.lightsliderImageState = null;
+
   const container = document.getElementById("productsList");
   container.innerHTML = '<div class="loading">載入中...</div>';
 
@@ -1126,37 +1137,16 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>上傳LightSlider圖片:</label>
                         <input type="file" id="editProductLightSliderImages" accept="image/*" multiple>
-                        ${
-                          product.lightslider_images &&
-                          product.lightslider_images.length > 0
-                            ? `<div class="current-images">
-                                <p>目前LightSlider圖片 (${
-                                  product.lightslider_images.length
-                                } 張):</p>
-                                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
-                                  ${product.lightslider_images
-                                    .map(
-                                      (img, index) => `
-                                    <div style="position: relative; display: inline-block;">
-                                      <img src="${buildImageUrl(
-                                        img
-                                      )}" alt="LightSlider圖片${
-                                        index + 1
-                                      }" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px;">
-                                      <button type="button" onclick="deleteImage('lightslider', '${
-                                        product.product_id
-                                      }', ${index})" style="position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer;">×</button>
-                                    </div>
-                                  `
-                                    )
-                                    .join("")}
-                                </div>
-                                <button type="button" onclick="deleteAllImages('lightslider', '${
-                                  product.product_id
-                                }')" style="background: #ff8800; color: white; border: none; padding: 5px 10px; cursor: pointer;">刪除所有LightSlider圖片</button>
-                               </div>`
-                            : "<p>目前無LightSlider圖片</p>"
-                        }
+                        <div id="lightsliderPreviewContainer" style="margin-top: 10px;">
+                            <p style="font-weight: bold; color: #666;">預設會被替換的圖片:</p>
+                            <p style="font-size: 12px; color: #999; margin-top: 5px;">可以拖曳圖片來改變順序</p>
+                            <div id="lightsliderPreviewImages" style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+                                <p style="color: #999;">目前無圖片</p>
+                            </div>
+                            <button type="button" id="deleteAllLightSliderBtn" onclick="deleteAllLightSliderPreview('${
+                              product.product_id
+                            }')" style="display: none; background: #ff8800; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-top: 10px;">刪除所有LightSlider圖片</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Sketchfab 嵌入程式碼:</label>
@@ -1211,6 +1201,36 @@ async function editProduct(productId) {
             </div>
         `;
 
+    // 初始化 LightSlider 圖片狀態（用於預覽）
+    // 存儲格式：{ type: 'existing' | 'new', data: string | File, index?: number }
+    window.lightsliderImageState = (product.lightslider_images || []).map(
+      (img, index) => ({
+        type: "existing",
+        data: img,
+        originalIndex: index,
+      })
+    );
+
+    // 初始化預覽
+    updateLightSliderPreview(productId);
+
+    // 綁定文件上傳事件
+    const fileInput = document.getElementById("editProductLightSliderImages");
+    fileInput.addEventListener("change", (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        files.forEach((file) => {
+          window.lightsliderImageState.push({
+            type: "new",
+            data: file,
+          });
+        });
+        updateLightSliderPreview(productId);
+        // 清空文件輸入，允許重複選擇相同文件
+        e.target.value = "";
+      }
+    });
+
     // 綁定表單提交事件
     document
       .getElementById("editProductForm")
@@ -1221,6 +1241,202 @@ async function editProduct(productId) {
   } catch (error) {
     handleAPIError(error, "載入商品資料失敗");
   }
+}
+
+// 更新 LightSlider 圖片預覽
+function updateLightSliderPreview(productId) {
+  const previewContainer = document.getElementById("lightsliderPreviewImages");
+  const deleteAllBtn = document.getElementById("deleteAllLightSliderBtn");
+
+  if (!previewContainer || !window.lightsliderImageState) {
+    return;
+  }
+
+  // 清理之前創建的 Object URL（避免內存洩漏）
+  if (window.lightsliderPreviewUrls) {
+    window.lightsliderPreviewUrls.forEach((url) => {
+      if (url.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+    });
+  }
+  window.lightsliderPreviewUrls = [];
+
+  if (window.lightsliderImageState.length === 0) {
+    previewContainer.innerHTML = '<p style="color: #999;">目前無圖片</p>';
+    if (deleteAllBtn) deleteAllBtn.style.display = "none";
+    return;
+  }
+
+  if (deleteAllBtn) deleteAllBtn.style.display = "block";
+
+  previewContainer.innerHTML = window.lightsliderImageState
+    .map((item, index) => {
+      let imageSrc;
+      if (item.type === "existing") {
+        // 現有圖片：使用 URL
+        imageSrc = buildImageUrl(item.data);
+      } else {
+        // 新上傳的圖片：使用 URL.createObjectURL 創建預覽
+        imageSrc = URL.createObjectURL(item.data);
+        window.lightsliderPreviewUrls.push(imageSrc);
+      }
+
+      return `
+        <div class="lightslider-preview-item" draggable="true" data-index="${index}" 
+             style="position: relative; display: inline-block; cursor: move; user-select: none;"
+             ondragstart="handleDragStart(event, ${index})"
+             ondragend="handleDragEnd(event)"
+             ondragover="handleDragOver(event)"
+             ondrop="handleDrop(event, ${index}, '${productId}')"
+             ondragenter="handleDragEnter(event)"
+             ondragleave="handleDragLeave(event)">
+          <img src="${imageSrc}" alt="LightSlider圖片${
+        index + 1
+      }" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; margin: 5px; pointer-events: none;">
+          <div style="position: absolute; top: 5px; left: 5px; background: rgba(255, 255, 255, 0.6); color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;">${
+            index + 1
+          }</div>
+          <button type="button" onclick="removeLightSliderPreview(${index}, '${productId}')" style="position: absolute; top: -5px; right: -5px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; z-index: 10;">×</button>
+        </div>
+      `;
+    })
+    .join("");
+
+  // 添加拖拽样式
+  if (!document.getElementById("lightsliderDragStyles")) {
+    const style = document.createElement("style");
+    style.id = "lightsliderDragStyles";
+    style.textContent = `
+      .lightslider-preview-item.dragging {
+        opacity: 0.5;
+        transform: scale(0.95);
+      }
+      .lightslider-preview-item.drag-over {
+        border: 2px dashed #007bff;
+        background-color: rgba(0, 123, 255, 0.1);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// 拖拽相關變量
+let draggedIndex = null;
+
+// 處理拖拽開始
+function handleDragStart(event, index) {
+  draggedIndex = index;
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/html", event.target.outerHTML);
+  event.currentTarget.classList.add("dragging");
+}
+
+// 處理拖拽結束
+function handleDragEnd(event) {
+  event.currentTarget.classList.remove("dragging");
+  // 移除所有 drag-over 樣式
+  document.querySelectorAll(".lightslider-preview-item").forEach((item) => {
+    item.classList.remove("drag-over");
+  });
+}
+
+// 處理拖拽經過
+function handleDragOver(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+  return false;
+}
+
+// 處理拖拽進入
+function handleDragEnter(event) {
+  event.preventDefault();
+  if (event.currentTarget.classList.contains("lightslider-preview-item")) {
+    event.currentTarget.classList.add("drag-over");
+  }
+}
+
+// 處理拖拽離開
+function handleDragLeave(event) {
+  event.currentTarget.classList.remove("drag-over");
+}
+
+// 處理放置
+function handleDrop(event, dropIndex, productId) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (draggedIndex === null || draggedIndex === dropIndex) {
+    event.currentTarget.classList.remove("drag-over");
+    return false;
+  }
+
+  // 重新排序數組：使用標準的數組移動方法
+  if (window.lightsliderImageState && window.lightsliderImageState.length > 0) {
+    const draggedItem = window.lightsliderImageState[draggedIndex];
+
+    // 先移除被拖拽的項目
+    window.lightsliderImageState.splice(draggedIndex, 1);
+
+    // 計算插入位置
+    // 如果從前面拖到後面，目標索引需要減1（因為已經移除了前面的項目）
+    // 如果從後面拖到前面，目標索引保持不變
+    const insertIndex = draggedIndex < dropIndex ? dropIndex : dropIndex + 1;
+
+    // 插入到新位置
+    window.lightsliderImageState.splice(insertIndex, 0, draggedItem);
+
+    // 更新預覽
+    updateLightSliderPreview(productId);
+  }
+
+  // 清理樣式
+  event.currentTarget.classList.remove("drag-over");
+  draggedIndex = null;
+  return false;
+}
+
+// 移除單張 LightSlider 預覽圖片
+function removeLightSliderPreview(index, productId) {
+  if (!confirm("確定要移除這張圖片嗎？")) {
+    return;
+  }
+
+  if (window.lightsliderImageState && window.lightsliderImageState[index]) {
+    // 如果是新上傳的圖片，釋放對應的 Object URL
+    if (
+      window.lightsliderImageState[index].type === "new" &&
+      window.lightsliderPreviewUrls
+    ) {
+      // 找到對應的 URL 並釋放
+      const item = window.lightsliderImageState[index];
+      // 由於我們在更新預覽時會重新創建所有 URL，這裡只需要從狀態中移除即可
+      // URL 會在下次 updateLightSliderPreview 時被清理
+    }
+
+    window.lightsliderImageState.splice(index, 1);
+    updateLightSliderPreview(productId);
+  }
+}
+
+// 刪除所有 LightSlider 預覽圖片
+function deleteAllLightSliderPreview(productId) {
+  if (!confirm("確定要移除所有圖片嗎？")) {
+    return;
+  }
+
+  // 清理所有 Object URL
+  if (window.lightsliderPreviewUrls) {
+    window.lightsliderPreviewUrls.forEach((url) => {
+      if (url.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+    });
+    window.lightsliderPreviewUrls = [];
+  }
+
+  window.lightsliderImageState = [];
+  updateLightSliderPreview(productId);
 }
 
 // 更新商品
@@ -1266,11 +1482,18 @@ async function updateProduct(productId) {
       formData.thumbnail_path = thumbnailFile;
     }
 
-    const lightsliderFiles = document.getElementById(
-      "editProductLightSliderImages"
-    ).files;
-    if (lightsliderFiles.length > 0) {
-      formData.lightslider_images = Array.from(lightsliderFiles);
+    // 處理 LightSlider 圖片：使用預覽狀態中的圖片列表
+    if (
+      window.lightsliderImageState &&
+      window.lightsliderImageState.length > 0
+    ) {
+      // 將狀態中的圖片轉換為數組：現有圖片保留路徑，新上傳的保留 File 對象
+      formData.lightslider_images = window.lightsliderImageState.map(
+        (item) => item.data
+      );
+    } else {
+      // 如果預覽狀態為空，設置為空數組
+      formData.lightslider_images = [];
     }
 
     const sketchfabBackgroundFile = document.getElementById(
@@ -1293,6 +1516,18 @@ async function updateProduct(productId) {
     }
 
     await API.updateProduct(productId, formData);
+
+    // 清理狀態和 Object URL
+    if (window.lightsliderPreviewUrls) {
+      window.lightsliderPreviewUrls.forEach((url) => {
+        if (url.startsWith("blob:")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+      window.lightsliderPreviewUrls = null;
+    }
+    window.lightsliderImageState = null;
+
     alert("商品更新成功！");
     loadProducts();
   } catch (error) {

@@ -23,6 +23,8 @@ class DynamicProductLoader {
     this.productId = null;
     this.productData = null;
     this.loadingElement = null;
+    this.mainSwiper = null;
+    this.thumbsSwiper = null;
   }
 
   // 確保資料為陣列（後端可能回字串 JSON 或 null）
@@ -208,77 +210,116 @@ class DynamicProductLoader {
     }
   }
 
-  // 更新 LightSlider 圖片
+  // 更新 Swiper 圖片輪播
   updateLightSliderImages() {
-    // 重新建立 lightSlider 容器，避免已初始化的結構影響
+    // 重新建立 Swiper 容器，避免已初始化的結構影響
     const galleryContainer = document.querySelector(".gallery");
     if (!galleryContainer) return;
-    galleryContainer.innerHTML = '<ul id="lightSlider"></ul>';
-    const lightSliderElement = document.getElementById("lightSlider");
 
-    // 檢查是否有圖片資料
+    // 清除現有的 Swiper 實例
+    if (this.mainSwiper) {
+      this.mainSwiper.destroy(true, true);
+      this.mainSwiper = null;
+    }
+    if (this.thumbsSwiper) {
+      this.thumbsSwiper.destroy(true, true);
+      this.thumbsSwiper = null;
+    }
+
+    // 重建 HTML 結構
+    galleryContainer.innerHTML = `
+      <div class="swiper product-main-swiper">
+        <div class="swiper-wrapper" id="productMainSwiper"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+      <div class="swiper product-thumbs-swiper">
+        <div class="swiper-wrapper" id="productThumbsSwiper"></div>
+      </div>
+    `;
+
+    const mainWrapper = document.getElementById("productMainSwiper");
+    const thumbsWrapper = document.getElementById("productThumbsSwiper");
+
+    // 準備圖片陣列
+    let images = [];
     if (
       !this.productData.lightslider_images ||
       !Array.isArray(this.productData.lightslider_images) ||
       this.productData.lightslider_images.length === 0
     ) {
       // 使用預設圖片
-      const fallbackImage = "/images/shop/yellow-noisy-gradients.jpg";
-      const fullFallbackUrl = this.buildImageUrl(fallbackImage);
-      const li = document.createElement("li");
-      li.setAttribute("data-thumb", fullFallbackUrl);
-
-      const img = document.createElement("img");
-      img.src = fullFallbackUrl;
-      img.alt = this.productData.name || "商品圖片";
-      img.onerror = () => {
-        console.warn(`圖片載入失敗: ${fullFallbackUrl}`);
-      };
-
-      li.appendChild(img);
-      lightSliderElement.appendChild(li);
+      images = ["/images/shop/yellow-noisy-gradients.jpg"];
     } else {
-      // 添加新的圖片，包含錯誤處理
-      this.productData.lightslider_images.forEach((imagePath) => {
-        const li = document.createElement("li");
-        const fullImageUrl = this.buildImageUrl(imagePath);
-        li.setAttribute("data-thumb", fullImageUrl);
-
-        const img = document.createElement("img");
-        img.src = fullImageUrl;
-        img.alt = this.productData.name || "商品圖片";
-
-        // 圖片載入失敗時使用預設圖片
-        img.onerror = () => {
-          console.warn(`圖片載入失敗: ${fullImageUrl}，使用預設圖片`);
-          img.src = this.buildImageUrl(
-            "/images/shop/yellow-noisy-gradients.jpg"
-          );
-        };
-
-        li.appendChild(img);
-        lightSliderElement.appendChild(li);
-      });
+      images = this.productData.lightslider_images;
     }
 
-    // 初始化 LightSlider（確保在圖片載入後執行）
+    // 建立主輪播和縮圖的 slide
+    images.forEach((imagePath, index) => {
+      const fullImageUrl = this.buildImageUrl(imagePath);
+
+      // 主輪播 slide
+      const mainSlide = document.createElement("div");
+      mainSlide.className = "swiper-slide";
+      const mainImg = document.createElement("img");
+      mainImg.src = fullImageUrl;
+      mainImg.alt = this.productData.name || "商品圖片";
+      mainImg.onerror = () => {
+        console.warn(`圖片載入失敗: ${fullImageUrl}`);
+        mainImg.src = this.buildImageUrl(
+          "/images/shop/yellow-noisy-gradients.jpg"
+        );
+      };
+      mainSlide.appendChild(mainImg);
+      mainWrapper.appendChild(mainSlide);
+
+      // 縮圖 slide
+      const thumbSlide = document.createElement("div");
+      thumbSlide.className = "swiper-slide";
+      const thumbImg = document.createElement("img");
+      thumbImg.src = fullImageUrl;
+      thumbImg.alt = `${this.productData.name || "商品圖片"} - 縮圖 ${
+        index + 1
+      }`;
+      thumbImg.onerror = () => {
+        thumbImg.src = this.buildImageUrl(
+          "/images/shop/yellow-noisy-gradients.jpg"
+        );
+      };
+      thumbSlide.appendChild(thumbImg);
+      thumbsWrapper.appendChild(thumbSlide);
+    });
+
+    // 初始化 Swiper（確保在圖片載入後執行）
     try {
-      const slider = $("#lightSlider").lightSlider({
-        gallery: true,
-        item: 1,
-        loop: true,
-        slideMargin: 0,
-        thumbItem: 4,
-        thumbWidth: 115,
-        thumbHeight: 115,
-        galleryMargin: 10,
+      // 先初始化縮圖 Swiper
+      this.thumbsSwiper = new Swiper(".product-thumbs-swiper", {
+        spaceBetween: 10,
+        slidesPerView: 4,
+        freeMode: true,
+        watchSlidesProgress: true,
       });
-      // 強制定位到第一張
-      if (slider && typeof slider.goToSlide === "function") {
-        slider.goToSlide(0);
+
+      // 再初始化主 Swiper，並與縮圖 Swiper 連結
+      this.mainSwiper = new Swiper(".product-main-swiper", {
+        spaceBetween: 0,
+        loop: images.length > 1,
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        thumbs: {
+          swiper: this.thumbsSwiper,
+        },
+        initialSlide: 0, // 確保從第一張開始
+      });
+
+      // 確保顯示第一張圖片
+      if (this.mainSwiper) {
+        this.mainSwiper.slideTo(0, 0);
       }
     } catch (error) {
-      console.error("初始化 LightSlider 失敗:", error);
+      console.error("初始化 Swiper 失敗:", error);
     }
   }
 

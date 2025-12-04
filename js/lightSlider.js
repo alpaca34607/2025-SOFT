@@ -1,11 +1,2 @@
-// 商店相簿
-$('#lightSlider').lightSlider({
-    gallery: true,
-    item: 1,
-    loop:true,
-    slideMargin: 0,
-    thumbItem: 4,
-    thumbWidth: 115, 
-    thumbHeight: 115, 
-    galleryMargin: 10, 
-});
+// Swiper 將在 dynamic-product.js 中初始化
+// 此文件保留以維持向後兼容性
