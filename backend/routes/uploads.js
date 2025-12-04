@@ -65,8 +65,10 @@ router.post("/presign", express.json(), async (req, res) => {
       Bucket: process.env.S3_BUCKET,
       Key: key,
       ContentType: contentType,
-      // 建議用 CloudFront 控制公開讀；若需暫時公開可啟用下行
-      // ACL: "public-read",
+      // 設置為公開讀取，以便通過 publicUrl 訪問
+      // 注意：如果 S3 bucket 禁用了 ACL（新 bucket 的默認設置），
+      // 需要在 S3 bucket 設置中啟用 ACL，或配置 bucket 策略允許公共讀取
+      ACL: "public-read",
     });
 
     const expiresIn = 60 * 3; // 3 分鐘

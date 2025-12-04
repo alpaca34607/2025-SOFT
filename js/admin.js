@@ -2140,11 +2140,32 @@ async function updateBanner() {
           file,
           "images/shop"
         );
+        console.log("📤 上傳圖片到 S3:", { uploadUrl, publicUrl });
         await API.uploadToS3(uploadUrl, file);
+
+        // 驗證圖片是否可以訪問
+        try {
+          const verifyResponse = await fetch(publicUrl, { method: "HEAD" });
+          if (!verifyResponse.ok) {
+            console.warn("⚠️ 圖片上傳成功但無法訪問:", publicUrl);
+            console.warn(
+              "⚠️ 響應狀態:",
+              verifyResponse.status,
+              verifyResponse.statusText
+            );
+            // 仍然繼續，因為可能是權限設置延遲
+          } else {
+            console.log("✅ 圖片上傳並驗證成功:", publicUrl);
+          }
+        } catch (verifyError) {
+          console.warn("⚠️ 圖片驗證失敗（可能權限設置延遲）:", verifyError);
+          // 仍然繼續，因為可能是權限設置延遲
+        }
+
         bannerImagePath = publicUrl;
         showSuccessToast("圖片上傳成功！");
       } catch (error) {
-        console.error("圖片上傳失敗:", error);
+        console.error("❌ 圖片上傳失敗:", error);
         alert("圖片上傳失敗: " + error.message);
         return;
       }
