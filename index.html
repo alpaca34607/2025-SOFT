@@ -21,7 +21,7 @@
       property="og:description"
       content="了解軟筋家族成員、最新玩具介紹與參加心理測驗，快來認領屬於你的軟筋生物。"
     />
-    <!-- Open Graph 圖片（Google 搜尋結果縮圖） -->
+    <!-- Open Graph 圖片（Google 搜尋結果縮圖）- 必須使用絕對路徑 -->
     <meta
       property="og:image"
       content="https://soft-creature.up.railway.app/images/home/soft_share.png"
@@ -37,6 +37,11 @@
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <!-- 明確指定主要圖片，避免 Google 選擇其他圖片 -->
+    <meta
+      name="image"
+      content="https://soft-creature.up.railway.app/images/home/soft_share.png"
+    />
     <meta
       property="og:image:alt"
       content="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
@@ -171,7 +176,26 @@
   </head>
 
   <body>
-    <!-- 主要圖片（供搜尋引擎使用，隱藏但可見於 HTML） -->
+    <!-- 主要圖片（供搜尋引擎使用）- 使用相對路徑，放置在頁面最前面以確保優先權 -->
+    <img
+      src="./images/home/soft_share.png"
+      alt="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
+      itemscope
+      itemtype="https://schema.org/ImageObject"
+      itemprop="image"
+      style="
+        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+      "
+      width="1200"
+      height="630"
+    />
+    <!-- 備用：絕對路徑圖片（確保兼容性） -->
     <img
       src="https://soft-creature.up.railway.app/images/home/soft_share.png"
       alt="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
@@ -185,6 +209,7 @@
         height: 1px;
         opacity: 0;
         pointer-events: none;
+        visibility: hidden;
       "
       width="1200"
       height="630"
@@ -474,8 +499,8 @@
             src="./images/home/left-page.png"
             alt="左頁"
             class="left-page"
-            data-nosnippet
-            data-no-image-index
+            data-nosnippet="true"
+            data-no-image-index="true"
             loading="lazy"
           />
           <img
