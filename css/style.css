@@ -4200,6 +4200,7 @@ textarea {
   width: 100%;
   padding-top: 7%;
   z-index: 0;
+  max-width: 1000px;
   overflow: visible;
 }
 #product-page .product-container .product-showcase .showcase-wrap img {
