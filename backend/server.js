@@ -120,6 +120,7 @@ function loadStaticFile(possiblePaths, fallbackContent, type) {
 const sitemapContent = loadStaticFile(
   [
     path.join(__dirname, "../sitemap.xml"),
+    path.join(__dirname, "public/sitemap.xml"),
     path.join(__dirname, "sitemap.xml"),
     path.join(process.cwd(), "sitemap.xml"),
   ],
@@ -163,6 +164,7 @@ const sitemapContent = loadStaticFile(
 const robotsContent = loadStaticFile(
   [
     path.join(__dirname, "../robots.txt"),
+    path.join(__dirname, "public/robots.txt"),
     path.join(__dirname, "robots.txt"),
     path.join(process.cwd(), "robots.txt"),
   ],
