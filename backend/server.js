@@ -197,14 +197,29 @@ if (process.env.NODE_ENV === "production") {
       return res.status(404).json({ error: "API endpoint not found" });
     }
 
+    // 如果是 sitemap 或 robots，不處理（已由專用路由處理）
+    if (req.path === "/sitemap.xml" || req.path === "/robots.txt") {
+      return;
+    }
+
+    // 如果請求的是 HTML 檔案，直接返回該檔案
+    if (req.path.endsWith(".html")) {
+      const htmlFile = req.path.substring(1); // 移除開頭的 /
+      const filePath = path.join(__dirname, "../", htmlFile);
+      if (fs.existsSync(filePath)) {
+        return res.sendFile(filePath);
+      }
+    }
+
     // 根據路徑返回對應的 HTML 檔案
     let htmlFile = "index.html";
 
-    // 映射路由到 HTML 檔案
+    // 映射路由到 HTML 檔案（不帶 .html 擴展名）
     const routeMap = {
       "/checkout": "checkout.html",
       "/admin": "admin.html",
       "/Get-Soft": "Get-Soft.html",
+      "/product": "product.html",
       "/product-SoftzillaOD": "product-SoftzillaOD.html",
       "/product-Softzilla": "product-Softzilla.html",
       "/product-Softtwice": "product-Softtwice.html",
