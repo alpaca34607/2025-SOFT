@@ -60,6 +60,16 @@
       content="https://soft-creature.up.railway.app/images/home/soft_share.png"
     />
     <meta name="twitter:image:alt" content="軟筋生物官方網站" />
+    <!-- 搜尋結果縮圖：明確指定，避免採用頁面其他圖片 -->
+    <meta
+      name="thumbnail"
+      content="https://soft-creature.up.railway.app/images/home/soft_share.png"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="https://soft-creature.up.railway.app/images/home/soft_share.png"
+    />
     <meta name="application-name" content="軟筋生物" />
     <!-- Favicon for search engines (Google requires absolute URL and proper order) -->
     <link
@@ -173,10 +183,25 @@
         "description": "軟筋生物官方網站，認識軟筋生物系列角色、參加心理測驗，發掘屬於你的軟魂，並不定時推出限量玩具。"
       }
     </script>
+    <!-- 指定本頁主要圖片（搜尋結果縮圖），避免採用 left-page 等裝飾圖 -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "軟筋生物｜官方網站與最新消息",
+        "url": "https://soft-creature.up.railway.app/",
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": "https://soft-creature.up.railway.app/images/home/soft_share.png",
+          "width": 1200,
+          "height": 630
+        }
+      }
+    </script>
   </head>
 
   <body>
-    <!-- 主要圖片（供搜尋引擎使用）- 使用相對路徑，放置在頁面最前面以確保優先權 -->
+    <!-- 主要圖片（供搜尋引擎使用）-->
     <img
       src="./images/home/soft_share.png"
       alt="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
@@ -195,7 +220,7 @@
       width="1200"
       height="630"
     />
-    <!-- 備用：絕對路徑圖片（確保兼容性） -->
+    <!-- 備用：絕對路徑圖片 -->
     <img
       src="https://soft-creature.up.railway.app/images/home/soft_share.png"
       alt="軟筋生物官方網站 - 認識軟筋生物系列角色、參加心理測驗、發掘屬於你的軟魂"
@@ -494,13 +519,12 @@
             class="learn-blobs"
           />
         </div>
-        <div class="book-wrapper">
+        <!-- 書本裝飾區塊：排除於搜尋摘要與縮圖選取，避免被當成搜尋結果縮圖 -->
+        <div class="book-wrapper" data-nosnippet="true">
           <img
             src="./images/home/left-page.png"
             alt="左頁"
             class="left-page"
-            data-nosnippet="true"
-            data-no-image-index="true"
             loading="lazy"
           />
           <img
