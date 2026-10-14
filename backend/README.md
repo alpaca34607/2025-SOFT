@@ -143,6 +143,10 @@ GET http://localhost:3000/api/products/debug/health
 - `POST /api/uploads/presign`
 - `POST /api/uploads/delete`
 
+管理後台的商品圖片欄位支援直接貼上 `http`/`https` 圖片網址；LightSlider
+可每行貼上一個網址。網址會直接儲存到商品資料，不會由後端下載或代理，
+因此外部圖片必須允許公開讀取。
+
 ## 專案結構
 
 ```text
