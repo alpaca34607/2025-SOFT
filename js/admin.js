@@ -45,6 +45,131 @@ function buildImageUrl(imagePath) {
   return `${baseURL}${imagePath}`;
 }
 
+function getInputValue(inputId) {
+  return document.getElementById(inputId)?.value.trim() || "";
+}
+
+function getImageUrlList(inputId) {
+  return getInputValue(inputId)
+    .split(/\r?\n/)
+    .map((url) => url.trim())
+    .filter(Boolean);
+}
+
+function isValidImageReference(value) {
+  if (value.startsWith("/") && !value.startsWith("//")) {
+    return true;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function validateImageUrlInputs(inputIds) {
+  for (const inputId of inputIds) {
+    const value = getInputValue(inputId);
+    if (value && !isValidImageReference(value)) {
+      alert(`圖片網址格式無效，請輸入 http(s) 網址或網站路徑：${value}`);
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateImageUrlList(urls) {
+  const invalidUrl = urls.find((url) => !isValidImageReference(url));
+  if (invalidUrl) {
+    alert(`圖片網址格式無效，請輸入 http(s) 網址或網站路徑：${invalidUrl}`);
+    return false;
+  }
+  return true;
+}
+
+function readImageFileAsDataUrl(file) {
+  if (!file.type.startsWith("image/")) {
+    return Promise.reject(new Error("所選檔案不是圖片"));
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("無法讀取圖片預覽"));
+      }
+    };
+    reader.onerror = () =>
+      reject(reader.error || new Error("讀取圖片預覽失敗"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImageFilePreviews(containerId, previews) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.replaceChildren();
+  if (previews.length === 0) return;
+
+  container.style.cssText =
+    "display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;";
+  previews.forEach(({ dataUrl, name }) => {
+    const figure = document.createElement("figure");
+    figure.style.cssText = "margin:0; max-width:180px;";
+
+    const image = document.createElement("img");
+    image.src = dataUrl;
+    image.alt = name;
+    image.style.cssText =
+      "display:block; max-width:180px; max-height:180px; border:1px solid #ccc; object-fit:contain;";
+
+    const caption = document.createElement("figcaption");
+    caption.textContent = name;
+    caption.style.cssText =
+      "max-width:180px; overflow-wrap:anywhere; font-size:12px; color:#666;";
+
+    figure.append(image, caption);
+    container.appendChild(figure);
+  });
+}
+
+function bindImageFilePreview(inputId, previewId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  let requestId = 0;
+  input.addEventListener("change", async () => {
+    const currentRequestId = ++requestId;
+    const files = Array.from(input.files || []);
+    if (files.length === 0) {
+      renderImageFilePreviews(previewId, []);
+      return;
+    }
+
+    try {
+      const previews = await Promise.all(
+        files.map(async (file) => ({
+          dataUrl: await readImageFileAsDataUrl(file),
+          name: file.name,
+        }))
+      );
+      if (currentRequestId === requestId) {
+        renderImageFilePreviews(previewId, previews);
+      }
+    } catch (error) {
+      if (currentRequestId !== requestId) return;
+      console.error("讀取圖片預覽失敗:", error);
+      renderImageFilePreviews(previewId, []);
+      alert(`讀取圖片預覽失敗: ${error.message}`);
+    }
+  });
+}
+
 // 格式化時間為台北時間
 function formatDateTime(dateString) {
   if (!dateString) return "-";
@@ -863,10 +988,14 @@ function showAddProductForm() {
                 <div class="form-group">
                     <label>上傳商品縮圖(thumb):</label>
                     <input type="file" id="productThumbnail" accept="image/*">
+                    <input type="text" id="productThumbnailUrl" placeholder="或貼上圖片網址（https://...）">
+                    <div id="productThumbnailPreview"></div>
                 </div>
                 <div class="form-group">
                     <label>上傳LightSlider圖片:</label>
                     <input type="file" id="productLightSliderImages" accept="image/*" multiple>
+                    <textarea id="productLightSliderImageUrls" rows="3" placeholder="或貼上圖片網址，每行一個（https://...）"></textarea>
+                    <div id="productLightSliderImagesPreview"></div>
                 </div>
                 <div class="form-group">
                     <label>Sketchfab 嵌入程式碼:</label>
@@ -875,14 +1004,20 @@ function showAddProductForm() {
                 <div class="form-group">
                     <label>Sketchfab 背景圖片:</label>
                     <input type="file" id="productSketchfabBackground" accept="image/*">
+                    <input type="text" id="productSketchfabBackgroundUrl" placeholder="或貼上圖片網址（https://...）">
+                    <div id="productSketchfabBackgroundPreview"></div>
                 </div>
                 <div class="form-group">
                     <label>商品介紹圖片:</label>
                     <input type="file" id="productIntroduction" accept="image/*">
+                    <input type="text" id="productIntroductionUrl" placeholder="或貼上圖片網址（https://...）">
+                    <div id="productIntroductionPreview"></div>
                 </div>
                 <div class="form-group">
                     <label>預購注意事項圖片:</label>
                     <input type="file" id="productPreorderNotes" accept="image/*">
+                    <input type="text" id="productPreorderNotesUrl" placeholder="或貼上圖片網址（https://...）">
+                    <div id="productPreorderNotesPreview"></div>
                 </div>
                 <div class="form-actions">
                     <button type="submit">新增商品</button>
@@ -891,6 +1026,18 @@ function showAddProductForm() {
             </form>
         </div>
     `;
+
+  bindImageFilePreview("productThumbnail", "productThumbnailPreview");
+  bindImageFilePreview(
+    "productLightSliderImages",
+    "productLightSliderImagesPreview"
+  );
+  bindImageFilePreview(
+    "productSketchfabBackground",
+    "productSketchfabBackgroundPreview"
+  );
+  bindImageFilePreview("productIntroduction", "productIntroductionPreview");
+  bindImageFilePreview("productPreorderNotes", "productPreorderNotesPreview");
 
   // 綁定表單提交事件
   document
@@ -904,6 +1051,20 @@ function showAddProductForm() {
 // 新增商品
 async function addProduct() {
   try {
+    const imageUrlInputIds = [
+      "productThumbnailUrl",
+      "productSketchfabBackgroundUrl",
+      "productIntroductionUrl",
+      "productPreorderNotesUrl",
+    ];
+    if (!validateImageUrlInputs(imageUrlInputIds)) {
+      return;
+    }
+    const lightsliderUrls = getImageUrlList("productLightSliderImageUrls");
+    if (!validateImageUrlList(lightsliderUrls)) {
+      return;
+    }
+
     // 獲取選中的顏色
     const getSelectedColors = (prefix) => {
       const checkboxes = document.querySelectorAll(
@@ -937,34 +1098,51 @@ async function addProduct() {
     };
 
     const thumbnailFile = document.getElementById("productThumbnail").files[0];
+    const thumbnailUrl = getInputValue("productThumbnailUrl");
     if (thumbnailFile) {
       formData.thumbnail_path = thumbnailFile;
+    } else if (thumbnailUrl) {
+      formData.thumbnail_path = thumbnailUrl;
     }
 
     const lightsliderFiles = document.getElementById(
       "productLightSliderImages"
     ).files;
-    if (lightsliderFiles.length > 0) {
-      formData.lightslider_images = Array.from(lightsliderFiles);
+    if (lightsliderFiles.length > 0 || lightsliderUrls.length > 0) {
+      formData.lightslider_images = [
+        ...Array.from(lightsliderFiles),
+        ...lightsliderUrls,
+      ];
     }
 
     const sketchfabBackgroundFile = document.getElementById(
       "productSketchfabBackground"
     ).files[0];
+    const sketchfabBackgroundUrl = getInputValue(
+      "productSketchfabBackgroundUrl"
+    );
     if (sketchfabBackgroundFile) {
       formData.sketchfab_background = sketchfabBackgroundFile;
+    } else if (sketchfabBackgroundUrl) {
+      formData.sketchfab_background = sketchfabBackgroundUrl;
     }
 
     const introductionImg = document.getElementById("productIntroduction")
       .files?.[0];
+    const introductionUrl = getInputValue("productIntroductionUrl");
     if (introductionImg) {
       formData.product_introduction = introductionImg;
+    } else if (introductionUrl) {
+      formData.product_introduction = introductionUrl;
     }
 
     const preorderNotesImg = document.getElementById("productPreorderNotes")
       .files?.[0];
+    const preorderNotesUrl = getInputValue("productPreorderNotesUrl");
     if (preorderNotesImg) {
       formData.preorder_notes = preorderNotesImg;
+    } else if (preorderNotesUrl) {
+      formData.preorder_notes = preorderNotesUrl;
     }
 
     await API.createProduct(formData);
@@ -1174,6 +1352,8 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>上傳商品縮圖(thumb):</label>
                         <input type="file" id="editProductThumbnail" accept="image/*">
+                        <input type="text" id="editProductThumbnailUrl" placeholder="或貼上圖片網址（https://...）">
+                        <div id="editProductThumbnailPreview"></div>
                         ${
                           product.thumbnail_path
                             ? `<div class="current-image">
@@ -1193,6 +1373,11 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>上傳LightSlider圖片:</label>
                         <input type="file" id="editProductLightSliderImages" accept="image/*" multiple>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">選取的圖片會以 Base64 預覽；可拖曳排序</p>
+                        <textarea id="editProductLightSliderImageUrls" rows="3" placeholder="或貼上圖片網址，每行一個（https://...）"></textarea>
+                        <button type="button" onclick="addLightSliderUrls('${
+                          product.product_id
+                        }')" style="margin-top: 5px;">加入網址圖片</button>
                         <div id="lightsliderPreviewContainer" style="margin-top: 10px;">
                             <p style="font-weight: bold; color: #666;">預設會被替換的圖片:</p>
                             <p style="font-size: 12px; color: #999; margin-top: 5px;">可以拖曳圖片來改變順序</p>
@@ -1213,6 +1398,8 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>Sketchfab 背景圖片:</label>
                         <input type="file" id="editProductSketchfabBackground" accept="image/*">
+                        <input type="text" id="editProductSketchfabBackgroundUrl" placeholder="或貼上圖片網址（https://...）">
+                        <div id="editProductSketchfabBackgroundPreview"></div>
                         ${
                           product.sketchfab_background
                             ? `<div class="current-image"><p>目前背景:</p><img src="${buildImageUrl(
@@ -1226,6 +1413,8 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>商品介紹圖片:</label>
                         <input type="file" id="editProductIntroduction" accept="image/*">
+                        <input type="text" id="editProductIntroductionUrl" placeholder="或貼上圖片網址（https://...）">
+                        <div id="editProductIntroductionPreview"></div>
                         ${
                           product.product_introduction
                             ? `<div class=\"current-image\"><p>目前介紹圖:</p><img src="${buildImageUrl(
@@ -1239,6 +1428,8 @@ async function editProduct(productId) {
                     <div class="form-group">
                         <label>預購注意事項圖片:</label>
                         <input type="file" id="editProductPreorderNotes" accept="image/*">
+                        <input type="text" id="editProductPreorderNotesUrl" placeholder="或貼上圖片網址（https://...）">
+                        <div id="editProductPreorderNotesPreview"></div>
                         ${
                           product.preorder_notes
                             ? `<div class=\"current-image\"><p>目前注意事項圖:</p><img src="${buildImageUrl(
@@ -1257,8 +1448,25 @@ async function editProduct(productId) {
             </div>
         `;
 
+    bindImageFilePreview(
+      "editProductThumbnail",
+      "editProductThumbnailPreview"
+    );
+    bindImageFilePreview(
+      "editProductSketchfabBackground",
+      "editProductSketchfabBackgroundPreview"
+    );
+    bindImageFilePreview(
+      "editProductIntroduction",
+      "editProductIntroductionPreview"
+    );
+    bindImageFilePreview(
+      "editProductPreorderNotes",
+      "editProductPreorderNotesPreview"
+    );
+
     // 初始化 LightSlider 圖片狀態（用於預覽）
-    // 存儲格式：{ type: 'existing' | 'new', data: string | File, index?: number }
+    // 存儲格式：{ type: 'existing' | 'new' | 'url', data: string | File }
     window.lightsliderImageState = (product.lightslider_images || []).map(
       (img, index) => ({
         type: "existing",
@@ -1272,18 +1480,31 @@ async function editProduct(productId) {
 
     // 綁定文件上傳事件
     const fileInput = document.getElementById("editProductLightSliderImages");
-    fileInput.addEventListener("change", (e) => {
+    fileInput.addEventListener("change", async (e) => {
       const files = Array.from(e.target.files);
-      if (files.length > 0) {
-        files.forEach((file) => {
-          window.lightsliderImageState.push({
+      if (files.length === 0) return;
+
+      fileInput.disabled = true;
+      try {
+        const newItems = await Promise.all(
+          files.map(async (file) => ({
             type: "new",
             data: file,
+            previewSrc: await readImageFileAsDataUrl(file),
+          }))
+        );
+        newItems.forEach((item) => {
+          window.lightsliderImageState.push({
+            ...item,
           });
         });
         updateLightSliderPreview(productId);
-        // 清空文件輸入，允許重複選擇相同文件
-        e.target.value = "";
+      } catch (error) {
+        console.error("讀取 LightSlider 圖片預覽失敗:", error);
+        alert(`讀取 LightSlider 圖片預覽失敗: ${error.message}`);
+      } finally {
+        fileInput.value = "";
+        fileInput.disabled = false;
       }
     });
 
@@ -1297,6 +1518,27 @@ async function editProduct(productId) {
   } catch (error) {
     handleAPIError(error, "載入商品資料失敗");
   }
+}
+
+function addLightSliderUrls(productId) {
+  const urls = getImageUrlList("editProductLightSliderImageUrls");
+  if (!validateImageUrlList(urls)) {
+    return false;
+  }
+
+  if (urls.length === 0) {
+    return true;
+  }
+
+  urls.forEach((url) => {
+    window.lightsliderImageState.push({
+      type: "url",
+      data: url,
+    });
+  });
+  document.getElementById("editProductLightSliderImageUrls").value = "";
+  updateLightSliderPreview(productId);
+  return true;
 }
 
 // 更新 LightSlider 圖片預覽
@@ -1329,13 +1571,11 @@ function updateLightSliderPreview(productId) {
   previewContainer.innerHTML = window.lightsliderImageState
     .map((item, index) => {
       let imageSrc;
-      if (item.type === "existing") {
-        // 現有圖片：使用 URL
-        imageSrc = buildImageUrl(item.data);
+      if (item.type === "new") {
+        imageSrc = item.previewSrc;
       } else {
-        // 新上傳的圖片：使用 URL.createObjectURL 創建預覽
-        imageSrc = URL.createObjectURL(item.data);
-        window.lightsliderPreviewUrls.push(imageSrc);
+        // 現有圖片或貼上的網址：使用 URL
+        imageSrc = buildImageUrl(item.data);
       }
 
       return `
@@ -1498,6 +1738,19 @@ function deleteAllLightSliderPreview(productId) {
 // 更新商品
 async function updateProduct(productId) {
   try {
+    const imageUrlInputIds = [
+      "editProductThumbnailUrl",
+      "editProductSketchfabBackgroundUrl",
+      "editProductIntroductionUrl",
+      "editProductPreorderNotesUrl",
+    ];
+    if (!validateImageUrlInputs(imageUrlInputIds)) {
+      return;
+    }
+    if (!addLightSliderUrls(productId)) {
+      return;
+    }
+
     // 獲取選中的顏色
     const getSelectedColors = (prefix) => {
       const checkboxes = document.querySelectorAll(
@@ -1534,8 +1787,11 @@ async function updateProduct(productId) {
 
     const thumbnailFile = document.getElementById("editProductThumbnail")
       .files[0];
+    const thumbnailUrl = getInputValue("editProductThumbnailUrl");
     if (thumbnailFile) {
       formData.thumbnail_path = thumbnailFile;
+    } else if (thumbnailUrl) {
+      formData.thumbnail_path = thumbnailUrl;
     }
 
     // 處理 LightSlider 圖片：使用預覽狀態中的圖片列表
@@ -1555,20 +1811,31 @@ async function updateProduct(productId) {
     const sketchfabBackgroundFile = document.getElementById(
       "editProductSketchfabBackground"
     ).files[0];
+    const sketchfabBackgroundUrl = getInputValue(
+      "editProductSketchfabBackgroundUrl"
+    );
     if (sketchfabBackgroundFile) {
       formData.sketchfab_background = sketchfabBackgroundFile;
+    } else if (sketchfabBackgroundUrl) {
+      formData.sketchfab_background = sketchfabBackgroundUrl;
     }
 
     const editIntroImg = document.getElementById("editProductIntroduction")
       .files?.[0];
+    const introductionUrl = getInputValue("editProductIntroductionUrl");
     if (editIntroImg) {
       formData.product_introduction = editIntroImg;
+    } else if (introductionUrl) {
+      formData.product_introduction = introductionUrl;
     }
 
     const editNotesImg = document.getElementById("editProductPreorderNotes")
       .files?.[0];
+    const preorderNotesUrl = getInputValue("editProductPreorderNotesUrl");
     if (editNotesImg) {
       formData.preorder_notes = editNotesImg;
+    } else if (preorderNotesUrl) {
+      formData.preorder_notes = preorderNotesUrl;
     }
 
     await API.updateProduct(productId, formData);
@@ -2038,6 +2305,7 @@ function displayBannerManagement(bannerData, productSideData) {
         <div class="form-group">
           <label>上傳新的 Banner 圖片:</label>
           <input type="file" id="bannerImageFile" accept="image/*">
+          <div id="bannerImageFilePreview"></div>
           <p style="color: #666; font-size: 12px; margin-top: 5px;">
             建議尺寸：寬度 1200px 以上，高度 300-600px
           </p>
@@ -2082,6 +2350,7 @@ function displayBannerManagement(bannerData, productSideData) {
         <div class="form-group">
           <label>上傳新的 Product-Side 圖片:</label>
           <input type="file" id="productSideImageFile" accept="image/*">
+          <div id="productSideImageFilePreview"></div>
           <p style="color: #666; font-size: 12px; margin-top: 5px;">
             建議尺寸：寬度 400-600px，高度 300-500px
           </p>
@@ -2107,6 +2376,12 @@ function displayBannerManagement(bannerData, productSideData) {
       </form>
     </div>
   `;
+
+  bindImageFilePreview("bannerImageFile", "bannerImageFilePreview");
+  bindImageFilePreview(
+  "productSideImageFile",
+  "productSideImageFilePreview"
+  );
 
   // 綁定表單提交事件
   document
