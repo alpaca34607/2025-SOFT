@@ -12,6 +12,36 @@
 npm install
 ```
 
+### Prisma MySQL/TiDB（可選）
+
+本專案目前預設仍使用既有的 SQLite/PostgreSQL 流程。若要在 TiDB
+上使用 Prisma，請明確設定 `DATABASE_PROVIDER=prisma`；未設定時不會切換
+現有資料庫。
+
+```powershell
+cd backend
+npm install
+$env:DATABASE_PROVIDER = "prisma"
+$env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱"
+npm run prisma:generate
+npm run prisma:validate
+```
+
+在全新的 TiDB 資料庫建立目前的核心表格：
+
+```powershell
+npm run prisma:db-push
+```
+
+`prisma:db-push` 只建立 schema，不會將 Railway PostgreSQL 的資料自動轉換
+到 MySQL/TiDB。正式搬遷前應先在測試資料庫驗證欄位與資料，再撰寫一次性的
+資料搬遷程序。TiDB 使用 MySQL 相容協定，因此 Prisma schema 使用
+`provider = "mysql"`。
+
+目前 Prisma schema 位於 `prisma/schema.prisma`，並以 `@map`/`@@map` 對應
+現有的 snake_case 表格與欄位。應用程式啟動時只會測試 Prisma 連線，不會
+自動執行 `db push` 或修改資料庫。
+
 ### 啟動伺服器
 
 ```bash

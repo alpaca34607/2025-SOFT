@@ -29,6 +29,9 @@ COPY favicon.ico ./
 # 複製後端檔案
 COPY backend/ ./backend/
 
+# Prisma schema 必須在 production image 中產生 Client
+RUN cd backend && DATABASE_URL=mysql://placeholder:placeholder@localhost:3306/placeholder npx prisma generate --schema prisma/schema.prisma
+
 # 複製配置檔案
 COPY *.json ./
 COPY *.yaml ./

@@ -83,6 +83,25 @@ curl http://localhost:3000/api/health
 - **檔案位置**: `backend/database.sqlite`
 - **初始化**: 伺服器啟動時自動初始化
 
+### 🔁 可選的 Prisma + MySQL/TiDB 架構
+
+目前的 SQLite/PostgreSQL 路徑會保留不變；後端另外提供 Prisma
+`provider = "mysql"` schema，供 TiDB 測試與後續搬遷使用。只有明確設定
+`DATABASE_PROVIDER=prisma` 才會啟用這條路徑。
+
+```powershell
+cd backend
+npm install
+$env:DATABASE_PROVIDER = "prisma"
+$env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱"
+npm run prisma:generate
+npm run prisma:validate
+npm run prisma:db-push
+```
+
+`prisma:db-push` 適合建立新的測試資料庫；它不會將 Railway PostgreSQL
+資料自動轉換至 TiDB。正式切換前，請先完成資料轉換、筆數比對與 API 測試。
+
 ### 📁 專案結構
 
 ```

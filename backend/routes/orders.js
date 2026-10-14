@@ -1,6 +1,6 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-const { query, get, run } = require("../database-adapter");
+const { query, get, run, usePrisma } = require("../database-adapter");
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get("/debug/schema", async (req, res) => {
     // 檢查是否有 order_number 欄位
     const orderNumberExists = await query(`
       SELECT EXISTS (
-        SELECT FROM information_schema.columns 
+        SELECT 1 FROM information_schema.columns
         WHERE table_name = 'orders' AND column_name = 'order_number'
       ) as exists
     `);
@@ -121,7 +121,7 @@ router.post(
           [customerInfo.name, customerInfo.phone, customerInfo.email]
         );
         console.log("客戶建立結果:", customerResult);
-        customer = { id: customerResult.lastID };
+        customer = { id: usePrisma ? customerId : customerResult.lastID };
         console.log("最終客戶物件:", customer);
       }
 
@@ -138,27 +138,50 @@ router.post(
         .substr(2, 5)
         .toUpperCase()}`;
 
-      const orderResult = await run(
-        `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount, 
-             status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          customerInfo.name,
-          customerInfo.phone,
-          customerInfo.email,
-          JSON.stringify(items),
-          totalAmount,
-          depositAmount,
-          "pending",
-          note,
-          orderNumber,
-          paymentMethod,
-          pickupMethod,
-        ]
-      );
+      const orderId = usePrisma ? uuidv4() : null;
+      const orderResult = usePrisma
+        ? await run(
+            `INSERT INTO orders (id, customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount,
+               status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              orderId,
+              customerInfo.name,
+              customerInfo.phone,
+              customerInfo.email,
+              JSON.stringify(items),
+              totalAmount,
+              depositAmount,
+              "pending",
+              note,
+              orderNumber,
+              paymentMethod,
+              pickupMethod,
+            ]
+          )
+        : await run(
+            `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount,
+               status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              customerInfo.name,
+              customerInfo.phone,
+              customerInfo.email,
+              JSON.stringify(items),
+              totalAmount,
+              depositAmount,
+              "pending",
+              note,
+              orderNumber,
+              paymentMethod,
+              pickupMethod,
+            ]
+          );
 
       console.log("訂單建立結果:", orderResult);
       console.log("customer.id:", customer.id);
-      console.log("orderResult.lastID:", orderResult.lastID);
+      console.log(
+        "建立的訂單 ID:",
+        usePrisma ? orderId : orderResult.lastID
+      );
 
       // PostgreSQL 使用 JSONB 欄位存儲訂單明細，不需要額外插入
 
@@ -167,7 +190,7 @@ router.post(
         `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
              FROM orders o 
              WHERE o.id = ?`,
-        [orderResult.lastID]
+        [usePrisma ? orderId : orderResult.lastID]
       );
 
       // 解析訂單明細 (PostgreSQL JSONB 可能已經是對象)

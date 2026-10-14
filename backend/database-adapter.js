@@ -1,13 +1,22 @@
-// 資料庫適配器 - 統一 SQLite 和 PostgreSQL 的介面
+// 資料庫適配器 - 統一 SQLite、PostgreSQL 和 Prisma MySQL/TiDB 的介面
+
+const configuredProvider = (
+  process.env.DATABASE_PROVIDER ||
+  process.env.DB_PROVIDER ||
+  ""
+).toLowerCase();
 
 const usePostgres =
-  process.env.DATABASE_URL ||
+  !["prisma", "mysql", "tidb"].includes(configuredProvider) &&
+  (process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
   process.env.PGDATABASE ||
   process.env.RAILWAY_DATABASE_URL ||
   process.env.NODE_ENV === "production" ||
   process.env.NODE_ENV === "staging" ||
-  process.env.RAILWAY_ENVIRONMENT;
+  process.env.RAILWAY_ENVIRONMENT);
+
+const usePrisma = ["prisma", "mysql", "tidb"].includes(configuredProvider);
 
 console.log("🔍 資料庫配置檢查:");
 console.log(
@@ -28,12 +37,23 @@ console.log(
   "  - RAILWAY_ENVIRONMENT:",
   process.env.RAILWAY_ENVIRONMENT || "未設置"
 );
+console.log("  - DATABASE_PROVIDER:", configuredProvider || "自動");
+console.log("  - 使用 Prisma MySQL/TiDB:", usePrisma);
 console.log("  - 使用 PostgreSQL:", usePostgres);
 
 let dbModule;
 let usePostgresFinal = usePostgres;
+let usePrismaFinal = usePrisma;
 
-if (usePostgres) {
+if (usePrisma) {
+  console.log("📦 載入 Prisma MySQL/TiDB 模組...");
+  try {
+    dbModule = require("./database-prisma");
+  } catch (error) {
+    console.error("❌ Prisma 模組載入失敗:", error.message);
+    throw error;
+  }
+} else if (usePostgres) {
   console.log("📦 載入 PostgreSQL 模組...");
   try {
     dbModule = require("./database-postgres");
@@ -52,10 +72,12 @@ if (usePostgres) {
     console.log("⚠️  PostgreSQL 模組載入失敗，回退到 SQLite:", error.message);
     dbModule = require("./database");
     usePostgresFinal = false;
+    usePrismaFinal = false;
   }
 } else {
   console.log("📦 載入 SQLite 模組...");
   dbModule = require("./database");
+  usePrismaFinal = false;
 }
 
 // SQLite 風格的查詢適配器
@@ -65,7 +87,14 @@ async function query(sql, params = []) {
     throw new Error("資料庫連接未初始化");
   }
 
-  if (usePostgresFinal) {
+  if (usePrismaFinal) {
+    const result = await dbModule.query(sql, params);
+    return {
+      rows: result.rows,
+      rowCount: result.rowCount,
+      lastInsertRowid: result.lastInsertRowid,
+    };
+  } else if (usePostgresFinal) {
     // PostgreSQL 使用 $1, $2, $3... 格式
     const pgSql = convertSQLiteToPostgreSQL(sql);
     const result = await dbModule.query(pgSql, params);
@@ -155,7 +184,9 @@ async function setupDatabase() {
 
 // 獲取原始資料庫實例（用於特殊操作）
 function getDatabase() {
-  if (usePostgresFinal) {
+  if (usePrismaFinal) {
+    return dbModule.prisma;
+  } else if (usePostgresFinal) {
     return dbModule.pool();
   } else {
     return dbModule.getDatabase ? dbModule.getDatabase() : null;
@@ -169,4 +200,5 @@ module.exports = {
   setupDatabase,
   getDatabase,
   usePostgres: usePostgresFinal,
+  usePrisma: usePrismaFinal,
 };

@@ -1,5 +1,6 @@
 const express = require("express");
-const { query, get, run } = require("../database-adapter");
+const { query, get, run, usePrisma } = require("../database-adapter");
+const { v4: uuidv4 } = require("uuid");
 
 const router = express.Router();
 
@@ -87,13 +88,19 @@ router.post(
         return res.status(409).json({ error: "此電話號碼已存在" });
       }
 
-      const result = await run(
-        "INSERT INTO customers (name, phone, email) VALUES (?, ?, ?)",
-        [name, phone, email]
-      );
+      const customerId = usePrisma ? uuidv4() : null;
+      const result = usePrisma
+        ? await run(
+            "INSERT INTO customers (id, name, phone, email) VALUES (?, ?, ?, ?)",
+            [customerId, name, phone, email]
+          )
+        : await run(
+            "INSERT INTO customers (name, phone, email) VALUES (?, ?, ?)",
+            [name, phone, email]
+          );
 
       const customer = await get("SELECT * FROM customers WHERE id = ?", [
-        result.id,
+        usePrisma ? customerId : result.lastID ?? result.id,
       ]);
 
       res.status(201).json({ success: true, customer });

@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                   Int      @id @default(autoincrement())
+  productId            String   @unique @map("product_id") @db.VarChar(255)
+  name                 String   @db.VarChar(500)
+  price                Decimal  @db.Decimal(10, 2)
+  deposit              Decimal  @default(0) @db.Decimal(10, 2)
+  maxQuantity          Int      @default(0) @map("max_quantity")
+  status               String   @default("available") @db.VarChar(50)
+  preorderButtonStatus String?  @default("select_style") @map("preorder_button_status") @db.VarChar(50)
+  cellOpenStatus       String?  @default("preparing") @map("cell_open_status") @db.VarChar(50)
+  cellRemainingStatus  String?  @default("still_available") @map("cell_remaining_status") @db.VarChar(50)
+  specifications       String?  @db.Text
+  pickupInfo           String?  @map("pickup_info") @db.Text
+  thumbnailPath        String?  @map("thumbnail_path") @db.Text
+  lightsliderImages    Json?    @map("lightslider_images")
+  sketchfabEmbedLink   String?  @map("sketchfab_embed_link") @db.VarChar(1000)
+  sketchfabBackground  String?  @map("sketchfab_background") @db.Text
+  productIntroduction  String?  @map("product_introduction") @db.Text
+  preorderNotes        String?  @map("preorder_notes") @db.Text
+  mainColors           Json?    @map("main_colors")
+  subColors            Json?    @map("sub_colors")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@index([status], map: "idx_products_status")
+  @@map("products")
+}
+
+model Customer {
+  id        String   @id @default(uuid()) @db.Char(36)
+  name      String   @db.VarChar(255)
+  phone     String   @unique @db.VarChar(20)
+  email     String?  @db.VarChar(255)
+  address   String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("customers")
+}
+
+model Order {
+  id             String   @id @default(uuid()) @db.Char(36)
+  orderNumber    String   @unique @map("order_number") @db.VarChar(50)
+  customerName   String   @map("customer_name") @db.VarChar(255)
+  customerPhone  String   @map("customer_phone") @db.VarChar(20)
+  customerEmail  String?  @map("customer_email") @db.VarChar(255)
+  orderItems     Json     @map("order_items")
+  totalAmount    Decimal  @map("total_amount") @db.Decimal(10, 2)
+  depositAmount  Decimal  @map("deposit_amount") @db.Decimal(10, 2)
+  status         String   @default("pending") @db.VarChar(50)
+  notes          String?  @db.Text
+  paymentMethod  String?  @map("payment_method") @db.VarChar(50)
+  pickupMethod   String?  @map("pickup_method") @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([customerPhone], map: "idx_orders_customer_phone")
+  @@index([status], map: "idx_orders_status")
+  @@index([createdAt], map: "idx_orders_created_at")
+  @@map("orders")
+}
+
+model SiteConfig {
+  id          Int      @id @default(autoincrement())
+  configKey   String   @unique @map("config_key") @db.VarChar(100)
+  configValue String?  @map("config_value") @db.Text
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([configKey], map: "idx_site_config_key")
+  @@map("site_config")
+}

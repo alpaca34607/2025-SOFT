@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { query, get, run } = require("../database-adapter");
+const { query, get, run, usePrisma } = require("../database-adapter");
 
 const router = express.Router();
 
@@ -209,9 +209,11 @@ router.get("/debug/health", async (req, res) => {
 
     // 檢查表格
     const tablesCheck = await query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = ${
+        usePrisma ? "DATABASE()" : "'public'"
+      }
       AND table_type = 'BASE TABLE'
       ORDER BY table_name
     `);
