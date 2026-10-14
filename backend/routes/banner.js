@@ -1,5 +1,5 @@
 const express = require("express");
-const { query, run, usePostgres } = require("../database-adapter");
+const { query, run } = require("../database-adapter");
 
 const router = express.Router();
 
@@ -43,21 +43,12 @@ async function updateConfig(key, value, description) {
 
   if (checkResult.rows && checkResult.rows.length > 0) {
     // 更新现有配置
-    if (usePostgres) {
-      await run(
-        `UPDATE site_config 
-         SET config_value = $1, updated_at = CURRENT_TIMESTAMP 
-         WHERE config_key = $2`,
-        [value, key]
-      );
-    } else {
-      await run(
-        `UPDATE site_config 
-         SET config_value = ?, updated_at = CURRENT_TIMESTAMP 
-         WHERE config_key = ?`,
-        [value, key]
-      );
-    }
+    await run(
+      `UPDATE site_config
+       SET config_value = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE config_key = ?`,
+      [value, key]
+    );
   } else {
     // 插入新配置
     await run(

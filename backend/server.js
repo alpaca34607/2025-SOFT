@@ -12,6 +12,12 @@ const { setupDatabase } = require("./database-adapter");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PUBLIC_SITE_URL = (
+  process.env.PUBLIC_SITE_URL ||
+  process.env.PUBLIC_API_URL ||
+  process.env.API_BASE_URL ||
+  `http://localhost:${PORT}`
+).replace(/\/$/, "");
 
 // 中間件
 app.use(
@@ -127,32 +133,32 @@ const sitemapContent = loadStaticFile(
   `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://soft-creature.up.railway.app/</loc>
+    <loc>${PUBLIC_SITE_URL}/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://soft-creature.up.railway.app/Learning-Soft.html</loc>
+    <loc>${PUBLIC_SITE_URL}/Learning-Soft.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://soft-creature.up.railway.app/Becoming-Soft.html</loc>
+    <loc>${PUBLIC_SITE_URL}/Becoming-Soft.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soft-creature.up.railway.app/Get-Soft.html</loc>
+    <loc>${PUBLIC_SITE_URL}/Get-Soft.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://soft-creature.up.railway.app/WhatsNew.html</loc>
+    <loc>${PUBLIC_SITE_URL}/WhatsNew.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://soft-creature.up.railway.app/product.html</loc>
+    <loc>${PUBLIC_SITE_URL}/product.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -173,7 +179,7 @@ Disallow: /admin.html
 Disallow: /admin-login.html
 Disallow: /checkout.html
 
-Sitemap: https://soft-creature.up.railway.app/sitemap.xml
+Sitemap: ${PUBLIC_SITE_URL}/sitemap.xml
 `,
   "robots.txt"
 );
@@ -265,8 +271,7 @@ async function initializeDatabase() {
   try {
     await setupDatabase();
     console.log("✅ 成功連接到資料庫");
-    console.log("🔄 初始化資料庫...");
-    console.log("✅ 資料庫表格初始化完成");
+    console.log("ℹ️ 資料庫 schema 請透過 Prisma CLI 管理");
   } catch (error) {
     console.error("❌ 資料庫初始化失敗:", error);
     throw error;
@@ -305,14 +310,12 @@ if (require.main === module) {
       await initializeDatabase();
       databaseInitialized = true;
 
-      // Railway 要求：必須綁定到 0.0.0.0 和使用 PORT 環境變數
-      // 根據 Railway 官方文檔：https://docs.railway.com/reference/errors/application-failed-to-respond
-      // 本地開發：使用 localhost 以便於開發
       const host =
-        process.env.NODE_ENV === "staging" ||
+        process.env.HOST ||
+        (process.env.NODE_ENV === "staging" ||
         process.env.NODE_ENV === "production"
-          ? "0.0.0.0" // Railway/生產環境
-          : "localhost"; // 本地開發環境
+          ? "0.0.0.0"
+          : "localhost");
 
       app.listen(PORT, host, () => {
         console.log(`🚀 伺服器運行在 http://${host}:${PORT}`);

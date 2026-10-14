@@ -1,276 +1,206 @@
 # 軟筋生物預購系統 - 後端 API
 
-## 📋 概述
+## 概述
 
-這是軟筋生物預購系統的後端 API 服務，提供完整的電商功能，包括訂單管理、商品管理、客戶管理和資料庫操作。
+後端提供商品、客戶、訂單、banner 設定與圖片上傳 API。資料庫 runtime
+固定使用 Prisma + TiDB；TiDB 透過 MySQL 相容協定連線。
 
-## 🚀 快速開始
+## 快速開始
 
 ### 安裝依賴
-
-```bash
-npm install
-```
-
-### Prisma MySQL/TiDB（可選）
-
-本專案目前預設仍使用既有的 SQLite/PostgreSQL 流程。若要在 TiDB
-上使用 Prisma，請明確設定 `DATABASE_PROVIDER=prisma`；未設定時不會切換
-現有資料庫。
 
 ```powershell
 cd backend
 npm install
-$env:DATABASE_PROVIDER = "prisma"
-$env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱"
-npm run prisma:generate
-npm run prisma:validate
 ```
 
-在全新的 TiDB 資料庫建立目前的核心表格：
+### 設定 TiDB Cloud
+
+以下以 TiDB Cloud 為例。若你使用的是 TiDB Cloud Dedicated，連線流程相同；
+差別主要在叢集方案、網路設定與費用。可以先從
+[TiDB Cloud Console](https://tidbcloud.com/) 建立一個 Serverless 叢集。
+
+1. 登入 TiDB Cloud，建立 Project 和 Cluster。
+2. 選擇離應用程式部署平台較近的 Region。
+3. 在 Cluster 的 **Connect** 頁面建立或查看資料庫使用者。
+4. 依照 **Connect with MySQL / General connection** 提供的資訊取得：
+   `host`、`port`、`user`、`password` 與 `database`。
+5. 如果 Console 顯示 IP allowlist，加入目前開發電腦的公網 IP；部署後也要
+   加入部署平台的出口 IP。不要為了測試長期開放所有來源。
+6. 複製 Console 產生的完整連線字串。TiDB Cloud 通常使用 `4000` port
+   並要求 TLS，請保留字串中的 `sslaccept` 或其他 TLS query parameters。
+
+如果連線字串中的 database 尚未存在，可以在 TiDB Cloud SQL Editor 執行：
+
+```sql
+CREATE DATABASE IF NOT EXISTS soft_bio;
+```
+
+TiDB Cloud 的連線方式可參考官方文件：
+[Connect to Your TiDB Cloud Dedicated Cluster](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster/)。
+
+### 在 Windows 設定本機環境變數
+
+請在 `backend` 目錄建立 `.env`（檔案不會被提交到 Git），或只在目前
+PowerShell 工作階段設定環境變數：
 
 ```powershell
+cd backend
+$env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱?sslaccept=strict"
+```
+
+如果密碼包含 `@`、`#`、`?`、`/` 或 `%` 等 URL 保留字元，必須先做
+URL encoding。例如密碼 `p@ss#word` 不可以直接放進 URL；請改成
+`p%40ss%23word`。不要把包含密碼的 `DATABASE_URL` 貼到聊天、Issue 或
+提交到 Git。
+
+你也可以建立 `backend/.env`：
+
+```dotenv
+DATABASE_URL="mysql://使用者:密碼@主機:4000/資料庫名稱?sslaccept=strict"
+```
+
+### 建立 TiDB schema
+
+第一次使用新的 TiDB 資料庫時，在 `backend` 目錄執行：
+
+```powershell
+npm run prisma:generate
+npm run prisma:validate
 npm run prisma:db-push
 ```
 
-`prisma:db-push` 只建立 schema，不會將 Railway PostgreSQL 的資料自動轉換
-到 MySQL/TiDB。正式搬遷前應先在測試資料庫驗證欄位與資料，再撰寫一次性的
-資料搬遷程序。TiDB 使用 MySQL 相容協定，因此 Prisma schema 使用
-`provider = "mysql"`。
+`prisma:db-push` 會依照 `prisma/schema.prisma` 建立或更新
+`products`、`customers`、`orders` 與 `site_config`。請確認
+`DATABASE_URL` 指向正確的 TiDB database，再執行這個命令。
 
-目前 Prisma schema 位於 `prisma/schema.prisma`，並以 `@map`/`@@map` 對應
-現有的 snake_case 表格與欄位。應用程式啟動時只會測試 Prisma 連線，不會
-自動執行 `db push` 或修改資料庫。
+`DATABASE_URL` 是必要設定。應用程式不會在啟動時自動修改 schema；請在
+部署前執行 `prisma:db-push`，或使用已建立的 Prisma migration 執行
+`npm run prisma:migrate-deploy`。
+
+`prisma/schema.prisma` 是目前唯一的正式資料庫 schema，對應
+`products`、`customers`、`orders` 與 `site_config`。根目錄的
+`database_schema.sql` 和 `database_postgres_schema.sql` 僅保留作為歷史參考，
+不會被應用程式讀取。
 
 ### 啟動伺服器
 
-```bash
-# 開發模式
+```powershell
 npm run dev
-
-# 生產模式
+# 或
 npm start
 ```
 
-### 健康檢查
+確認 HTTP API：
 
-```bash
-curl http://localhost:3000/api/health
+```text
+GET http://localhost:3000/api/health
 ```
 
-## 📊 API 端點
+確認 API 到 TiDB 的連線：
 
-### 健康檢查
-- **GET** `/api/health` - 系統健康狀態
-
-### 訂單管理
-- **POST** `/api/orders` - 建立新訂單
-- **GET** `/api/orders` - 取得所有訂單
-- **GET** `/api/orders/:id` - 取得特定訂單
-- **PUT** `/api/orders/:id/status` - 更新訂單狀態
-- **GET** `/api/orders/search/phone/:phone` - 根據電話號碼查詢訂單
-
-### 商品管理
-- **GET** `/api/products` - 取得所有商品
-- **GET** `/api/products/:id` - 取得特定商品
-- **POST** `/api/products` - 新增商品
-- **PUT** `/api/products/:id` - 更新商品
-- **DELETE** `/api/products/:id` - 刪除商品
-- **PATCH** `/api/products/:id/stock` - 更新商品庫存
-
-### 客戶管理
-- **GET** `/api/customers` - 取得所有客戶
-- **GET** `/api/customers/:id` - 取得特定客戶
-- **POST** `/api/customers` - 新增客戶
-- **PUT** `/api/customers/:id` - 更新客戶
-- **DELETE** `/api/customers/:id` - 刪除客戶
-- **GET** `/api/customers/search/phone/:phone` - 根據電話號碼查詢客戶
-
-## 🗄️ 資料庫結構
-
-### 表格結構
-
-#### customers (客戶表)
-```sql
-CREATE TABLE customers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    phone TEXT UNIQUE NOT NULL,
-    email TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+```text
+GET http://localhost:3000/api/products/debug/health
 ```
 
-#### products (商品表)
-```sql
-CREATE TABLE products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    product_id TEXT UNIQUE NOT NULL,
-    name TEXT NOT NULL,
-    price INTEGER NOT NULL,
-    deposit INTEGER NOT NULL,
-    max_quantity INTEGER DEFAULT 3,
-    status TEXT DEFAULT 'available',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
+`/api/health` 只確認 HTTP server；`/api/products/debug/health` 才會執行
+資料庫查詢。
 
-#### orders (訂單表)
-```sql
-CREATE TABLE orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_number TEXT UNIQUE NOT NULL,
-    customer_id INTEGER NOT NULL,
-    total_amount INTEGER NOT NULL,
-    deposit_amount INTEGER NOT NULL,
-    pickup_method TEXT NOT NULL,
-    payment_method TEXT NOT NULL,
-    note TEXT,
-    status TEXT DEFAULT 'pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers (id)
-);
-```
+## API 端點
 
-#### order_items (訂單明細表)
-```sql
-CREATE TABLE order_items (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id INTEGER NOT NULL,
-    product_id TEXT NOT NULL,
-    product_name TEXT NOT NULL,
-    main_color TEXT NOT NULL,
-    main_color_name TEXT NOT NULL,
-    sub_color TEXT NOT NULL,
-    sub_color_name TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
-    unit_price INTEGER NOT NULL,
-    unit_deposit INTEGER NOT NULL,
-    total_price INTEGER NOT NULL,
-    total_deposit INTEGER NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders (id)
-);
-```
+### 訂單
 
-## 🔧 開發環境
+- `POST /api/orders`
+- `GET /api/orders`
+- `GET /api/orders/:id`
+- `PATCH /api/orders/:id/status`
+- `GET /api/orders/search/phone/:phone`
 
-### 環境變數
+### 商品
 
-- `NODE_ENV`: 環境模式 (`development` | `production`)
-- `PORT`: 伺服器端口 (預設: 3000)
+- `GET /api/products`
+- `GET /api/products/:id`
+- `POST /api/products`
+- `PUT /api/products/:id`
+- `DELETE /api/products/:id`
+- `PATCH /api/products/:id/stock`
 
-### 依賴套件
+### 客戶
 
-```json
-{
-  "express": "^4.18.2",
-  "sqlite3": "^5.1.6",
-  "cors": "^2.8.5",
-  "body-parser": "^1.20.2",
-  "uuid": "^9.0.1"
-}
-```
+- `GET /api/customers`
+- `GET /api/customers/:id`
+- `POST /api/customers`
+- `PUT /api/customers/:id`
+- `DELETE /api/customers/:id`
+- `GET /api/customers/search/phone/:phone`
 
-## 📁 檔案結構
+### 其他
 
-```
+- `GET /api/banner`
+- `PUT /api/banner`
+- `GET /api/banner/product-side`
+- `PUT /api/banner/product-side`
+- `POST /api/uploads/presign`
+- `POST /api/uploads/delete`
+
+## 專案結構
+
+```text
 backend/
-├── server.js              # 主伺服器檔案
-├── database.js            # 資料庫連接和初始化
-├── database.sqlite        # SQLite 資料庫檔案
-├── package.json           # 專案配置
-├── routes/                # API 路由
-│   ├── orders.js         # 訂單相關 API
-│   ├── products.js       # 商品相關 API
-│   └── customers.js      # 客戶相關 API
-└── README.md             # 本檔案
+├── server.js
+├── database-adapter.js
+├── database-prisma.js
+├── prisma/
+│   └── schema.prisma
+├── prisma-client.js
+├── prisma.config.js
+├── routes/
+└── package.json
 ```
 
-## 🔍 除錯和監控
+## 部署環境變數
 
-### 日誌輸出
+- `DATABASE_URL`: TiDB MySQL 連線字串，必要
+- `NODE_ENV`: `development`、`staging` 或 `production`
+- `PORT`: HTTP 服務埠，預設 `3000`
+- `PUBLIC_API_URL`: 前端 API URL；未設定時使用本機預設值
+- `PUBLIC_SITE_URL`: sitemap 與 robots 使用的公開網站 URL
 
-伺服器啟動時會顯示：
-- 資料庫連接狀態
-- API 端點資訊
-- 可用的頁面 URL
+圖片上傳若使用 S3，另需設定 `S3_BUCKET`、`S3_REGION`、`S3_ACCESS_KEY`
+與 `S3_SECRET_KEY` 等對應的 S3 環境變數。
 
-### 常見問題
+部署到 Vercel、Render 或其他平台時，請在該平台的 Environment Variables
+設定 `DATABASE_URL`，不要把 `.env` 上傳或提交。若前端與後端分開部署，
+另外設定前端使用的 `PUBLIC_API_URL`。
 
-1. **資料庫連接失敗**
-   - 檢查 `database.sqlite` 檔案權限
-   - 確認 SQLite3 模組已正確安裝
+## 常見問題
 
-2. **API 端點無法訪問**
-   - 檢查伺服器是否正在運行
-   - 確認端口 3000 未被佔用
+### `DATABASE_URL` 未設定
 
-3. **CORS 錯誤**
-   - 確認 CORS 中間件已正確配置
-   - 檢查前端請求的 Origin
+請在啟動 server 或執行 Prisma CLI 前設定 TiDB 連線字串：
 
-## 🚀 部署
-
-### 生產環境配置
-
-1. 設定環境變數：
-   ```bash
-   export NODE_ENV=production
-   export PORT=3000
-   ```
-
-2. 啟動伺服器：
-   ```bash
-   npm start
-   ```
-
-### Docker 部署
-
-```dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
+```powershell
+$env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱"
 ```
 
-## 📝 API 回應格式
+### Schema 尚未建立
 
-### 成功回應
-```json
-{
-  "success": true,
-  "data": {...},
-  "message": "操作成功"
-}
+在 `backend` 目錄執行：
+
+```powershell
+npm run prisma:validate
+npm run prisma:db-push
 ```
 
-### 錯誤回應
-```json
-{
-  "error": "錯誤訊息",
-  "message": "詳細說明"
-}
-```
+舊資料不會自動搬遷；本分支預期由使用者手動補回。
 
-## 🔐 安全性
+### 常見連線錯誤
 
-- 使用 CORS 中間件處理跨域請求
-- 輸入驗證和清理
-- SQL 注入防護
-- 錯誤訊息不暴露敏感資訊
-
-## 📞 支援
-
-如有問題，請檢查：
-1. 伺服器日誌輸出
-2. API 健康檢查端點
-3. 資料庫連接狀態
-
----
-
-**版本**: 1.0.0  
-**最後更新**: 2025-08-02  
-**維護者**: Soft Bio Team
+- **P1001 / can't reach database server**：檢查 host、port、IP allowlist
+  與部署平台網路；TiDB Cloud 通常使用 port `4000`。
+- **P1000 / authentication failed**：重新從 Console 複製使用者、密碼與
+  連線字串，並確認密碼中的特殊字元已 URL encoding。
+- **TLS 或 certificate error**：使用 TiDB Cloud Console 產生的完整連線
+  字串，不要自行刪除 `sslaccept` 或 TLS 參數。
+- **Unknown database**：先在 Console 或 SQL Editor 建立 database，或把
+  `DATABASE_URL` 最後的 database 名稱改成已存在的 database。

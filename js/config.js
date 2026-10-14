@@ -35,41 +35,22 @@ window.ENV_CONFIG = {
   getDefaultAPIURL() {
     const hostname = window.location.hostname;
 
-    // 如果是 Vercel 部署
-    if (hostname.includes("vercel.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-
-    // 如果是 Railway 部署
-    if (hostname.includes("railway.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-    if (hostname.endsWith("soft-creature.up.railway.app")) {
-      return window.location.origin;
-    }
-    if (hostname.includes("railway.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-
     // 本地開發環境
-    return "http://localhost:3000";
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:3000";
+    }
+
+    // 前後端同源部署時直接使用目前來源。
+    return window.location.origin;
   },
 
   // 智能判斷環境
   getDefaultEnvironment() {
     const hostname = window.location.hostname;
 
-    if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
-      return "staging";
-    }
-    if (hostname.endsWith("soft-creature.up.railway.app")) {
-      return "production";
-    }
-    if (hostname.includes("vercel.app") || hostname.includes("railway.app")) {
-      return "staging";
-    }
-
-    return "development";
+    return hostname === "localhost" || hostname === "127.0.0.1"
+      ? "development"
+      : "production";
   },
 
   // 獲取當前配置

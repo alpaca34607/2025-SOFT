@@ -1,5 +1,9 @@
 # API 請求完整流程圖與程式片段說明
 
+> 本文件描述目前的同源 API 設計。部署時請透過後端的
+> `PUBLIC_API_URL` 或前端環境設定提供跨域 API 網址；文件中的舊部署網址
+> 不再使用。
+
 ## 📊 完整流程圖
 
 ```mermaid
@@ -23,14 +27,10 @@ flowchart TD
     ParseConfig --> CheckHostname{檢查 hostname}
     UseDefault --> CheckHostname
 
-    CheckHostname -->|vercel.app| VercelURL[https://2025-soft-staging<br/>.up.railway.app]
-    CheckHostname -->|railway.app| RailwayURL[https://2025-soft-staging<br/>.up.railway.app]
-    CheckHostname -->|soft-creature| ProductionURL[window.location.origin]
+    CheckHostname -->|非本機| SameOriginURL[window.location.origin]
     CheckHostname -->|localhost| LocalURL[http://localhost:3000]
 
-    VercelURL --> CombineURL[組合完整 URL<br/>baseURL + endpoint]
-    RailwayURL --> CombineURL
-    ProductionURL --> CombineURL
+    SameOriginURL --> CombineURL[組合完整 URL<br/>baseURL + endpoint]
     LocalURL --> CombineURL
 
     CombineURL --> CheckFormData{檢查 body<br/>是否為 FormData?}
@@ -199,16 +199,10 @@ static async getDynamicBaseURL() {
 static getSmartDefaultURL() {
   const hostname = window.location.hostname;
 
-  if (hostname.includes("vercel.app")) {
-    return "https://2025-soft-staging.up.railway.app";
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:3000";
   }
-  if (hostname.includes("railway.app")) {
-    return "https://2025-soft-staging.up.railway.app";
-  }
-  if (hostname.endsWith("soft-creature.up.railway.app")) {
-    return window.location.origin;
-  }
-  return "http://localhost:3000";
+  return window.location.origin;
 }
 ```
 
@@ -442,7 +436,7 @@ Swal.fire({
    ↓
 4. fetch("/api/config") → 獲取 baseURL
    ↓
-5. 組合 URL: "https://2025-soft-staging.up.railway.app/api/orders"
+5. 組合 URL: `${API_BASE_URL}/api/orders`
    ↓
 6. 合併選項: { method: "POST", headers: {...}, body: "..." }
    ↓
@@ -460,7 +454,7 @@ Swal.fire({
 ### 實際請求範例
 
 ```http
-POST https://2025-soft-staging.up.railway.app/api/orders
+POST ${API_BASE_URL}/api/orders
 Content-Type: application/json
 
 {

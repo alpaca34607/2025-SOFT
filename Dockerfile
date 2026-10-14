@@ -8,7 +8,7 @@ WORKDIR /app
 COPY backend/package*.json ./
 
 # 安裝依賴
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # 複製圖片預處理腳本
 COPY prepare-images.js ./
@@ -57,11 +57,11 @@ RUN find images/ -type f -name "*.jpg" -o -name "*.png" -o -name "*.gif" -o -nam
 RUN chmod +x start.sh
 
 # 設定環境變數
-ENV NODE_ENV=staging
-# Railway 會自動設定 PORT 環境變數
+ENV NODE_ENV=production
+ENV PORT=3000
 
-# 暴露端口 (Railway 會動態分配端口)
-EXPOSE $PORT
+# 暴露應用程式端口；部署平台可透過 PORT 覆寫
+EXPOSE 3000
 
 # 健康檢查 (使用動態端口)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \

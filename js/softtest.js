@@ -82,7 +82,7 @@ class Quiz {
     this.isQuizEnded = false;
     this.test = document.getElementById("test");
     this.currentSnailPosition = 0;
-    this.shareUrl = "https://soft-creature.up.railway.app/Becoming-Soft.html";
+    this.shareUrl = `${window.location.origin}/Becoming-Soft.html`;
     this.latestResult = {
       text: "",
       image: "",

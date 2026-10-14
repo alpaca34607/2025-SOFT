@@ -1,8 +1,41 @@
+if (!process.env.DATABASE_URL?.trim()) {
+  throw new Error(
+    "DATABASE_URL is required for the Prisma MySQL/TiDB database."
+  );
+}
+
 const { prisma } = require("./prisma-client");
+
+function normalizeValue(value) {
+  if (typeof value === "bigint") {
+    return Number(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(normalizeValue);
+  }
+
+  if (
+    value &&
+    typeof value === "object" &&
+    value.constructor === Object
+  ) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entryValue]) => [
+        key,
+        normalizeValue(entryValue),
+      ])
+    );
+  }
+
+  return value;
+}
 
 async function query(sql, params = []) {
   const rows = await prisma.$queryRawUnsafe(sql, ...params);
-  const normalizedRows = Array.isArray(rows) ? rows : [];
+  const normalizedRows = Array.isArray(rows)
+    ? rows.map(normalizeValue)
+    : [];
 
   return {
     rows: normalizedRows,

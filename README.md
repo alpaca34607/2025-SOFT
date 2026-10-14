@@ -35,8 +35,14 @@ cd backend
 # 2. 安裝依賴套件
 npm install
 
-# 3. 啟動伺服器
-node server.js
+# 3. 確認資料庫環境變數
+# 將 TiDB 連線字串設定在 backend/.env 的 DATABASE_URL
+
+# 4. 開發模式啟動（支援 nodemon）
+npm run dev
+
+# 正式模式可改用
+# npm start
 ```
 
 ### 🌐 可用的頁面
@@ -79,28 +85,30 @@ curl http://localhost:3000/api/health
 ```
 
 #### 資料庫狀態
-- **資料庫類型**: SQLite
-- **檔案位置**: `backend/database.sqlite`
-- **初始化**: 伺服器啟動時自動初始化
+- **資料庫類型**: TiDB（MySQL 相容協定）
+- **資料庫存取**: Prisma Client
+- **初始化**: 使用 `prisma db push` 或正式 Prisma migration
+- **必要環境變數**: `DATABASE_URL`
 
-### 🔁 可選的 Prisma + MySQL/TiDB 架構
+### 🗄️ Prisma + TiDB
 
-目前的 SQLite/PostgreSQL 路徑會保留不變；後端另外提供 Prisma
-`provider = "mysql"` schema，供 TiDB 測試與後續搬遷使用。只有明確設定
-`DATABASE_PROVIDER=prisma` 才會啟用這條路徑。
+目前分支只使用 Prisma + TiDB，不再提供 SQLite 或 PostgreSQL runtime
+fallback。Prisma schema 位於 `backend/prisma/schema.prisma`，使用
+`provider = "mysql"` 以相容 TiDB。
 
 ```powershell
 cd backend
 npm install
-$env:DATABASE_PROVIDER = "prisma"
 $env:DATABASE_URL = "mysql://使用者:密碼@主機:4000/資料庫名稱"
 npm run prisma:generate
 npm run prisma:validate
 npm run prisma:db-push
 ```
 
-`prisma:db-push` 適合建立新的測試資料庫；它不會將 Railway PostgreSQL
-資料自動轉換至 TiDB。正式切換前，請先完成資料轉換、筆數比對與 API 測試。
+`prisma:db-push` 適合建立新的 TiDB 資料庫；它不會自動搬遷舊資料。
+本分支預期由使用者手動補回舊資料。`database_schema.sql` 與
+`database_postgres_schema.sql` 僅保留作為歷史 schema 參考，不會在應用程式
+啟動時讀取。
 
 ### 📁 專案結構
 
@@ -108,7 +116,8 @@ npm run prisma:db-push
 SOFT/
 ├── backend/                 # 後端 API 伺服器
 │   ├── server.js           # 主伺服器檔案
-│   ├── database.js         # 資料庫連接
+│   ├── database-prisma.js  # Prisma/TiDB 查詢介面
+│   ├── prisma/             # TiDB Prisma schema
 │   ├── routes/             # API 路由
 │   │   ├── orders.js       # 訂單管理
 │   │   ├── products.js     # 商品管理
@@ -143,6 +152,8 @@ SOFT/
    ```
 
 2. **API 連接失敗**
+   - 確認 `DATABASE_URL` 是 TiDB 的 MySQL 連線字串
+   - 先在 `backend` 目錄執行 `npm run prisma:validate`
    ```bash
    # 檢查伺服器是否運行
    Get-Process -Name "node"
@@ -191,7 +202,7 @@ node server.js
 ### 📝 注意事項
 
 1. **開發模式**: 目前運行在開發模式 (`NODE_ENV=development`)
-2. **資料庫**: 使用 SQLite，資料儲存在 `backend/database.sqlite`
+2. **資料庫**: 使用 TiDB，連線資訊由 `DATABASE_URL` 提供
 3. **API 端點**: 所有 API 端點都有健康檢查機制
 4. **錯誤處理**: 前端有 fallback 機制，API 失敗時會使用 localStorage
 

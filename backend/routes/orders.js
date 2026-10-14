@@ -1,6 +1,6 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-const { query, get, run, usePrisma } = require("../database-adapter");
+const { query, get, run } = require("../database-adapter");
 
 const router = express.Router();
 
@@ -48,33 +48,6 @@ router.get("/debug/schema", async (req, res) => {
   }
 });
 
-// 手動運行遷移的端點（用於調試）
-router.post("/debug/migrate", async (req, res) => {
-  try {
-    console.log("🔄 手動運行資料庫遷移...");
-    const { addOrderNumberColumn } = require("../migrate-add-order-number");
-    await addOrderNumberColumn();
-
-    const {
-      addPaymentPickupColumns,
-    } = require("../migrate-add-payment-pickup");
-    await addPaymentPickupColumns();
-
-    res.json({
-      success: true,
-      message: "資料庫遷移完成",
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("手動遷移失敗:", error);
-    res.status(500).json({
-      error: "手動遷移失敗",
-      message: error.message,
-      stack: error.stack,
-    });
-  }
-});
-
 // 建立新訂單
 router.post(
   "/",
@@ -116,12 +89,17 @@ router.post(
 
       if (!customer) {
         console.log("建立新客戶...", customerInfo);
-        const customerResult = await run(
-          "INSERT INTO customers (name, phone, email) VALUES (?, ?, ?)",
-          [customerInfo.name, customerInfo.phone, customerInfo.email]
+        const customerId = uuidv4();
+        await run(
+          "INSERT INTO customers (id, name, phone, email) VALUES (?, ?, ?, ?)",
+          [
+            customerId,
+            customerInfo.name,
+            customerInfo.phone,
+            customerInfo.email,
+          ]
         );
-        console.log("客戶建立結果:", customerResult);
-        customer = { id: usePrisma ? customerId : customerResult.lastID };
+        customer = { id: customerId };
         console.log("最終客戶物件:", customer);
       }
 
@@ -138,62 +116,40 @@ router.post(
         .substr(2, 5)
         .toUpperCase()}`;
 
-      const orderId = usePrisma ? uuidv4() : null;
-      const orderResult = usePrisma
-        ? await run(
-            `INSERT INTO orders (id, customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount,
-               status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              orderId,
-              customerInfo.name,
-              customerInfo.phone,
-              customerInfo.email,
-              JSON.stringify(items),
-              totalAmount,
-              depositAmount,
-              "pending",
-              note,
-              orderNumber,
-              paymentMethod,
-              pickupMethod,
-            ]
-          )
-        : await run(
-            `INSERT INTO orders (customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount,
-               status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              customerInfo.name,
-              customerInfo.phone,
-              customerInfo.email,
-              JSON.stringify(items),
-              totalAmount,
-              depositAmount,
-              "pending",
-              note,
-              orderNumber,
-              paymentMethod,
-              pickupMethod,
-            ]
-          );
-
-      console.log("訂單建立結果:", orderResult);
-      console.log("customer.id:", customer.id);
-      console.log(
-        "建立的訂單 ID:",
-        usePrisma ? orderId : orderResult.lastID
+      const orderId = uuidv4();
+      await run(
+        `INSERT INTO orders (id, customer_name, customer_phone, customer_email, order_items, total_amount, deposit_amount,
+           status, notes, order_number, payment_method, pickup_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          orderId,
+          customerInfo.name,
+          customerInfo.phone,
+          customerInfo.email,
+          JSON.stringify(items),
+          totalAmount,
+          depositAmount,
+          "pending",
+          note,
+          orderNumber,
+          paymentMethod,
+          pickupMethod,
+        ]
       );
 
-      // PostgreSQL 使用 JSONB 欄位存儲訂單明細，不需要額外插入
+      console.log("customer.id:", customer.id);
+      console.log("建立的訂單 ID:", orderId);
+
+      // TiDB 使用 JSON 欄位存儲訂單明細，不需要額外插入
 
       // 取得完整訂單資訊
       const order = await get(
         `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
              FROM orders o 
              WHERE o.id = ?`,
-        [usePrisma ? orderId : orderResult.lastID]
+        [orderId]
       );
 
-      // 解析訂單明細 (PostgreSQL JSONB 可能已經是對象)
+      // 解析訂單明細（TiDB JSON 可能已經是物件）
       let orderItems;
       if (typeof order.order_items === "string") {
         orderItems = JSON.parse(order.order_items || "[]");
@@ -264,7 +220,7 @@ router.get("/", async (req, res) => {
 
     // 取得每個訂單的明細
     for (const order of orders) {
-      // 解析 order_items JSONB 字段
+      // 解析 order_items JSON 欄位
       let orderItems = order.order_items || [];
 
       // 如果是字符串，需要解析 JSON
@@ -321,7 +277,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "訂單不存在" });
     }
 
-    // 解析 order_items JSONB 字段
+    // 解析 order_items JSON 欄位
     let orderItems = order.order_items || [];
 
     // 如果是字符串，需要解析 JSON
@@ -424,7 +380,6 @@ router.patch("/:id/status", express.json(), async (req, res) => {
       );
       console.log("✅ 更新結果:", {
         changes: result.changes,
-        lastID: result.lastID,
       });
     } catch (updateError) {
       console.error("❌ UPDATE 語句執行失敗:", updateError);
@@ -436,7 +391,7 @@ router.patch("/:id/status", express.json(), async (req, res) => {
       throw updateError;
     }
 
-    // 注意：PostgreSQL 的 rowCount 可能為 0 即使更新成功（如果新值與舊值相同）
+    // 受影響列數可能為 0，即使新值與舊值相同；以下仍會重新查詢驗證
     // 但我們仍然需要驗證實際的狀態是否改變
     if (result.changes === 0) {
       console.warn("⚠️ 更新結果顯示沒有行被更新，但繼續驗證實際狀態...");
@@ -525,7 +480,7 @@ router.get("/search/phone/:phone", async (req, res) => {
 
     // 取得每個訂單的明細
     for (const order of orders) {
-      // 解析 order_items JSONB 字段
+      // 解析 order_items JSON 欄位
       let orderItems = order.order_items || [];
 
       // 如果是字符串，需要解析 JSON
@@ -579,7 +534,7 @@ router.delete("/batch/all", express.json(), async (req, res) => {
 
     console.log("⚠️ 執行批量刪除所有訂單...");
 
-    // PostgreSQL 使用 JSONB 欄位，訂單明細已包含在 orders 表中
+    // 訂單明細已包含在 orders 表的 JSON 欄位中
     // 直接刪除所有訂單即可
     const deleteOrdersResult = await run("DELETE FROM orders");
     console.log(`🗑️ 刪除了 ${deleteOrdersResult.changes} 筆訂單`);
@@ -588,42 +543,11 @@ router.delete("/batch/all", express.json(), async (req, res) => {
       success: true,
       message: "所有訂單及相關明細已清空",
       deletedOrders: deleteOrdersResult.changes,
-      deletedItems: 0, // PostgreSQL 使用 JSONB，沒有獨立的 order_items 表
+      deletedItems: 0, // 沒有獨立的 order_items 表
     });
   } catch (error) {
     console.error("批量刪除訂單失敗:", error);
     res.status(500).json({ error: "批量刪除訂單失敗", message: error.message });
-  }
-});
-
-// 取得單一訂單 (必須在最後，因為會匹配任何 /:id 格式)
-router.get("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const order = await get(
-      `SELECT o.*, o.customer_name, o.customer_phone as phone, o.customer_email as email 
-              FROM orders o 
-              WHERE o.id = ?`,
-      [id]
-    );
-
-    if (!order) {
-      return res.status(404).json({ error: "訂單不存在" });
-    }
-
-    // 取得訂單明細
-    const orderItems = await query(
-      "SELECT * FROM order_items WHERE order_id = ?",
-      [id]
-    );
-
-    order.items = orderItems.rows || [];
-
-    res.json({ order });
-  } catch (error) {
-    console.error("取得訂單失敗:", error);
-    res.status(500).json({ error: "取得訂單失敗", message: error.message });
   }
 });
 
@@ -642,7 +566,7 @@ router.delete("/:id", async (req, res) => {
 
     console.log(`📋 找到訂單: ${order.order_number}`);
 
-    // PostgreSQL 使用 JSONB 欄位，訂單明細已包含在 orders 表中
+    // 訂單明細已包含在 orders 表的 JSON 欄位中
     // 直接刪除訂單即可
     const deleteOrderResult = await run("DELETE FROM orders WHERE id = ?", [
       id,
@@ -657,7 +581,7 @@ router.delete("/:id", async (req, res) => {
       success: true,
       message: `訂單 ${order.order_number} 及相關明細已成功刪除`,
       deletedOrder: order.order_number,
-      deletedItems: 0, // PostgreSQL 使用 JSONB，沒有獨立的 order_items 表
+      deletedItems: 0, // 沒有獨立的 order_items 表
     });
   } catch (error) {
     console.error("刪除訂單失敗:", error);

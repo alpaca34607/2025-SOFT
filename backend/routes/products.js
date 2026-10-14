@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const { query, get, run, usePrisma } = require("../database-adapter");
+const { query, get, run } = require("../database-adapter");
 
 const router = express.Router();
 
@@ -25,6 +25,11 @@ function convertToFullUrl(path) {
 
   const baseUrl = getBaseUrl();
   return `${baseUrl}${path}`;
+}
+
+function serializeJson(value) {
+  if (value === null || value === undefined) return null;
+  return typeof value === "string" ? value : JSON.stringify(value);
 }
 
 // 檢查圖片文件是否存在
@@ -204,16 +209,14 @@ router.get("/debug/health", async (req, res) => {
 
     // 基本連接測試
     const connectionTest = await query(
-      "SELECT NOW() as current_time, version() as postgres_version"
+      "SELECT NOW() as current_time, version() as database_version"
     );
 
     // 檢查表格
     const tablesCheck = await query(`
       SELECT table_name
       FROM information_schema.tables
-      WHERE table_schema = ${
-        usePrisma ? "DATABASE()" : "'public'"
-      }
+      WHERE table_schema = DATABASE()
       AND table_type = 'BASE TABLE'
       ORDER BY table_name
     `);
@@ -308,7 +311,7 @@ router.get("/", async (req, res) => {
     );
     const products = productResult.rows || [];
 
-    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // TiDB JSON 欄位已經是 JavaScript 物件，不需要解析
     // 處理圖片路徑，轉換為完整URL
     const processedProducts = products.map((product) =>
       processProductImages(product)
@@ -333,7 +336,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "商品不存在" });
     }
 
-    // PostgreSQL JSONB 欄位已經是 JavaScript 物件，不需要解析
+    // TiDB JSON 欄位已經是 JavaScript 物件，不需要解析
     // 處理圖片路徑，轉換為完整URL
     const processedProduct = processProductImages(product);
 
@@ -512,13 +515,15 @@ router.put(
       // 注意：Base64圖片不需要文件系統操作，直接使用傳入的值
 
       // 處理顏色配置
-      const mainColorsJson = main_colors
-        ? JSON.stringify(main_colors)
-        : existingProduct.main_colors;
-      const subColorsJson = sub_colors
-        ? JSON.stringify(sub_colors)
-        : existingProduct.sub_colors;
-      const lightsliderImagesJson = JSON.stringify(lightsliderImages);
+      const mainColorsJson =
+        main_colors !== undefined
+          ? serializeJson(main_colors)
+          : serializeJson(existingProduct.main_colors);
+      const subColorsJson =
+        sub_colors !== undefined
+          ? serializeJson(sub_colors)
+          : serializeJson(existingProduct.sub_colors);
+      const lightsliderImagesJson = serializeJson(lightsliderImages);
 
       // 準備更新資料（缺少的欄位沿用原值）
       const updatedName = name ?? existingProduct.name;

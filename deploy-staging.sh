@@ -18,5 +18,4 @@ npm install
 echo "✅ 準備完成！"
 echo "🌐 請前往部署平台進行部署："
 echo "   - Vercel: https://vercel.com"
-echo "   - Railway: https://railway.app"
 echo "   - Render: https://render.com"

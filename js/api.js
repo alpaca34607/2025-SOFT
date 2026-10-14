@@ -20,26 +20,13 @@ class API {
   static getSmartDefaultURL() {
     const hostname = window.location.hostname;
 
-    // 如果是 Vercel 部署
-    if (hostname.includes("vercel.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-
-    // 如果是 Railway 部署
-    if (hostname.includes("railway.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-    // 正式：你的 Railway production 網域 → 用目前來源
-    if (hostname.endsWith("soft-creature.up.railway.app")) {
-      return window.location.origin;
-    }
-    // 其他 Railway 部署（預設視為 staging）
-    if (hostname.includes("railway.app")) {
-      return "https://2025-soft-staging.up.railway.app";
-    }
-
     // 本地開發環境
-    return "http://localhost:3000";
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:3000";
+    }
+
+    // 前後端同源部署時直接使用目前來源；跨域部署可由 ENV_CONFIG 覆寫。
+    return window.location.origin;
   }
 
   // 動態獲取 API URL（用於確保獲取最新配置）
